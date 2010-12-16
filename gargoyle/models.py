@@ -46,7 +46,6 @@ class Switch(models.Model):
         return {
             'key': self.key,
             'status': self.get_status(),
-            'active': self.is_active(),
             'label': self.label,
             'description': self.description,
         }
