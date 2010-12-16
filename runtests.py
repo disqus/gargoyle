@@ -1,9 +1,6 @@
 #!/usr/bin/env python
-import logging
 import sys
 from os.path import dirname, abspath
-
-logging.getLogger('gargoyle').addHandler(logging.StreamHandler())
 
 from django.conf import settings
 
@@ -24,15 +21,6 @@ if not settings.configured:
         ],
         ROOT_URLCONF='',
         DEBUG=False,
-        SITE_ID=1,
-        BROKER_HOST="localhost",
-        BROKER_PORT=5672,
-        BROKER_USER="guest",
-        BROKER_PASSWORD="guest",
-        BROKER_VHOST="/",
-        CELERY_ALWAYS_EAGER=True,
-        SENTRY_THRASHING_LIMIT=0,
-        TEMPLATE_DEBUG=True,
     )
 
 from django.test.simple import run_tests
