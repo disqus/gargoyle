@@ -19,7 +19,7 @@ class Switch(models.Model):
     
     {
       disable: bool,
-      user: {
+      class.__name__: {
           id: [0, 50] // 50% of users
       }
     }
@@ -78,10 +78,18 @@ class SwitchManager(ModelDict):
         if instances:
             # check each value for this switch against its registered type
             for instance in instances:
-                for column, values in values.get(instance.__class__.__name__, {}).iteritems():
+                type_values = values.get(instance.__class__.__name__)
+                if not type_values:
+                    continue
+                for column, values in type_values.iteritems():
+                    # switches assigned to this column
                     for switch in self._registry.get((instance.__class__, column), []):
                         if any(switch.is_active(instance, v) for v in values):
                             return True
+                # switches assigned to global
+                for switch in self._registry.get((instance.__class__, None), []):
+                    if switch.is_active_among(key, instance, type_values):
+                        return True
                 
         # if all other checks failed, look at our global 'disable' flag
         return False
@@ -91,5 +99,4 @@ class SwitchManager(ModelDict):
         if type_ not in self._registry:
             self._registry[type_] = []
         self._registry[type_].append(switch)
-
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)

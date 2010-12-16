@@ -16,7 +16,7 @@ class GargoyleTest(TestCase):
         self.user = User.objects.create(username='foo', email='foo@example.com')
 
     def test_builtin_discovery(self):
-        self.assertEquals(len(gargoyle._registry), 1)
+        self.assertEquals(len(gargoyle._registry), 5)
 
     def test_isolations(self):
         gargoyle['isolation'] = {'User': {'id': [[0, 50]], 'is_staff': [True]}}

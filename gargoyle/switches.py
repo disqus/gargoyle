@@ -1,25 +1,22 @@
 # TODO: i18n
 
 from django.db import models
-from django.contrib.auth.models import User, AnonymousUser
+from django.http import HttpRequest
 
 class BaseSwitch(object):
-    pass
+    def get_type_label(self):
+        return self.get_type().__name__
+    
+    def get_column_label(self):
+        return 
 
 class ModelSwitch(BaseSwitch):
-    """
-    needs to provide:
-    
-    """
     def __init__(self, model, column):
         self.model = model
         self.column = column
     
     def get_type(self):
         return self.model
-    
-    def get_type_label(self):
-        return self.model.__name__
     
     def get_column_label(self):
         return self.column
@@ -62,10 +59,8 @@ class ModelSwitch(BaseSwitch):
         return col_value == column
 
 class RequestSwitch(BaseSwitch):
-    # TODO: Pull in all User applied switches are applied to request.user?
-
     def get_type(self):
-        return WSGIRequest
+        return HttpRequest
 
 class IPAddressSwitch(BaseSwitch):
     # TODO:
