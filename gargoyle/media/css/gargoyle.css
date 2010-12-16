@@ -1,3 +1,254 @@
+/* http://www.positioniseverything.net/easyclearing.html */
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+.clearfix {display: block;}
+* html .clearfix {height: 1%;}
+/* end hide from IE-mac */
+
+html * { padding:0; margin:0; }
+body * * { padding:0; }
+body { font:small sans-serif; background: #E5E5E5;
+    font-family: "Lucida Grande", "Lucida Sans", verdana, sans-serif;
+}
+
+h1 { font-weight:normal; }
+h2 { font-weight: normal; }
+h3 { font-weight: normal; }
+h4 { font-weight: normal; }
+h1 a { color: inherit; text-decoration: none; }
+h2 span { font-size:80%; color:#666; font-weight:normal; }
+
+h1, h2, h3, h4, h5, h6, p, ul,
+table, form, pre, ol { margin-bottom: 20px; }
+ul { margin: 0 0 20px 20px; }
+
+a { color: #333; }
+a:visited { color: inherit; }
+
+pre {
+    display: block;
+    white-space: pre-wrap;       /* CSS-3                  */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+    white-space: -pre-wrap;      /* Opera 4-6              */
+    white-space: -o-pre-wrap;    /* Opera 7                */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
 body {
     background-color: #eee;
+}
+
+#header {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#437ba3', endColorstr='#234b6f'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#437ba3), to(#234b6f)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #555,  #437ba3); /* for firefox 3.6+ */        
+    padding: 20px;
+}
+
+#header h1, #header h2 {
+    font-family: 'Yanone Kaffeesatz', arial, serif;    
+    color: #fff;
+    display: inline;
+    font-size: 20pt;
+    font-weight: normal;
+}
+
+#header h1 {
+    background-image: url("../img/logo.jpg");
+    background-repeat: no-repeat;
+    background-position: top middle;
+    padding-left: 84px;
+}
+
+#header h2 {
+    margin-left: 5px;
+    color: #ccc;
+}
+
+#container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);    
+}
+
+#container div.toolbar {
+    border-bottom: solid 1px #e5e5e5;
+    padding-bottom: 20px;
+}
+
+#container div.toolbar span.switchTest {
+    float: right;
+}
+
+#container div.toolbar span.switchTest input {
+    font-size: 13px;
+    padding: 5px;
+    width: 200px;
+}
+
+#container table.switches {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#container table.switches td {
+    vertical-align: top;
+    border-bottom: solid 1px #efefef;
+    padding: 20px 0;
+}
+
+#container table.switches td.name {
+    width: 40%;
+}
+
+#container table.switches td.name h4 {
+    font-size: 100%;
+    font-weight: bold;
+    margin: 0 0 15px 0;
+}
+
+#container table.switches td.name p {
+    margin: 0;
+}
+
+#container table.switches td.command {
+    font-family: "Inconsolata", arial;
+    text-align: left;
+    padding-left: 10px;    
+}
+
+#container table.switches td.status {
+    width: 200px;
+    text-align: right;
+}
+
+#container table.switches td.actions {
+    text-align: right;
+    width: 70px;
+}
+
+#footer {
+    background-color: #e5e5e5;
+    border-top: solid 1px #ddd;
+    padding: 20px;
+}
+
+/*
+ * Styles for customized buttons.
+ * (taken from Disqus code, author Chris Jennings)
+ */
+
+.button,
+.button ul {
+    display: inline-block;
+    margin: 0 1px;
+    font-size: 13px;
+    border: 1px solid #94afbd;
+    text-align: center;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    color: #5a7c9d;
+    font-weight: bold;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0, .1);
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0, .2);
+    background: #fff url(../img/button-bg.jpg) left bottom repeat-x;
+    text-shadow: 0 1px 0 #fff;
+    padding: 8px;
+    font-family: Arial, Helvetica, Calibri, sans-serif;
+    position: relative;
+}
+
+.button ul {
+    white-space: nowrap;
+    z-index: 100;
+    position: absolute;
+    left: -1px;
+    margin: 3px 0 0;
+    display: none;
+    text-align: left;
+    -moz-border-radius: 0 4px 4px 4px;
+    border-radius: 0 4px 4px 4px;
+}
+
+.button ul li a {
+    padding: 4px 0;
+    display: block;
+    white-space: nowrap;
+}
+
+.button ul li a:hover {
+    color: #36A0FF;
+}
+
+.button:hover ul {
+    display: block;
+}
+
+.button li a {
+    color: inherit;
+    font-size: inherit;
+}
+
+.button {
+    cursor: pointer;
+}
+
+.paging li span,
+.button.disabled {
+    color: #C9D5DF;
+    border-color: #C9D5DF;
+}
+
+.paging li a:hover,
+.button:focus,
+.button:hover {
+    background-position: right -156px;
+}
+
+.button.delete:hover,
+.button.delete:focus {
+    border-color: red;
+    background-color: #E25F53;
+    color: #fff;
+    text-shadow: 0 1px 0 red;
+}
+
+.button img {
+    position: relative;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+
+.button.small,
+.button.small ul {
+    padding: 5px 8px;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.paging li a:hover,
+.button.small:hover {
+    background-position: right -126px;
+}
+
+.button.xtrasmall {
+    padding: 1px 4px;
+    font-size: 11px;
+    line-height: 14px;
 }

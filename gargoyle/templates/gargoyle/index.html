@@ -4,13 +4,75 @@
   <head>
     <meta charset="utf-8">
     <title>Gargoyle</title>
-    <link rel="stylesheet" href="{{ media }}css/gargoyle.css">
+    <link rel="stylesheet" href="{% url gargoyle-media 'css/gargoyle.css' %}">
+    <link href='//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:light,regular&amp;subset=latin' rel='stylesheet'>
+    <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>    
   </head>
 
   <body>
     <div id="header">
       <h1>Gargoyle</h1>
       <h2>Switches</h2>
+    </div>
+
+    <div id="container">
+      <div class="toolbar">
+        <button class="button">Add a switch</button>
+
+        <span class="switchTest">
+          <input type="text">
+          <button class="button">Test Switch</button>
+        </span>
+      </div>
+
+      <table class="switches">
+        <tr>
+          <td class="name">
+            <h4>Disable Realtime</h4>
+            <p>Enables usage of IndexedPostTreePaginator on get_thread (DTPL).</p>
+          </td>
+
+          <td class="command">
+            overview_trending_threads
+          </td>
+
+          <td class="status">
+            <button class="xtrasmall button">Global</button>
+            <button class="xtrasmall button">Selective</button>
+            <button class="xtrasmall button">Disabled</button>
+          </td>
+
+          <td class="actions">
+            <button class="xtrasmall button">E</button>
+            <button class="xtrasmall button">D</button>
+          </td>          
+        </tr>
+        <tr>
+          <td class="name">
+            <h4>Disable Realtime</h4>
+            <p>Enables usage of IndexedPostTreePaginator on get_thread (DTPL).</p>
+          </td>
+
+          <td class="command">
+            overview_trending_threads
+          </td>
+
+          <td class="status">
+            <button class="xtrasmall button">Global</button>
+            <button class="xtrasmall button">Selective</button>
+            <button class="xtrasmall button">Disabled</button>
+          </td>
+
+          <td class="actions">
+            <button class="xtrasmall button">E</button>
+            <button class="xtrasmall button">D</button>
+          </td>
+        </tr>        
+      </table>
+    </div>
+
+    <div id="footer">
+      Gargoyle | Created by <a href="http://code.disqus.com/">DISQUS Open Source</a> team.
     </div>
   </body>
 </html>
