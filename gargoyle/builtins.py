@@ -11,13 +11,6 @@ class UserSwitch(ModelSwitch):
     def can_execute(self, instance):
         return isinstance(instance, (User, AnonymousUser))
 
-    def get_field_value(self, instance, field_name):
-        # XXX: can we come up w/ a better API?
-        # Ensure we map ``percent`` to the ``id`` column
-        if field_name == 'percent':
-            field_name = 'id'
-        return super(UserSwitch, self).get_field_value(instance, field_name)
-
     def is_active(self, instance, conditions):
         """
         value is the current value of the switch
@@ -35,5 +28,17 @@ gargoyle.register(UserSwitch(User))
 class IPAddressSwitch(RequestSwitch):
     percent = Percent()
     ip_address = String()
+
+    def get_type_label(self):
+        return 'ip'
+
+    def get_field_value(self, instance, field_name):
+        # XXX: can we come up w/ a better API?
+        # Ensure we map ``percent`` to the ``id`` column
+        if field_name == 'percent':
+            return sum([int(x) for x in instance.META['REMOTE_ADDR'].split('.')])
+        elif field_name == 'ip_address':
+            return instance.META['REMOTE_ADDR']
+        return super(IPAddressSwitch, self).get_field_value(instance, field_name)
 
 gargoyle.register(IPAddressSwitch())

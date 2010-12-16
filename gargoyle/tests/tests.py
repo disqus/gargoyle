@@ -133,3 +133,30 @@ class GargoyleTest(TestCase):
         gargoyle['test_anonymous_user'] = {'User': {'percent': [1, 10], 'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
+
+    def test_ip_address(self):
+        request = HttpRequest()
+        request.META['REMOTE_ADDR'] = '192.168.1.1'
+
+        self.assertFalse(gargoyle.is_active('test_ip_address', request))
+
+        gargoyle['test_ip_address'] = {'ip': {'ip_address': ['192.168.1.1']}}
+
+        self.assertTrue(gargoyle.is_active('test_ip_address', request))
+
+        gargoyle['test_ip_address'] = {'ip': {'ip_address': ['127.0.1.1']}}
+
+        self.assertFalse(gargoyle.is_active('test_ip_address', request))
+
+        gargoyle['test_ip_address'] = {}
+
+        self.assertTrue(gargoyle.is_active('test_ip_address', request))
+
+        gargoyle['test_ip_address'] = {'ip': {'percent': [[50, 100]]}}
+
+        self.assertTrue(gargoyle.is_active('test_ip_address', request))
+        
+        gargoyle['test_ip_address'] = {'ip': {'percent': [[0, 50]]}}
+        
+        self.assertFalse(gargoyle.is_active('test_ip_address', request))
+        

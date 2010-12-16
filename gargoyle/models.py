@@ -71,7 +71,7 @@ class SwitchManager(ModelDict):
         conditions = self.get(key)
         if not conditions:
             # XXX: option to have default return value?
-            return True
+            return False
 
         conditions = conditions.value
         if conditions.get('disable'):
@@ -79,8 +79,9 @@ class SwitchManager(ModelDict):
 
         if instances:
             # HACK: support request.user by swapping in User instance
+            instances = list(instances)
             for v in instances:
-                if isinstance(v, HttpRequest):
+                if isinstance(v, HttpRequest) and hasattr(v, 'user'):
                     instances.append(v.user)
 
             for instance in instances:
