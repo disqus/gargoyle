@@ -1,0 +1,4 @@
+include setup.py README MANIFEST.in LICENSE
+recursive-include gargoyle/templates *
+recursive-include gargoyle/media *
+global-exclude *~
