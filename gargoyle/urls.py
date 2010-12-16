@@ -7,9 +7,9 @@ GARGOYLE_ROOT = os.path.dirname(__file__)
 print GARGOYLE_ROOT
 print "test"
 
-urlpatterns = patterns('',
+urlpatterns = patterns('gargoyle.views',
     url(r'^media/(?P<path>.+)?/$', 'django.views.static.serve',
         {'document_root': os.path.join(GARGOYLE_ROOT, 'media')}, name='gargoyle-media'),
 
-    url(r'^$', 'views.index', name='gargoyle'),
+    url(r'^$', 'index', name='gargoyle'),
 )
