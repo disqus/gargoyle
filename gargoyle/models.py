@@ -29,6 +29,7 @@ class Switch(models.Model):
     key = models.CharField(max_length=32, primary_key=True)
     value = JSONField(default="{\"disable\": true}")
     label = models.CharField(max_length=32, null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     description = models.TextField(null=True)
     
     def __unicode__(self):
