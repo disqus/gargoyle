@@ -8,6 +8,11 @@ class UserSwitch(ModelSwitch):
     username = String()
     is_authenticated = Boolean(label='Anonymous')
 
+    def get_field_value(self, instance, field_name):
+        if field_name == 'percent':
+            field_name = 'id'
+        return super(UserSwitch, self).get_field_value(instance, field_name)
+
 gargoyle.register(UserSwitch(User))
 
 class IPAddressSwitch(RequestSwitch):

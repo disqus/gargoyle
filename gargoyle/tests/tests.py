@@ -20,7 +20,7 @@ class GargoyleTest(TestCase):
         self.assertEquals(len(gargoyle._registry), 2)
 
     def test_isolations(self):
-        gargoyle['isolation'] = {'User': {'id': [[0, 50]], 'is_staff': [True]}}
+        gargoyle['isolation'] = {'User': {'percent': [[0, 50]], 'is_staff': [True]}}
 
         user = User(pk=5)
         self.assertTrue(gargoyle.is_active('isolation', user))

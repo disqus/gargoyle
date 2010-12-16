@@ -53,7 +53,6 @@ class SwitchBase(type):
                     attrs['fields'].update(fields)
         except NameError:
             pass
-        
 
         for field_name, obj in attrs.items():
             if isinstance(obj, Field):
@@ -66,12 +65,18 @@ class SwitchBase(type):
 class Switch(object):
     __metaclass__ = SwitchBase
 
+    def __repr__(self):
+        return '<%s>' % (self.__class__.__name__,)
+
     def can_execute(self, instance):
         return True
 
 class ModelSwitch(Switch):
     def __init__(self, model):
         self.model = model
+
+    def __repr__(self):
+        return '<%s: %s>' % (self.__class__.__name__, self.model.__name__)
         
     def can_execute(self, instance):
         return isinstance(instance, self.model)
@@ -82,18 +87,22 @@ class ModelSwitch(Switch):
     def get_group_label(self):
         return self.model._meta.verbose_name
 
+    def get_field_value(self, instance, field_name):
+        value = getattr(instance, field_name)
+        if callable(value):
+            value = value()
+        return value
+
     def is_active(self, instance, conditions):
         """
         value is the current value of the switch
         instance is the instance of our type
         """
         for name, field in self.fields.iteritems():
-            condition = conditions.get(name)
+            condition = conditions[self.model.__name__].get(name)
             if condition:
-                value = getattr(instance, name)
-                if callable(value):
-                    value = value()
-                if field.is_active(condition, value):
+                value = self.get_field_value(instance, name)
+                if any(field.is_active(c, value) for c in condition):
                     return True
 
 class RequestSwitch(Switch):
