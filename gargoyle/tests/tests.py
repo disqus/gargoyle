@@ -12,7 +12,7 @@ class GargoyleTest(TestCase):
         self.user = User.objects.create(username='foo', email='foo@example.com')
 
     def test_isolations(self):
-        gargoyle['isolation'] = {'users': [[0, 50]], 'forums': [[0, 5]], 'admins': True}
+        gargoyle['isolation'] = {'user': {'id': [[0, 50]], 'is_staff': [True]}}
 
         user = User(pk=5)
         self.assertTrue(gargoyle.is_active('isolation', user))
@@ -34,7 +34,7 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_user'] = {'users': [self.admin_username]}
+        gargoyle['switched_for_user'] = {'user': {'username': ['foo']}}
 
         self.assertTrue(test(request))
 
@@ -78,13 +78,11 @@ class GargoyleTest(TestCase):
         self.assertFalse(gargoyle.is_active('test_for_all'))
 
     def test_disable(self):
-        user = User(pk=5, username=self.admin_username)
-
         gargoyle['test_disable'] = {'disable': True}
 
         self.assertFalse(gargoyle.is_active('test_disable'))
 
-        self.assertFalse(gargoyle.is_active('test_disable', user))
+        self.assertFalse(gargoyle.is_active('test_disable', self.user))
 
     def test_expiration(self):
         gargoyle['test_expiration'] = {'disable': True}
