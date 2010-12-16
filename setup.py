@@ -26,7 +26,10 @@ setup(
     description = 'Switches',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=[],
+    install_requires=[
+        'django-modeldict',
+        'django-jsonfield',
+    ],
     test_suite = 'gargoyle.tests',
     include_package_data=True,
     cmdclass={"test": mytest},

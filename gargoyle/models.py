@@ -9,7 +9,22 @@ gargoyle.register(RequestSwitch())
 
 from django.db import models
 
+from jsonfield import JSONField
+from modeldict import ModelDict
+
 class Switch(models.Model):
+    """
+    
+    ``value`` is stored with by type label, and then by column:
+    
+    {
+      disable: bool,
+      user: {
+          id: [0, 50] // 50% of users
+      }
+    }
+    """
+    
     key = models.CharField(max_length=32, primary_key=True)
     value = JSONField(default="{\"disable\": true}")
     label = models.CharField(max_length=32, null=True)
@@ -35,7 +50,19 @@ class Switch(models.Model):
             'description': self.description,
         }
     
-    def is_active(self):
+    def is_active(self, key, *instances):
+        """
+        ``gargoyle.is_active('my_feature', request)``
+        """
+        
+        if instances:
+            # check each value for this switch against its registered type
+            for instance in instances:
+                for switch in Switch._registry[instance.__class__]:
+                    for value in self.value:
+                        if switch.is_active(instance, value):
+                            return True
+        # if all other checks failed, look at our global 'disable' flag
         return not self.value.get('disable')
     
     def get_status(self):
@@ -45,82 +72,13 @@ class Switch(models.Model):
             return 'Selective'
         else:
             return 'Global'
-    
-    def get_for_user(self, user):
-        """
-        Value which is isolated to the user or default.
-        """
-        from django.conf import settings
-        
-        if not self.value:
-            return True
-        elif self.value.get('disable'):
-            return False
-        elif self.value.get('anon') and not user.is_authenticated():
-            return True
-        elif self.value.get('admins') and user.username in settings.DISQUS_ADMIN_USERNAMES:
-            return True
-        elif self.value.get('users') and user.is_authenticated():
-            mod = user.id % 100
-            for k in self.value['users']:
-                if k == user.username:
-                    return True
-                if mod >= k[0] and mod <= k[1]:
-                    return True
-        return False
-    
-    def get_for_forum(self, forum):
-        """
-        Value which is isolated to the forum or default.
-        """
-        if not self.value:
-            return True
-        elif self.value.get('disable'):
-            return False
-        elif self.value.get('early_adopters') and forum.IS_EARLY_ADOPTER():
-            return True
-        elif self.value.get('forums'):
-            mod = forum.id % 100
-            for k in self.value['forums']:
-                if k == forum.url:
-                    return True
-                if mod >= k[0] and mod <= k[1]:
-                    return True
-        return False
-    
-    def get_for_ipaddress(self, addr):
-        """
-        Value which is isolated to the ipaddress or default.
-        """
-        if not self.value:
-            return True
-        elif self.value.get('disable'):
-            return False
-        elif self.value.get('ipaddress'):
-            mod = sum([int(x) for x in addr.split('.')]) % 100
-            for k in self.value['ipaddress']:
-                if k == addr:
-                    return True
-                if mod >= k[0] and mod <= k[1]:
-                    return True
-        return False
 
-    def get(self):
-        """
-        Value which has no isolation level.
-        """
-        if not self.value:
-            return True
-        elif self.value.get('disable'):
-            return False
-        return False
-
-class SettingManager(ModelDict):
+class SwitchManager(ModelDict):
     def is_active(self, key, instance=None):
-        for switch in Gargoyle._registry[instance.__class__]:
+        for switch in Switch._registry[instance.__class__]:
             for value in self.get(key):
                 if switch.is_active(instance, value):
                     return True
         return False
         
-gargoyle = SettingManager(Setting, key='key', value='value', instances=True)
+gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
