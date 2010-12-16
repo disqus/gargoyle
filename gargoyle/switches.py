@@ -71,6 +71,28 @@ class Switch(object):
     def can_execute(self, instance):
         return True
 
+    def get_field_value(self, instance, field_name):
+        # XXX: can we come up w/ a better API?
+        # Ensure we map ``percent`` to the ``id`` column
+        if field_name == 'percent':
+            field_name = 'id'
+        value = getattr(instance, field_name)
+        if callable(value):
+            value = value()
+        return value
+
+    def is_active(self, instance, conditions):
+        """
+        conditions are the current value of the switch
+        instance is the instance of our type
+        """
+        for name, field in self.fields.iteritems():
+            condition = conditions.get(self.get_type_label(), {}).get(name)
+            if condition:
+                value = self.get_field_value(instance, name)
+                if any(field.is_active(c, value) for c in condition):
+                    return True
+
 class ModelSwitch(Switch):
     def __init__(self, model):
         self.model = model
@@ -84,27 +106,15 @@ class ModelSwitch(Switch):
     def get_type(self):
         return self.model
     
+    def get_type_label(self):
+        return self.model.__name__
+    
     def get_group_label(self):
         return self.model._meta.verbose_name
 
-    def get_field_value(self, instance, field_name):
-        value = getattr(instance, field_name)
-        if callable(value):
-            value = value()
-        return value
-
-    def is_active(self, instance, conditions):
-        """
-        value is the current value of the switch
-        instance is the instance of our type
-        """
-        for name, field in self.fields.iteritems():
-            condition = conditions[self.model.__name__].get(name)
-            if condition:
-                value = self.get_field_value(instance, name)
-                if any(field.is_active(c, value) for c in condition):
-                    return True
-
 class RequestSwitch(Switch):
+    def get_type_label(self):
+        return 'request'
+    
     def can_execute(self, instance):
         return isinstance(instance, HttpRequest)
