@@ -59,8 +59,32 @@ class Switch(models.Model):
         else:
             return 'Global'
 
+    def get_active_conditions(self):
+        "Returns groups of lists of active conditions"
+        for switch in sorted(gargoyle._registry, key=lambda x: x.get_group_label()):
+            ns = switch.get_namespace()
+            if ns in self.value:
+                group = switch.get_group_label()
+                for field in switch.fields:
+                    for value in self.value[ns].get(field.name, []):
+                        yield group, field, value
+
+    def add_condition(self, switch_id, field, condition):
+        switch = gargoyle.get_switch(switch_id)
+        self[switch.get_namespace()].setdefault(field, []).append(condition)
+
+    def remove_condition(self, switch_id, field, condition):
+        switch = gargoyle.get_switch(switch_id)
+        ns = switch.get_namespace()
+        if ns not in self:
+            return
+        if field not in self[ns]:
+            return
+        self[ns][field] = [c for c in self[ns][field] if c != condition]
+
+
 class SwitchManager(ModelDict):
-    _registry = []
+    _registry = {}
     
     def is_active(self, key, *instances):
         """
@@ -85,7 +109,7 @@ class SwitchManager(ModelDict):
 
             for instance in instances:
                 # check each switch to see if it can execute
-                for switch in self._registry:
+                for switch in self._registry.itervalues():
                     if switch.can_execute(instance):
                         if switch.is_active(instance, conditions):
                             return True
@@ -96,21 +120,14 @@ class SwitchManager(ModelDict):
     def register(self, switch):
         if callable(switch):
             switch = switch()
-        self._registry.append(switch)
+        self._registry['%s.%s' % (switch.__module__, switch.__class__.__name__)].append(switch)
 
-    def add_condition(self, group, field, condition):
-        self[group].setdefault(field, []).append(condition)
-
-    def remove_condition(self, group, field, condition):
-        if group not in self:
-            return
-        if field not in self[group]:
-            return
-        self[group][field] = [c for c in self[group][field] if c != condition]
+    def get_switch(self, switch_id):
+        return self._registry[switch_id]
 
     def get_all_conditions(self):
         "Returns groups of lists of conditions"
-        for switch in sorted(self._registry, key=lambda x: x.get_group_label()):
+        for switch in sorted(self._registry.itervalues(), key=lambda x: x.get_group_label()):
             group = switch.get_group_label()
             for field in switch.fields:
                 yield group, field

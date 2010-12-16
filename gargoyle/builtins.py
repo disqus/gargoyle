@@ -29,7 +29,7 @@ class IPAddressSwitch(RequestSwitch):
     percent = Percent()
     ip_address = String()
 
-    def get_type_label(self):
+    def get_namespace(self):
         return 'ip'
 
     def get_field_value(self, instance, field_name):
