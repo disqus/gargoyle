@@ -70,20 +70,24 @@ class SwitchManager(ModelDict):
         if not values:
             # XXX: option to have default return value?
             return True
+
         values = values.value
-        
+        if values.get('disable'):
+            return False
+
         if instances:
             # check each value for this switch against its registered type
             for instance in instances:
-                for switch in self._registry.get(instance.__class__, []):
-                    for value in values.get(switch.get_type_label(), []):
-                        if switch.is_active(instance, value):
+                for column, values in values.get(instance.__class__.__name__, {}).iteritems():
+                    for switch in self._registry.get((instance.__class__, column), []):
+                        if any(switch.is_active(instance, v) for v in values):
                             return True
+                
         # if all other checks failed, look at our global 'disable' flag
-        return not values.get('disable') and not values
+        return False
     
     def register(self, switch):
-        type_ = switch.get_type()
+        type_ = (switch.get_type(), switch.get_column_label())
         if type_ not in self._registry:
             self._registry[type_] = []
         self._registry[type_].append(switch)

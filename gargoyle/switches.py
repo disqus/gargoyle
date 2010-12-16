@@ -21,6 +21,9 @@ class ModelSwitch(BaseSwitch):
     def get_type_label(self):
         return self.model.__name__
     
+    def get_column_label(self):
+        return self.column
+    
     def get_group_label(self):
         return self.model._meta.verbose_name
     
@@ -31,7 +34,7 @@ class ModelSwitch(BaseSwitch):
         """
         column = self.column
         col_value = getattr(instance, column)
-        
+
         # support for things like "is_authenticated" being a column
         if callable(col_value):
             col_value = col_value()
@@ -39,8 +42,8 @@ class ModelSwitch(BaseSwitch):
         # If our column is a ``Field`` we determine its type
         # TODO: abstract to type selectors
         try:
-            column = model._meta.get_field_by_name(column)[0]
-        except:
+            column = self.model._meta.get_field_by_name(column)[0]
+        except models.FieldDoesNotExist:
             pass
         else:
             if isinstance(column, models.CharField):
@@ -49,14 +52,12 @@ class ModelSwitch(BaseSwitch):
             elif isinstance(column, models.BooleanField):
                 # if its a boolean field, only if its true
                 return col_value
-            elif isinstance(column, models.IntegerField):
+            elif isinstance(column, (models.IntegerField, models.AutoField)):
                 # if its an integer field, only if its in modulus range
                 mod = col_value % 100
-                if mod >= value[0] and mod <= value[1]:
-                    return True
+                return mod >= value[0] and mod <= value[1]
                 # XXX: we could also have some kind of user id range support?
                 # return col_value >= value[0] and col_value <= value[1]
-
         # by default we just do exact comparison
         return col_value == column
 
