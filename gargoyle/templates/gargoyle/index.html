@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load gargoyle_helpers %}<!DOCTYPE html>
 
 <html>
   <head>
@@ -63,9 +63,9 @@
           </td>
 
           <td class="status">
-            <button class="xtrasmall button">Global</button>
-            <button class="xtrasmall button">Selective</button>
-            <button class="xtrasmall button">Disabled</button>
+            <button class="xtrasmall button {% if switch.status == 3 %}toggled{% endif %}">Global</button>
+            <button class="xtrasmall button {% if switch.status == 2 %}toggled{% endif %}">Selective</button>
+            <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}">Disabled</button>
           </td>
 
           <td class="actions">
@@ -117,6 +117,7 @@
       </table>
     </script>
 
+    {% raw %}
     <script type="text/x-jquery-tmpl" id="switchData">
       <tr data-switch-key="${key}">
         <td class="name">
@@ -129,9 +130,9 @@
         </td>
 
         <td class="status">
-          <button class="xtrasmall button">Global</button>
-          <button class="xtrasmall button">Selective</button>
-          <button class="xtrasmall button">Disabled</button>
+          <button class="xtrasmall button {{if status == 3}}toggled{{/if}}">Global</button>
+          <button class="xtrasmall button {{if status == 2}}toggled{{/if}}">Selective</button>
+          <button class="xtrasmall button {{if status == 1}}toggled{{/if}}">Disabled</button>
         </td>
 
         <td class="actions">
@@ -140,6 +141,7 @@
         </td>          
       </tr>
     </script>
+    {% endraw %}
   </body>
 </html>
   

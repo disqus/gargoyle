@@ -13,6 +13,10 @@ from django.http import HttpRequest
 from jsonfield import JSONField
 from modeldict import ModelDict
 
+DISABLED  = 1
+SELECTIVE = 2
+GLOBAL    = 3
+
 class Switch(models.Model):
     """
     
@@ -46,18 +50,20 @@ class Switch(models.Model):
     def to_dict(self):
         return {
             'key': self.key,
-            'status': self.get_status(),
+            'status': self.status,
             'label': self.label,
             'description': self.description,
         }
     
     def get_status(self):
         if self.value.get('disable'):
-            return 'Disabled'
+            return DISABLED
         elif self.value:
-            return 'Selective'
+            return SELECTIVE
         else:
-            return 'Global'
+            return GLOBAL
+            
+    status = property(get_status)
 
 class SwitchManager(ModelDict):
     _registry = []
