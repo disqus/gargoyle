@@ -4,9 +4,28 @@
   <head>
     <meta charset="utf-8">
     <title>Gargoyle</title>
+
     <link rel="stylesheet" href="{% url gargoyle-media 'css/gargoyle.css' %}">
+    <link rel="stylesheet" href="{% url gargoyle-media 'css/facebox.css' %}">    
     <link href='//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:light,regular&amp;subset=latin' rel='stylesheet'>
-    <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>    
+    <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
+
+    <script>
+      var GARGOYLE = {
+        addSwitch:    "{% url gargoyle-add %}",
+        deleteSwitch: "{% url gargoyle-delete %}",
+
+        facebox: {
+          loadingImage: "{% url gargoyle-media 'img/facebox/loading.gif' %}",
+          closeImage:   "{% url gargoyle-media 'img/facebox/closelabel.png' %}"
+        }
+      };
+    </script>
+
+    <script src="{% url gargoyle-media 'js/lib/jquery.js' %}"></script>
+    <script src="{% url gargoyle-media 'js/lib/jquery.tmpl.js' %}"></script>    
+    <script src="{% url gargoyle-media 'js/lib/facebox/facebox.js' %}"></script>
+    <script src="{% url gargoyle-media 'js/gargoyle.js' %}"></script>
   </head>
 
   <body>
@@ -17,7 +36,7 @@
 
     <div id="container">
       <div class="toolbar">
-        <button class="button">Add a switch</button>
+        <button class="button addSwitch">Add a Switch</button>
 
         <span class="switchTest">
           <input type="text">
@@ -25,15 +44,22 @@
         </span>
       </div>
 
-      <table class="switches">
-        <tr>
+      {% if not switches %}
+      <div class="noSwitches">
+        You do not have any switches yet. <a href="#" class="addSwitch">Add the first one</a>.
+      </div>
+      {% endif %}
+
+      <table class="switches {% if not switches %}empty{% endif %}">
+        {% for switch in switches %}
+        <tr data-switch-key="{{ switch.key }}">
           <td class="name">
-            <h4>Disable Realtime</h4>
-            <p>Enables usage of IndexedPostTreePaginator on get_thread (DTPL).</p>
+            <h4>{{ switch.label }}</h4>
+            <p>{{ switch.description }}</p>
           </td>
 
           <td class="command">
-            overview_trending_threads
+            {{ switch.key }}
           </td>
 
           <td class="status">
@@ -43,37 +69,77 @@
           </td>
 
           <td class="actions">
-            <button class="xtrasmall button">E</button>
-            <button class="xtrasmall button">D</button>
+            <button class="edit xtrasmall button">E</button>
+            <button class="delete xtrasmall button">D</button>
           </td>          
         </tr>
-        <tr>
-          <td class="name">
-            <h4>Disable Realtime</h4>
-            <p>Enables usage of IndexedPostTreePaginator on get_thread (DTPL).</p>
-          </td>
-
-          <td class="command">
-            overview_trending_threads
-          </td>
-
-          <td class="status">
-            <button class="xtrasmall button">Global</button>
-            <button class="xtrasmall button">Selective</button>
-            <button class="xtrasmall button">Disabled</button>
-          </td>
-
-          <td class="actions">
-            <button class="xtrasmall button">E</button>
-            <button class="xtrasmall button">D</button>
-          </td>
-        </tr>        
+        {% endfor %}
       </table>
     </div>
 
     <div id="footer">
       Gargoyle | Created by <a href="http://code.disqus.com/">DISQUS Open Source</a> team.
     </div>
+
+    <script type="text/x-jquery-tmpl" id="addSwitch">
+      <h2>Add a Switch</h2>
+
+      <table class="addSwitchForm">
+        <tr>
+          <th>Name:</th>
+          <td>
+            <input name="name" type="text">
+            <p>A descriptive name for this switch.
+          </td>
+        </tr>
+
+        <tr>
+          <th>Key:</th>
+          <td>
+            <input name="key" type="text">
+            <p>The key can be any valid JSON string.</p>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Description:</th>
+          <td>
+            <textarea name="desc"></textarea>
+            <p>A brief description on what this switch accomplishes.</p>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2" class="buttons">
+            <button class="submitSwitch small button">Add</button> or <a href="#" class="closeFacebox">cancel</a>
+          </td>
+        </tr>
+      </table>
+    </script>
+
+    <script type="text/x-jquery-tmpl" id="switchData">
+      <tr data-switch-key="${key}">
+        <td class="name">
+          <h4>${label}</h4>
+          <p>${description}</p>
+        </td>
+
+        <td class="command">
+          ${key}
+        </td>
+
+        <td class="status">
+          <button class="xtrasmall button">Global</button>
+          <button class="xtrasmall button">Selective</button>
+          <button class="xtrasmall button">Disabled</button>
+        </td>
+
+        <td class="actions">
+          <button class="edit xtrasmall button">E</button>
+          <button class="delete xtrasmall button">D</button>
+        </td>          
+      </tr>
+    </script>
   </body>
 </html>
   
