@@ -3,6 +3,10 @@ import re
 
 from django.conf.urls.defaults import *
 
+import gargoyle
+
+gargoyle.autodiscover()
+
 GARGOYLE_ROOT = os.path.dirname(__file__)
 
 urlpatterns = patterns('',

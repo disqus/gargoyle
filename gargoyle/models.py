@@ -75,10 +75,17 @@ class SwitchManager(ModelDict):
         if instances:
             # check each value for this switch against its registered type
             for instance in instances:
-                for switch in SwitchManager._registry.get(instance.__class__, []):
-                    for value in values.get(switch.get_type_label()):
+                for switch in self._registry.get(instance.__class__, []):
+                    for value in values.get(switch.get_type_label(), []):
                         if switch.is_active(instance, value):
                             return True
         # if all other checks failed, look at our global 'disable' flag
         return not values.get('disable') and not values
+    
+    def register(self, switch):
+        type_ = switch.get_type()
+        if type_ not in self._registry:
+            self._registry[type_] = []
+        self._registry[type_].append(switch)
+
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)

@@ -69,5 +69,3 @@ class RequestSwitch(BaseSwitch):
 class IPAddressSwitch(BaseSwitch):
     # TODO:
     pass
-
-# gargoyle.register(ModelSwitch(User, 'is_authenticated'))

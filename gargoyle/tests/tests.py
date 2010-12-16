@@ -5,6 +5,10 @@ from django.test import TestCase
 
 from gargoyle.models import gargoyle, Switch
 
+from gargoyle import autodiscover
+
+autodiscover()
+
 class GargoyleTest(TestCase):
     urls = 'gargoyle.urls'
     
