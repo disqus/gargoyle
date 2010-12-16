@@ -80,5 +80,5 @@ class SwitchManager(ModelDict):
                         if switch.is_active(instance, value):
                             return True
         # if all other checks failed, look at our global 'disable' flag
-        return not values.get('disable')
+        return not values.get('disable') and not values
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
