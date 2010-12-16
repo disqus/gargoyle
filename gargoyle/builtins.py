@@ -1,18 +1,17 @@
 from gargoyle.models import gargoyle
-from gargoyle.switches import ModelSwitch, RequestSwitch
+from gargoyle.switches import ModelSwitch, RequestSwitch, Percent, String, Boolean
 
 from django.contrib.auth.models import User
 
-class UserRequestSwitch(RequestSwitch):
-    def get_type_label(self):
-        return 'User'
+class UserSwitch(ModelSwitch):
+    percent = Percent()
+    username = String()
+    is_authenticated = Boolean(label='Anonymous')
 
-    def is_active_among(self, key, request, values):
-        return gargoyle.is_active(key, request.user)
+gargoyle.register(UserSwitch(User))
 
-gargoyle.register(ModelSwitch(User, 'is_authenticated'))
-gargoyle.register(ModelSwitch(User, 'id'))
-gargoyle.register(ModelSwitch(User, 'username'))
-gargoyle.register(ModelSwitch(User, 'is_staff'))
+class IPAddressSwitch(RequestSwitch):
+    percent = Percent()
+    ip_address = String()
 
-gargoyle.register(UserRequestSwitch())
+gargoyle.register(IPAddressSwitch())

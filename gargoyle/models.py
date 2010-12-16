@@ -8,6 +8,7 @@ gargoyle.register(RequestSwitch())
 """
 
 from django.db import models
+from django.http import HttpRequest
 
 from jsonfield import JSONField
 from modeldict import ModelDict
@@ -59,44 +60,40 @@ class Switch(models.Model):
             return 'Global'
 
 class SwitchManager(ModelDict):
-    _registry = {}
+    _registry = []
     
     def is_active(self, key, *instances):
         """
         ``gargoyle.is_active('my_feature', request)``
         """
         
-        values = self.get(key)
-        if not values:
+        conditions = self.get(key)
+        if not conditions:
             # XXX: option to have default return value?
             return True
 
-        values = values.value
-        if values.get('disable'):
+        conditions = conditions.value
+        if conditions.get('disable'):
             return False
 
         if instances:
-            # check each value for this switch against its registered type
+            # HACK: support request.user by swapping in User instance
+            for v in instances:
+                if isinstance(v, HttpRequest):
+                    instances.append(v.user)
+
             for instance in instances:
-                type_values = values.get(instance.__class__.__name__)
-                if not type_values:
-                    continue
-                for column, values in type_values.iteritems():
-                    # switches assigned to this column
-                    for switch in self._registry.get((instance.__class__, column), []):
-                        if any(switch.is_active(instance, v) for v in values):
+                # check each switch to see if it can execute
+                for switch in self._registry:
+                    if switch.can_execute(instance):
+                        if switch.is_active(instance, conditions):
                             return True
-                # switches assigned to global
-                for switch in self._registry.get((instance.__class__, None), []):
-                    if switch.is_active_among(key, instance, type_values):
-                        return True
-                
+
         # if all other checks failed, look at our global 'disable' flag
-        return False
+        return not conditions
     
     def register(self, switch):
-        type_ = (switch.get_type(), switch.get_column_label())
-        if type_ not in self._registry:
-            self._registry[type_] = []
-        self._registry[type_].append(switch)
+        if callable(switch):
+            switch = switch()
+        self._registry.append(switch)
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
