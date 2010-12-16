@@ -12,12 +12,17 @@ class ModelSwitch(BaseSwitch):
     
     """
     def __init__(self, model, column):
-        self.type_label = model.__name__
-        self.group = model._meta.verbose_name
+        self.model = model
         self.column = column
     
     def get_type(self):
         return self.model
+    
+    def get_type_label(self):
+        return self.model.__name__
+    
+    def get_group_label(self):
+        return self.model._meta.verbose_name
     
     def is_active(self, instance, value):
         """
@@ -64,5 +69,3 @@ class RequestSwitch(BaseSwitch):
 class IPAddressSwitch(BaseSwitch):
     # TODO:
     pass
-
-# gargoyle.register(ModelSwitch(User, 'is_authenticated'))
