@@ -19,6 +19,25 @@ $(document).ready(function () {
         "json");
     });
 
+    $(".switches td.status button").live("click", function () {
+        var row = $(this).parents("tr:first");
+        var el = $(this);
+
+        $.post(GARGOYLE.updateStatus,
+            {
+                key:    row.attr("data-switch-key"),
+                status: el.attr("data-status")
+            },
+
+            function (response) {
+                if (response.status == status) {
+                    row.find(".toggled").removeClass("toggled");
+                    el.addClass("toggled");
+                }
+            },
+        "json");
+    });
+
     $("#facebox .closeFacebox").live("click", function () {
         $.facebox.close();
     });

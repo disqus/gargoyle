@@ -306,3 +306,8 @@ body {
     font-size: 11px;
     line-height: 14px;
 }
+
+.button.toggled {
+    -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .2);    
+}
