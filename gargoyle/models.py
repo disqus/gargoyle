@@ -97,4 +97,21 @@ class SwitchManager(ModelDict):
         if callable(switch):
             switch = switch()
         self._registry.append(switch)
+
+    def add_condition(self, group, field, condition):
+        self[group].setdefault(field, []).append(condition)
+
+    def remove_condition(self, group, field, condition):
+        if group not in self:
+            return
+        if field not in self[group]:
+            return
+        self[group][field] = [c for c in self[group][field] if c != condition]
+
+    def get_all_conditions(self):
+        "Returns groups of lists of conditions"
+        for switch in sorted(self._registry, key=lambda x: x.get_group_label()):
+            group = switch.get_group_label()
+            for field in switch.fields:
+                yield group, field
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
