@@ -4,7 +4,7 @@ from django.http import HttpRequest, Http404
 from django.test import TestCase
 
 from gargoyle.models import gargoyle, Switch
-
+from gargoyle.decorators import switch_is_active
 from gargoyle import autodiscover
 
 autodiscover()
@@ -29,7 +29,7 @@ class GargoyleTest(TestCase):
         self.assertFalse(gargoyle.is_active('isolation', user))
 
     def test_decorator_for_user(self):
-        @gargoyle.is_active('switched_for_user')
+        @switch_is_active('switched_for_user')
         def test(request):
             return True
 
@@ -47,7 +47,7 @@ class GargoyleTest(TestCase):
         self.assertTrue(test(request))
 
     def test_decorator_for_ip_address(self):
-        @gargoyle.is_active('switched_for_ipaddress')
+        @switch_is_active('switched_for_ipaddress')
         def test(request):
             return True
 
@@ -56,11 +56,11 @@ class GargoyleTest(TestCase):
 
         self.assertRaises(Http404, test, request)
 
-        gargoyle['switched_for_ipaddress'] = {'ipaddress': ['192.168.1.1']}
+        gargoyle['switched_for_ipaddress'] = {'ip': {'ip_address': ['192.168.1.1']}}
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_ipaddress'] = {'ipaddress': ['127.0.1.1']}
+        gargoyle['switched_for_ipaddress'] = {'ip': {'ip_address': ['127.0.0.1']}}
 
         self.assertRaises(Http404, test, request)
 
@@ -68,11 +68,11 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_ipaddress'] = {'ipaddress': [[50, 100]]}
+        gargoyle['switched_for_ipaddress'] = {'ip': {'percent': [[50, 100]]}}
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_ipaddress'] = {'ipaddress': [[0, 50]]}
+        gargoyle['switched_for_ipaddress'] = {'ip': {'percent': [[0, 50]]}}
 
         self.assertRaises(Http404, test, request)
 
