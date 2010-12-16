@@ -20,8 +20,8 @@ class mytest(test):
 setup(
     name='gargoyle',
     version='0.1.0',
-    author='Disqus',
-    author_email='team@disqus.com',
+    author='DISQUS',
+    author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
     description = 'Switches',
     packages=find_packages(),
