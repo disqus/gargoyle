@@ -15,8 +15,11 @@ class GargoyleTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
 
+    def test_builtin_discovery(self):
+        self.assertEquals(len(gargoyle._registry), 1)
+
     def test_isolations(self):
-        gargoyle['isolation'] = {'user': {'id': [[0, 50]], 'is_staff': [True]}}
+        gargoyle['isolation'] = {'User': {'id': [[0, 50]], 'is_staff': [True]}}
 
         user = User(pk=5)
         self.assertTrue(gargoyle.is_active('isolation', user))
@@ -38,7 +41,7 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_user'] = {'user': {'username': ['foo']}}
+        gargoyle['switched_for_user'] = {'User': {'username': ['foo']}}
 
         self.assertTrue(test(request))
 
@@ -77,7 +80,7 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(gargoyle.is_active('test_for_all'))
 
-        gargoyle['test_for_all'] = {'users': ['dcramer']}
+        gargoyle['test_for_all'] = {'User': {'username': ['dcramer']}}
 
         self.assertFalse(gargoyle.is_active('test_for_all'))
 
