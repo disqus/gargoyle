@@ -16,10 +16,11 @@ class GargoyleTest(TestCase):
         self.user = User.objects.create(username='foo', email='foo@example.com')
 
     def test_builtin_discovery(self):
-        self.assertEquals(len(gargoyle._registry), 1)
+        # TODO: this test shoudl just ensure we've registered our builtins
+        self.assertEquals(len(gargoyle._registry), 2)
 
     def test_isolations(self):
-        gargoyle['isolation'] = {'User': {'id': [[0, 50]], 'is_staff': [True]}}
+        gargoyle['isolation'] = {'User': {'percent': [[0, 50]], 'is_staff': [True]}}
 
         user = User(pk=5)
         self.assertTrue(gargoyle.is_active('isolation', user))
@@ -96,7 +97,7 @@ class GargoyleTest(TestCase):
 
         self.assertFalse(gargoyle.is_active('test_expiration'))
 
-        Switch.objects.filter(key='test_expiration').update(value="{}")
+        Switch.objects.filter(key='test_expiration').update(value={})
 
         # cache shouldn't have expired
         self.assertFalse(gargoyle.is_active('test_expiration'))
