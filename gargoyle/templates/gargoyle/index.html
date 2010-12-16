@@ -14,6 +14,7 @@
       var GARGOYLE = {
         addSwitch:    "{% url gargoyle-add %}",
         deleteSwitch: "{% url gargoyle-delete %}",
+        updateStatus: "{% url gargoyle-status %}",
 
         facebox: {
           loadingImage: "{% url gargoyle-media 'img/facebox/loading.gif' %}",
@@ -63,9 +64,17 @@
           </td>
 
           <td class="status">
-            <button class="xtrasmall button {% if switch.status == 3 %}toggled{% endif %}">Global</button>
-            <button class="xtrasmall button {% if switch.status == 2 %}toggled{% endif %}">Selective</button>
-            <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}">Disabled</button>
+            <button class="xtrasmall button {% if switch.status == 3 %}toggled{% endif %}" data-status="3">
+              Global
+            </button>
+
+            <button class="xtrasmall button {% if switch.status == 2 %}toggled{% endif %}" data-status="2">
+              Selective
+            </button>
+
+            <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}" data-status="1">
+              Disabled
+            </button>
           </td>
 
           <td class="actions">
@@ -130,9 +139,17 @@
         </td>
 
         <td class="status">
-          <button class="xtrasmall button {{if status == 3}}toggled{{/if}}">Global</button>
-          <button class="xtrasmall button {{if status == 2}}toggled{{/if}}">Selective</button>
-          <button class="xtrasmall button {{if status == 1}}toggled{{/if}}">Disabled</button>
+          <button class="xtrasmall button {{if status == 3}}toggled{{/if}}" data-status="3">
+            Global
+          </button>
+
+          <button class="xtrasmall button {{if status == 2}}toggled{{/if}}" data-status="2">
+            Selective
+          </button>
+
+          <button class="xtrasmall button {{if status == 1}}toggled{{/if}}" data-status="1">
+            Disabled
+          </button>
         </td>
 
         <td class="actions">

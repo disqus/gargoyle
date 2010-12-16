@@ -22,6 +22,14 @@ def add(request):
     )
 
     return json(switch.to_dict())
+    
+def status(request):
+    try:
+        switch = Switch.objects.get(key=request.POST.get("key"))
+    except Switch.DoesNotExist:
+        return {}
+    return {}
+
 
 def delete(request):
     try:
