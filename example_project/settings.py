@@ -63,7 +63,7 @@ MEDIA_URL = ''
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ')*)&8a36)6%74e@-ne5(-!8a(vv#tkv)(eyg&@0=zd^pl!7=y@'
@@ -94,28 +94,12 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'django.contrib.auth',
-    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
     'gargoyle',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
 )
-
-try:
-    import debug_toolbar
-except ImportError, exc:
-    pass
-else:
-    INSTALLED_APPS = INSTALLED_APPS + (
-        'debug_toolbar',
-    )
-    
-    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
 
 try:
     from local_settings import *
