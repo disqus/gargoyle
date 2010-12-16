@@ -118,7 +118,7 @@ class GargoyleTest(TestCase):
 
         self.assertFalse(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'users': [1, 10]}
+        gargoyle['test_anonymous_user'] = {'User': {'percent': [1, 10]}}
 
         self.assertFalse(gargoyle.is_active('test_anonymous_user', user))
 
@@ -126,10 +126,10 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'anon': True}
+        gargoyle['test_anonymous_user'] = {'User': {'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'users': [1, 10], 'anon': True}
+        gargoyle['test_anonymous_user'] = {'User': {'percent': [1, 10], 'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))

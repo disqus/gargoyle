@@ -99,7 +99,7 @@ class ModelSwitch(Switch):
         instance is the instance of our type
         """
         for name, field in self.fields.iteritems():
-            condition = conditions[self.model.__name__].get(name)
+            condition = conditions.get(self.model.__name__, {}).get(name)
             if condition:
                 value = self.get_field_value(instance, name)
                 if any(field.is_active(c, value) for c in condition):
