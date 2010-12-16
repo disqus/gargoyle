@@ -50,21 +50,6 @@ class Switch(models.Model):
             'description': self.description,
         }
     
-    def is_active(self, key, *instances):
-        """
-        ``gargoyle.is_active('my_feature', request)``
-        """
-        
-        if instances:
-            # check each value for this switch against its registered type
-            for instance in instances:
-                for switch in Switch._registry[instance.__class__]:
-                    for value in self.value:
-                        if switch.is_active(instance, value):
-                            return True
-        # if all other checks failed, look at our global 'disable' flag
-        return not self.value.get('disable')
-    
     def get_status(self):
         if self.value.get('disable'):
             return 'Disabled'
@@ -74,11 +59,26 @@ class Switch(models.Model):
             return 'Global'
 
 class SwitchManager(ModelDict):
-    def is_active(self, key, instance=None):
-        for switch in Switch._registry[instance.__class__]:
-            for value in self.get(key):
-                if switch.is_active(instance, value):
-                    return True
-        return False
+    _registry = {}
+    
+    def is_active(self, key, *instances):
+        """
+        ``gargoyle.is_active('my_feature', request)``
+        """
         
+        values = self.get(key)
+        if not values:
+            # XXX: option to have default return value?
+            return True
+        values = values.value
+        
+        if instances:
+            # check each value for this switch against its registered type
+            for instance in instances:
+                for switch in SwitchManager._registry.get(instance.__class__, []):
+                    for value in values.get(switch.get_type_label()):
+                        if switch.is_active(instance, value):
+                            return True
+        # if all other checks failed, look at our global 'disable' flag
+        return not values.get('disable')
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
