@@ -58,7 +58,7 @@ class Switch(models.Model):
     def get_status(self):
         if self.value.get('global') is False:
             return DISABLED
-        elif self.value.get('global'):
+        elif self.value.get('global') or not self.value:
             return GLOBAL
         else:
             return SELECTIVE
@@ -97,10 +97,13 @@ class SwitchManager(ModelDict):
         ``gargoyle.is_active('my_feature', request)``
         """
         
-        conditions = self.get(key)
-        if not conditions:
-            # XXX: option to have default return value?
+        try:
+            conditions = self[key]
+        except KeyError:
             return False
+
+        if not conditions:
+            return True
 
         conditions = conditions.value
         if conditions.get('global'):
