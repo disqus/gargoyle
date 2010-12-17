@@ -163,10 +163,12 @@
           <p>
             {{if status == 3}}
                 (Active for everyone)
-            {{elif status == 2}}
-                (Active for everyone)
             {{else}}
+              {{if status == 2}}
+                (Active for everyone)
+              {{else}}
                 (Disabled for everyone)
+              {{/if}}
             {{/if}}
           </p>
         </td>

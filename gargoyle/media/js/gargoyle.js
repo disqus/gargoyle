@@ -1,4 +1,16 @@
 $(document).ready(function () {
+    var api = function (url, params, succ) {
+        $.post(url, params, function (resp) {
+            if (resp.success) {
+                succ(resp.data);
+            } else {
+                alert(resp.data);
+            }
+        }, "json");
+    };
+
+    // Events
+
     $(".addSwitch").click(function (ev) {
         ev.preventDefault();
         $.facebox($("#switchForm").tmpl({ add: true }));
@@ -20,50 +32,38 @@ $(document).ready(function () {
         var row = $(this).parents("tr:first");
         var table = row.parents("table:first");
 
-        $.post(GARGOYLE.deleteSwitch,
-            {
-                key: row.attr("data-switch-key")
-            },
-            
-            function (response) {
-                if (response.success) {
-                    row.remove();
-                    if (!table.find("tr").length) {
-                        $("div.noSwitches").show();
-                    }
+        api(GARGOYLE.deleteSwitch, { key: row.attr("data-switch-key") },
+            function () {
+                row.remove();
+                if (!table.find("tr").length) {
+                    $("div.noSwitches").show();
                 }
-            },
-        "json");
+            });
     });
 
     $(".switches td.status button").live("click", function () {
         var row = $(this).parents("tr:first");
         var el = $(this);
         var status = el.attr("data-status");
-        var status_label;
+        var labels = {
+            3: "(Active for everyone)",
+            2: "(Active for everyone)",
+            1: "(Disabled for everyone)"
+        };
 
-        $.post(GARGOYLE.updateStatus,
+        api(GARGOYLE.updateStatus,
             {
                 key:    row.attr("data-switch-key"),
                 status: status
             },
 
-            function (response) {
-                if (response.status == status) {
+            function (swtch) {
+                if (swtch.status == status) {
                     row.find(".toggled").removeClass("toggled");
                     el.addClass("toggled");
+                    row.find('.status p').text(labels[swtch.status]);
                 }
-                if (response.status == 3) {
-                    status_label = '(Active for everyone)';
-                } else if (response.status == 2) {
-                    status_label = '(Active for everyone)';
-                } else {
-                    status_label = '(Disabled for everyone)';
-                    
-                }
-                row.find('.status p').text(status_label);
-            },
-        "json");
+            });
     });
 
     $("#facebox .closeFacebox").live("click", function (ev) {
@@ -75,16 +75,16 @@ $(document).ready(function () {
         var action = $(this).attr("data-action");
         var curkey = $(this).attr("data-curkey");
 
-        $.post(action == "add" ? GARGOYLE.addSwitch : GARGOYLE.updateSwitch,
+        api(action == "add" ? GARGOYLE.addSwitch : GARGOYLE.updateSwitch,
             {
                 curkey: curkey,
                 name:   $("#facebox input[name=name]").val(),
                 key:    $("#facebox input[name=key]").val(),
                 desc:   $("#facebox textarea").val()
             },
-            
-            function (data) {
-                var result = $("#switchData").tmpl(data);
+
+            function (swtch) {
+                var result = $("#switchData").tmpl(swtch);
 
                 if (action == "add") {
                     if ($("table.switches tr").length == 0) {
@@ -97,11 +97,9 @@ $(document).ready(function () {
 
                     $.facebox.close();
                 } else {
-                    debugger;
                     $("table.switches tr[data-switch-key=" + curkey + "]").replaceWith(result);
                     $.facebox.close();
                 }
-            },
-        "json");
+            });
     });
 });
