@@ -97,9 +97,12 @@ class SwitchManager(ModelDict):
         ``gargoyle.is_active('my_feature', request)``
         """
         
-        conditions = self.get(key)
+        try:
+            conditions = self[key]
+        except KeyError:
+            return False
+
         if not conditions:
-            # XXX: option to have default return value?
             return True
 
         conditions = conditions.value
