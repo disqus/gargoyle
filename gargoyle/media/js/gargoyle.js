@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    $(".addSwitch").click(function () {
+    $(".addSwitch").click(function (ev) {
+        ev.preventDefault();
         $.facebox($("#switchForm").tmpl({ add: true }));
     });
 
@@ -17,6 +18,7 @@ $(document).ready(function () {
 
     $(".switches .delete").live("click", function () {
         var row = $(this).parents("tr:first");
+        var table = row.parents("table:first");
 
         $.post(GARGOYLE.deleteSwitch,
             {
@@ -26,6 +28,9 @@ $(document).ready(function () {
             function (response) {
                 if (response.success) {
                     row.remove();
+                    if (!table.find("tr").length) {
+                        $("div.noSwitches").show();
+                    }
                 }
             },
         "json");
@@ -72,7 +77,14 @@ $(document).ready(function () {
                 var result = $("#switchData").tmpl(data);
 
                 if (action == "add") {
-                    $("table.switches tr:last").after(result);
+                    if ($("table.switches tr").length == 0) {
+                        $("table.switches").html(result);
+                        $("table.switches").removeClass("empty");
+                        $("div.noSwitches").hide();
+                    } else {
+                        $("table.switches tr:last").after(result);
+                    }
+
                     $.facebox.close();
                 } else {
                     debugger;
