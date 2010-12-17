@@ -107,10 +107,13 @@ def add_condition(request):
     key = request.POST.get("key")
     namespace = request.POST.get("namespace")
     field_name = request.POST.get("field")
-    value = request.POST.get("value")
-
-    if not all([key, namespace, field_name, value]):
+    
+    if not all([key, namespace, field_name]):
         raise GargoyleException("Fields cannot be empty")
+
+    field = gargoyle._registry[namespace].fields[field_name]
+
+    value = field.validate(request.POST)
 
     switch = Switch.objects.get(key=key)
     switch.add_condition(namespace, field_name, value)
@@ -122,10 +125,13 @@ def remove_condition(request):
     key = request.POST.get("key")
     namespace = request.POST.get("namespace")
     field_name = request.POST.get("field")
-    value = request.POST.get("value")
 
-    if not all([key, namespace, field_name, value]):
+    if not all([key, namespace, field_name]):
         raise GargoyleException("Fields cannot be empty")
+
+    field = gargoyle._registry[namespace].fields[field_name]
+
+    value = field.validate(request.POST)
 
     switch = Switch.objects.get(key=key)
     switch.remove_condition(namespace, field_name, value)

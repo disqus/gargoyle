@@ -20,6 +20,10 @@ class Field(object):
     def is_active(self, condition, value):
         return condition == value
 
+    def validate(self, data):
+        value = data.get(self.name)
+        return self.clean(value)
+
     def clean(self, value):
         return value
 
@@ -31,11 +35,7 @@ class Boolean(Field):
         return bool(value)
     
     def render(self, value):
-        if value:
-            selected = ' checked="checked"'
-        else:
-            selected = ''
-        return mark_safe('<input type="checkbox" value="1" name="%s"%s/>' % (escape(self.name), selected))
+        return mark_safe('<input type="hidden" value="1" name="%s"/>' % (escape(self.name),))
 
 class Choice(Field):
     def __init__(self, choices, **kwargs):
@@ -53,6 +53,10 @@ class Choice(Field):
 class Range(Field):
     def is_active(self, condition, value):
         return value >= condition[0] and value <= condition[1]
+
+    def validate(self, data):
+        value = [data.get(self.name + '[min]'), data.get(self.name + '[max]')]
+        return self.clean(value)
 
     def render(self, value):
         if not value:
