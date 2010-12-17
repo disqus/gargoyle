@@ -173,7 +173,7 @@
               <div class="group">
                 <label>${group}</label>
                 {{ each(i, item) conds }}
-                  <span data-field="${item[0]}" class="value">${item[1]}</span>{{ if i < conds.length - 1 }}, {{ /if }}
+                  <span data-field="${item[0]}" data-value="${item[1]}" class="value">${item[2]}</span>{{ if i < conds.length - 1 }}, {{ /if }}
                 {{ /each }}
               </div>
             {{ /each }}
