@@ -3,6 +3,8 @@
 
 from django.http import HttpRequest
 
+class ValidationError(Exception): pass
+
 class Field(object):
     def __init__(self, label=None):
         self.label = label
@@ -13,6 +15,9 @@ class Field(object):
     
     def is_active(self, condition, value):
         return condition == value
+
+    def clean(self, value):
+        return value
 
 class Boolean(Field):
     def is_active(self, condition, value):
@@ -25,6 +30,11 @@ class Choice(Field):
 
     def is_active(self, condition, value):
         return value in self.choices
+    
+    def clean(self, value):
+        if value not in self.choices:
+            raise ValidationError
+        return value
 
 class Range(Field):
     def is_active(self, condition, value):
