@@ -193,7 +193,7 @@
 
     <script type="text/x-jquery-tmpl" id="switchConditions">
       <select name="condition">
-        <option disabled>Add a condition</option>
+        <option></option>
         {% for group, namespace, field in all_conditions %}
           {% ifchanged group %}
             {% if not loop.first %}</optgroup>{% endif %}
