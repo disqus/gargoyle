@@ -22,6 +22,19 @@ def add(request):
     )
 
     return json(switch.to_dict())
+
+def update(request):
+    try:
+        switch = Switch.objects.get(key=request.POST.get("curkey"))
+    except Switch.DoesNotExist:
+        return json({})
+
+    switch.label = request.POST.get("name")
+    switch.key = request.POST.get("key")
+    switch.description = request.POST.get("description")
+    switch.save()
+
+    return json(switch.to_dict())
     
 def status(request):
     try:

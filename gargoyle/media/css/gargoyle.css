@@ -148,6 +148,28 @@ body {
     width: 70px;
 }
 
+#container table.switches td.actions button.edit,
+#container table.switches td.actions button.edit span {
+    height: 18px;
+    width: 18px;
+}
+
+#container table.switches td.actions button.edit span {
+    display: block;
+    background: transparent url("../img/edit.png") no-repeat 35% left;
+}
+
+#container table.switches td.actions button.delete,
+#container table.switches td.actions button.delete span {
+    height: 18px;
+    width: 18px;
+}
+
+#container table.switches td.actions button.delete span {
+    display: block;
+    background: transparent url("../img/delete.png") no-repeat 35% left;
+}
+
 #container table.empty {
     display: none;
 }
@@ -165,40 +187,40 @@ body {
     margin-bottom: 20px;
 }
 
-#facebox table.addSwitchForm {
+#facebox table.switchForm {
     width: 100%;
     border-collapse: collapse;
     margin: 0;
 }
 
-#facebox table.addSwitchForm th, #facebox table.addSwitchForm td {
+#facebox table.switchForm th, #facebox table.switchForm td {
     vertical-align: top;
 }
 
-#facebox table.addSwitchForm th {
+#facebox table.switchForm th {
     width: 100px;
     font-weight: normal;
     text-align: right;
     padding-right: 10px;
 }
 
-#facebox table.addSwitchForm td input,
-#facebox table.addSwitchForm td textarea {
+#facebox table.switchForm td input,
+#facebox table.switchForm td textarea {
     width: 230px;
     padding: 2px 3px;
 }
 
-#facebox table.addSwitchForm td p {
+#facebox table.switchForm td p {
     margin-top: 5px;
     font-size: 80%;
     color: #666;
 }
 
-#facebox table.addSwitchForm td textarea {
+#facebox table.switchForm td textarea {
     height: 30px;
 }
 
-#facebox table.addSwitchForm td.buttons {
+#facebox table.switchForm td.buttons {
     text-align: right;
 }
 

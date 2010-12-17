@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     }, name='gargoyle-media'),
 
     url(r'^add/$', 'gargoyle.views.add', name='gargoyle-add'),
+    url(r'^update/$', 'gargoyle.views.update', name='gargoyle-update'),
     url(r'^delete/$', 'gargoyle.views.delete', name='gargoyle-delete'),
     url(r'^status/$', 'gargoyle.views.status', name='gargoyle-status'),
     url(r'^$', 'gargoyle.views.index', name='gargoyle'),
