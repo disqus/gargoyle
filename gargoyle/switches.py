@@ -14,6 +14,8 @@ class Field(object):
     
     def set_name(self, name):
         self.name = name
+        if name and not self.label:
+            self.label = name.title()
     
     def is_active(self, condition, value):
         return condition == value
@@ -22,7 +24,7 @@ class Field(object):
         return value
 
     def render(self, value):
-        return mark_safe('<input type="text" value="%s" name="%s"%s/>' % (escape(self.value), escape(self.name)))
+        return mark_safe('<input type="text" value="%s" name="%s"/>' % (escape(value or ''), escape(self.name)))
 
 class Boolean(Field):
     def is_active(self, condition, value):
@@ -53,8 +55,10 @@ class Range(Field):
         return value >= condition[0] and value <= condition[1]
 
     def render(self, value):
+        if not value:
+            value = ['', '']
         return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % \
-                         (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
+                         (escape(value[0]), escape(self.name), escape(value[1]), escape(self.name)))
 
 class Percent(Field):
     def is_active(self, condition, value):
@@ -62,8 +66,10 @@ class Percent(Field):
         return mod >= condition[0] and mod <= condition[1]
 
     def render(self, value):
+        if not value:
+            value = ['', '']
         return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % \
-                         (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
+                         (escape(value[0]), escape(self.name), escape(value[1]), escape(self.name)))
 
 class String(Field):
     pass
@@ -73,17 +79,14 @@ class SwitchBase(type):
         attrs['fields'] = {}
         
         # Inherit any fields from parent(s).
-        try:
-            parents = [b for b in bases if issubclass(b, Switch)]
+        parents = [b for b in bases if isinstance(b, SwitchBase)]
+        
+        for p in parents:
+            fields = getattr(p, 'fields', None)
             
-            for p in parents:
-                fields = getattr(p, 'fields', None)
-                
-                if fields:
-                    attrs['fields'].update(fields)
-        except NameError:
-            pass
-
+            if fields:
+                attrs['fields'].update(fields)
+            
         for field_name, obj in attrs.items():
             if isinstance(obj, Field):
                 field = attrs.pop(field_name)

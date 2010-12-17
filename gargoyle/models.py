@@ -79,7 +79,7 @@ class Switch(models.Model):
                         "User", field.label, field.render(value)
 
 class SwitchManager(ModelDict):
-    _registry = {}
+    _registry = []
     
     def is_active(self, key, *instances):
         """
@@ -111,7 +111,7 @@ class SwitchManager(ModelDict):
 
             for instance in instances:
                 # check each switch to see if it can execute
-                for switch in self._registry.itervalues():
+                for switch in self._registry:
                     if switch.can_execute(instance):
                         if switch.is_active(instance, conditions):
                             return True
@@ -121,15 +121,12 @@ class SwitchManager(ModelDict):
     def register(self, switch):
         if callable(switch):
             switch = switch()
-        self._registry['%s.%s' % (switch.__module__, switch.__class__.__name__)] = switch
-
-    def get_switch(self, switch_id):
-        return self._registry[switch_id]
+        self._registry.append(switch)
 
     def get_all_conditions(self):
         "Returns groups of lists of conditions"
-        for switch in sorted(self._registry.itervalues(), key=lambda x: x.get_group_label()):
-            group = switch.get_group_label()
-            for field in switch.fields:
-                yield group, field
+        for switch in sorted(self._registry, key=lambda x: x.get_group_label()):
+            group = unicode(switch.get_group_label())
+            for field in switch.fields.itervalues():
+                yield group, switch.get_namespace(), field
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
