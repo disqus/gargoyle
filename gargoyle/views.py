@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 
-from gargoyle.models import Switch
+from gargoyle.models import Switch, GLOBAL, SELECTIVE, DISABLED
 
 json = lambda data: HttpResponse(simplejson.dumps(data), mimetype="application/json")
 
@@ -39,9 +39,17 @@ def update(request):
 def status(request):
     try:
         switch = Switch.objects.get(key=request.POST.get("key"))
+        status = int(request.POST.get("status"))
     except Switch.DoesNotExist:
-        return {}
-    return {}
+        return json({})
+
+    if status in (GLOBAL, DISABLED):
+        switch.value["global"] = (status == GLOBAL)
+    else:
+        switch.value.pop("global", None)
+
+    switch.save()
+    return json({ "status": switch.status })
 
 
 def delete(request):

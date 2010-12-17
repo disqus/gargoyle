@@ -34,11 +34,12 @@ $(document).ready(function () {
     $(".switches td.status button").live("click", function () {
         var row = $(this).parents("tr:first");
         var el = $(this);
+        var status = el.attr("data-status");        
 
         $.post(GARGOYLE.updateStatus,
             {
                 key:    row.attr("data-switch-key"),
-                status: el.attr("data-status")
+                status: status
             },
 
             function (response) {
