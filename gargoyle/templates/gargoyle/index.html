@@ -48,11 +48,9 @@
         -->
       </div>
 
-      {% if not switches %}
-      <div class="noSwitches">
+      <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>
         You do not have any switches yet. <a href="#" class="addSwitch">Add the first one</a>.
       </div>
-      {% endif %}
 
       <table class="switches {% if not switches %}empty{% endif %}">
         {% for switch in switches %}

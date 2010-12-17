@@ -38,7 +38,7 @@ def update(request):
 
     return json(switch.to_dict())
     
-def status(request):
+def status(request):    
     try:
         switch = Switch.objects.get(key=request.POST.get("key"))
         status = int(request.POST.get("status"))
