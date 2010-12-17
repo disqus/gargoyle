@@ -108,7 +108,9 @@ class SwitchManager(ModelDict):
             return True
 
         conditions = conditions.value
-        if conditions.get('global'):
+        if not conditions:
+            return False
+        elif conditions.get('global'):
             return True
         elif conditions.get('global') is False:
             return False
@@ -127,7 +129,7 @@ class SwitchManager(ModelDict):
                         if switch.is_active(instance, conditions):
                             return True
 
-        return not conditions
+        return False
     
     def register(self, switch):
         if callable(switch):

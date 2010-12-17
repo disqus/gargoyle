@@ -231,8 +231,7 @@ body {
  * (taken from Disqus code, author Chris Jennings)
  */
 
-.button,
-.button ul {
+.button {
     display: inline-block;
     margin: 0 1px;
     font-size: 13px;
@@ -250,37 +249,6 @@ body {
     padding: 8px;
     font-family: Arial, Helvetica, Calibri, sans-serif;
     position: relative;
-}
-
-.button ul {
-    white-space: nowrap;
-    z-index: 100;
-    position: absolute;
-    left: -1px;
-    margin: 3px 0 0;
-    display: none;
-    text-align: left;
-    -moz-border-radius: 0 4px 4px 4px;
-    border-radius: 0 4px 4px 4px;
-}
-
-.button ul li a {
-    padding: 4px 0;
-    display: block;
-    white-space: nowrap;
-}
-
-.button ul li a:hover {
-    color: #36A0FF;
-}
-
-.button:hover ul {
-    display: block;
-}
-
-.button li a {
-    color: inherit;
-    font-size: inherit;
 }
 
 .button {
@@ -320,7 +288,6 @@ body {
     line-height: 14px;
 }
 
-.paging li a:hover,
 .button.small:hover {
     background-position: right -126px;
 }
@@ -331,7 +298,14 @@ body {
     line-height: 14px;
 }
 
-.button.toggled {
+.button.toggled,
+.button.toggled:hover,
+.button.toggled:focus {
+    background-image: url('../img/button-bg-active.png');
+    background-position: 0 0;
+    color: #fff;
+    border-color: #537789;
+    text-shadow: 0 1px 0 #000;
     -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, .2);
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .2);    
 }
