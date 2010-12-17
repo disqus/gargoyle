@@ -20,7 +20,7 @@ class UserSwitch(ModelSwitch):
             return super(UserSwitch, self).is_active(instance, conditions)
         
         # HACK: allow is_authenticated to work on AnonymousUser
-        condition = conditions.get(self.model.__name__, {}).get('is_authenticated')
+        condition = conditions.get(self.get_namespace(), {}).get('is_authenticated')
         return bool(condition is False)
 
 gargoyle.register(UserSwitch(User))
