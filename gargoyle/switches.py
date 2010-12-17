@@ -28,7 +28,10 @@ class Field(object):
 
     def validate(self, data):
         value = data.get(self.name)
-        return self.clean(value)
+        value = self.clean(value)
+        if hasattr(self, 'clean_%s' % self.name):
+            value = getattr(self, 'clean_%s' % self.name)
+        return value
 
     def clean(self, value):
         return value
