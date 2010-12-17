@@ -120,7 +120,6 @@ body {
 }
 
 #container table.switches td.name {
-    width: 40%;
 }
 
 #container table.switches td.name h4 {
@@ -128,16 +127,16 @@ body {
     font-weight: bold;
     margin: 0 0 15px 0;
 }
+#container table.switches td.name h4 small {
+    color: #999;
+    font-weight: normal;
+    margin-left: 8px;
+    font-family: "Inconsolata", arial;
+}
 
 #container table.switches td.name p {
     color: #666;
     margin: 0;
-}
-
-#container table.switches td.command {
-    font-family: "Inconsolata", arial;
-    text-align: left;
-    padding-left: 10px;    
 }
 
 #container table.switches td.status {

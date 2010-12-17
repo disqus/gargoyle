@@ -56,12 +56,8 @@
         {% for switch in switches %}
         <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
           <td class="name">
-            <h4>{{ switch.label }}</h4>
+            <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
             <p>{{ switch.description }}</p>
-          </td>
-
-          <td class="command">
-            {{ switch.key }}
           </td>
 
           <td class="status">
@@ -139,12 +135,8 @@
     <script type="text/x-jquery-tmpl" id="switchData">
       <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
         <td class="name">
-          <h4>${label}</h4>
+          <h4>${label} <small class="command">(${key})</small></h4>
           <p>${description}</p>
-        </td>
-
-        <td class="command">
-          ${key}
         </td>
 
         <td class="status">
