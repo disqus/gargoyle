@@ -20,7 +20,7 @@ class GargoyleTest(TestCase):
         self.assertEquals(len(gargoyle._registry), 2)
 
     def test_user(self):
-        gargoyle['test_user'] = {'auth.User': {'percent': [[0, 50]], 'is_staff': [True]}}
+        gargoyle['test_user'] = {'auth.user': {'percent': [[0, 50]], 'is_staff': [True]}}
 
         user = User(pk=5)
         self.assertTrue(gargoyle.is_active('test_user', user))
@@ -42,7 +42,7 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_user'] = {'auth.User': {'username': ['foo']}}
+        gargoyle['switched_for_user'] = {'auth.user': {'username': ['foo']}}
 
         self.assertTrue(test(request))
 
@@ -81,11 +81,11 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(gargoyle.is_active('test_for_all'))
 
-        gargoyle['test_for_all'] = {'auth.User': {'username': ['dcramer']}}
+        gargoyle['test_for_all'] = {'auth.user': {'username': ['dcramer']}}
 
         self.assertFalse(gargoyle.is_active('test_for_all'))
 
-        gargoyle['test_for_all'] = {'auth.User': {'username': ['dcramer']}, 'global': True}
+        gargoyle['test_for_all'] = {'auth.user': {'username': ['dcramer']}, 'global': True}
 
         self.assertTrue(gargoyle.is_active('test_for_all'))
 
@@ -122,7 +122,7 @@ class GargoyleTest(TestCase):
 
         self.assertFalse(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'auth.User': {'percent': [1, 10]}}
+        gargoyle['test_anonymous_user'] = {'auth.user': {'percent': [1, 10]}}
 
         self.assertFalse(gargoyle.is_active('test_anonymous_user', user))
 
@@ -130,11 +130,11 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'auth.User': {'is_authenticated': False}}
+        gargoyle['test_anonymous_user'] = {'auth.user': {'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'auth.User': {'percent': [1, 10], 'is_authenticated': False}}
+        gargoyle['test_anonymous_user'] = {'auth.user': {'percent': [1, 10], 'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 

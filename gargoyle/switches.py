@@ -123,7 +123,7 @@ class ModelSwitch(Switch):
         return isinstance(instance, self.model)
     
     def get_namespace(self):
-        return '%s.%s' % (self.model.__module__.rsplit('.', 2)[-2], self.model.__name__)
+        return '%s.%s' % (self.model._meta.app_label, self.model.module_name)
     
     def get_type(self):
         return self.model
