@@ -207,7 +207,7 @@
 
       {% for group, namespace, field in all_conditions %}
         <div class="fields" data-path="{{ namespace }}.{{ field.name }}" style="display:none;">
-          {{ field.label }}: {{ field|render_field }}
+          <label>{{ field.label }}: </label>{{ field|render_field }}
           <button class="small button">Add</button>
         </div>
       {% endfor %}

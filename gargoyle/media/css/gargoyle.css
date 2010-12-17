@@ -45,6 +45,16 @@ body {
     background-color: #eee;
 }
 
+input[type=text], select, textarea {
+    border: 1px solid #cdd2d6;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.15);
+    -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.15);
+    padding: 2px 4px;
+}
+
 #header {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#437ba3', endColorstr='#234b6f'); /* for IE */
     background: -webkit-gradient(linear, left top, left bottom, from(#437ba3), to(#234b6f)); /* for webkit browsers */
@@ -143,23 +153,28 @@ body {
 
 #container table.switches td.name div.conditionsForm {
     display: none;
-    width: 400px;
     margin-top: 10px;
+    line-height: 25px;
     border: solid 1px #dfdfdf;
     background-color: #eee;
-    padding: 5px;
+    padding: 5px 10px;
+    vertical-align: middle;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     -o-border-radius: 3px;
 }
 
 #container table.switches td.name div.conditionsForm div.fields {
-    margin-top: 15px;
+    display: inline;
+}
+
+#container table.switches td.name div.conditionsForm div.fields label {
+    display: none;
 }
 
 #container table.switches td.name div.conditionsForm div.fields input {
     font-size: 12px;
-    padding: 2px 3px;
+    margin: 0 5px;
 }
 
 #container table.switches td.status {
@@ -278,6 +293,7 @@ body {
     padding: 8px;
     font-family: Arial, Helvetica, Calibri, sans-serif;
     position: relative;
+    vertical-align: text-middle;
 }
 
 .button {
@@ -310,9 +326,8 @@ body {
     vertical-align: text-bottom;
 }
 
-.button.small,
-.button.small ul {
-    padding: 5px 8px;
+.button.small {
+    padding: 2px 8px;
     font-size: 11px;
     line-height: 14px;
 }
