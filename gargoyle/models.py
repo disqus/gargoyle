@@ -7,6 +7,8 @@ gargoyle.register(ModelSwitch(Forum, 'id'))
 gargoyle.register(RequestSwitch())
 """
 
+import datetime
+
 from django.db import models
 from django.http import HttpRequest
 
@@ -33,7 +35,7 @@ class Switch(models.Model):
     key = models.CharField(max_length=32, primary_key=True)
     value = JSONField(default="{\"global\": false}")
     label = models.CharField(max_length=32, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(default=datetime.datetime.now)
     description = models.TextField(null=True)
     
     def __unicode__(self):

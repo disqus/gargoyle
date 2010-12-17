@@ -65,7 +65,7 @@ $(document).ready(function () {
                 curkey: curkey,
                 name:   $("#facebox input[name=name]").val(),
                 key:    $("#facebox input[name=key]").val(),
-                desc:   $("#facebox textarea[name=desc]").val()
+                desc:   $("#facebox textarea").val()
             },
             
             function (data) {
@@ -75,7 +75,8 @@ $(document).ready(function () {
                     $("table.switches tr:last").after(result);
                     $.facebox.close();
                 } else {
-                    $("table.switches tr[data-key=" + curkey + "]").replaceWith(result);
+                    debugger;
+                    $("table.switches tr[data-switch-key=" + curkey + "]").replaceWith(result);
                     $.facebox.close();
                 }
             },
