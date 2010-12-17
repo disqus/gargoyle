@@ -39,7 +39,8 @@ $(document).ready(function () {
     $(".switches td.status button").live("click", function () {
         var row = $(this).parents("tr:first");
         var el = $(this);
-        var status = el.attr("data-status");        
+        var status = el.attr("data-status");
+        var status_label;
 
         $.post(GARGOYLE.updateStatus,
             {
@@ -52,6 +53,15 @@ $(document).ready(function () {
                     row.find(".toggled").removeClass("toggled");
                     el.addClass("toggled");
                 }
+                if (response.status == 3) {
+                    status_label = '(Active for everyone)';
+                } else if (response.status == 2) {
+                    status_label = '(Active for everyone)';
+                } else {
+                    status_label = '(Disabled for everyone)';
+                    
+                }
+                row.find('.status p').text(status_label);
             },
         "json");
     });

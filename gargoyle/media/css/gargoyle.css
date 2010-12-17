@@ -141,7 +141,14 @@ body {
 
 #container table.switches td.status {
     width: 200px;
-    text-align: right;
+    text-align: center;
+}
+#container table.switches td.status p {
+    color: #999;
+    margin-top: 15px;
+    font-size: 85%;
+    text-transform: lowercase;
+    margin-bottom: 0;
 }
 
 #container table.switches td.actions {

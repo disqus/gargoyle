@@ -72,6 +72,15 @@
             <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}" data-status="1">
               Disabled
             </button>
+            <p>
+              {% if status == 3 %}
+                  (Active for everyone)
+              {% else %}{% if status == 2 %}
+                  (Active for everyone)
+              {% else %}
+                  (Disabled for everyone)
+              {% endif %}{% endif %}
+            </p>
           </td>
 
           <td class="actions">
@@ -151,6 +160,15 @@
           <button class="xtrasmall button {{if status == 1}}toggled{{/if}}" data-status="1">
             Disabled
           </button>
+          <p>
+            {{if status == 3}}
+                (Active for everyone)
+            {{elif status == 2}}
+                (Active for everyone)
+            {{else}}
+                (Disabled for everyone)
+            {{/if}}
+          </p>
         </td>
 
         <td class="actions">
