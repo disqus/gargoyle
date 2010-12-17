@@ -67,15 +67,15 @@ class Range(Field):
         return value >= condition[0] and value <= condition[1]
 
     def validate(self, data):
-        value = [data.get(self.name + '[min]'), data.get(self.name + '[max]')]
+        value = filter(None, [data.get(self.name + '[min]'), data.get(self.name + '[max]')]) or None
         return self.clean(value)
 
     def clean(self, value):
-        if filter(None, value):
+        if value:
             try:
                 value = map(int, value)
             except (TypeError, ValueError):
-                raise ValidationError
+                raise ValidationError('You must enter valid integer values.')
         return value
 
     def render(self, value):
@@ -96,6 +96,16 @@ class Percent(Range):
 
     def display(self, value):
         return '%s: %s%% (%s-%s)' % (self.label, int(value[1]) - int(value[0]), value[0], value[1])
+
+    def clean(self, value):
+        value = super(Percent, self).clean(value)
+        if value:
+            if value[0] < 0 or value[1] > 100:
+                raise ValidationError('You must enter values between 0 and 100.')
+            if value[0] > value[1]:
+                raise ValidationError('Start value must be less than end value.')
+        return value
+
 
 class String(Field):
     pass
