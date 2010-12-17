@@ -70,6 +70,14 @@ class Range(Field):
         value = [data.get(self.name + '[min]'), data.get(self.name + '[max]')]
         return self.clean(value)
 
+    def clean(self, value):
+        if filter(None, value):
+            try:
+                value = map(int, value)
+            except (TypeError, ValueError):
+                raise ValidationError
+        return value
+
     def render(self, value):
         if not value:
             value = ['', '']
@@ -87,7 +95,7 @@ class Percent(Range):
         return mod >= condition[0] and mod <= condition[1]
 
     def display(self, value):
-        return '%s: %s%% (%s-%s)' % (self.label, value[1]-value[0], value[0], value[1])
+        return '%s: %s%% (%s-%s)' % (self.label, int(value[1]) - int(value[0]), value[0], value[1])
 
 class String(Field):
     pass
