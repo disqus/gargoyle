@@ -62,11 +62,11 @@
             <p>{{ switch.description }}</p>
 
             <div class="conditions">
-              {% for group, conds in switch.conditions.items %}
+              {% for group, conds in switch.conditions.iteritems %}
                 <div class="group">
                   <label>{{ group }}</label>
-                  {% for field, value in conds %}
-                    <span data-field="{{ field }}" class="value">{{ value }}</span>{% if not forloop.last %}, {% endif %}
+                  {% for field, value, display in conds %}
+                    <span data-field="{{ field }}" data-value="{{ value }}" class="value">{{ display }}</span>{% if not forloop.last %}, {% endif %}
                   {% endfor %}
                 </div>
               {% endfor %}
@@ -93,7 +93,11 @@
               {% if status == 3 %}
                   (Active for everyone)
               {% else %}{% if status == 2 %}
+                {% if switch.value %}
+                  (Active for conditions)
+                {% else %}
                   (Active for everyone)
+                {% endif %}
               {% else %}
                   (Disabled for everyone)
               {% endif %}{% endif %}

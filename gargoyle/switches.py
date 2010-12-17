@@ -30,12 +30,18 @@ class Field(object):
     def render(self, value):
         return mark_safe('<input type="text" value="%s" name="%s"/>' % (escape(value or ''), escape(self.name)))
 
+    def display(self, value):
+        return value
+
 class Boolean(Field):
     def is_active(self, condition, value):
         return bool(value)
     
     def render(self, value):
         return mark_safe('<input type="hidden" value="1" name="%s"/>' % (escape(self.name),))
+
+    def display(self, value):
+        return self.label
 
 class Choice(Field):
     def __init__(self, choices, **kwargs):
@@ -64,10 +70,16 @@ class Range(Field):
         return mark_safe('<input type="text" value="%s" placeholder="from" name="%s[min]"/> - <input type="text" placeholder="to"  value="%s" name="%s[max]"/>' % \
                          (escape(value[0]), escape(self.name), escape(value[1]), escape(self.name)))
 
+    def display(self, value):
+        return '%s-%s' % (value[0], value[1])
+
 class Percent(Range):
     def is_active(self, condition, value):
         mod = value % 100
         return mod >= condition[0] and mod <= condition[1]
+
+    def display(self, value):
+        return '%s%% (%s-%s)' % (value[1]-value[0], value[0], value[1])
 
 class String(Field):
     pass

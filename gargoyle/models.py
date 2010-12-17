@@ -60,9 +60,9 @@ class Switch(models.Model):
 
         for group, field, value in self.get_active_conditions():
             if group not in data['conditions']:
-                data['conditions'][group] = [(field.name, value)]
+                data['conditions'][group] = [(field.name, value, field.display(value))]
             else:
-                data['conditions'][group].append((field.name, value))
+                data['conditions'][group].append((field.name, value, field.display(value)))
 
         return data
     
