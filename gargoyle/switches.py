@@ -140,7 +140,7 @@ class ModelSwitch(Switch):
         return self.model
     
     def get_group_label(self):
-        return self.model._meta.verbose_name
+        return self.model._meta.verbose_name.title()
 
 class RequestSwitch(Switch):
     def get_namespace(self):

@@ -200,7 +200,7 @@
             <optgroup label="{{ group }}">
           {% endifchanged %}
 
-          <option value="{{ namespace }},{{ field.name }}">{{ field.label }}</option>
+          <option value="{{ namespace }},{{ field.name }}">{% if group != field.label %}{{ group }}: {% endif %}{{ field.label }}</option>
         {% endfor %}
         </optgroup>
       </select>
