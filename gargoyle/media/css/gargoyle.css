@@ -55,6 +55,13 @@ input[type=text], select, textarea {
     padding: 2px 4px;
 }
 
+.wrapper {
+    position: relative;
+    min-width: 600px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 #header {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#437ba3', endColorstr='#234b6f'); /* for IE */
     background: -webkit-gradient(linear, left top, left bottom, from(#437ba3), to(#234b6f)); /* for webkit browsers */
@@ -84,8 +91,8 @@ input[type=text], select, textarea {
     color: #ccc;
 }
 
-#container {
-    margin: 20px;
+#container .wrapper {
+    margin: 20px auto;
     padding: 20px;
     background-color: #fff;
     
