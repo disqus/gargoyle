@@ -61,7 +61,9 @@ body {
 }
 
 #header h1 {
-    background-image: url("../img/logo.jpg");
+    background-image: url("../img/logo.png");
+    margin: -15px 0 -20px;
+    padding: 15px 0 20px;
     background-repeat: no-repeat;
     background-position: top middle;
     padding-left: 84px;
