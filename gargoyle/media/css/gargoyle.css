@@ -222,6 +222,7 @@ input[type=text], input[type=password], select, textarea {
 #container table.switches td.name div.conditions div.group {
     font-size: 90%;
     margin-top: 5px;
+    line-height: 18px;
     padding-left: 100px;
     position: relative;
 }
@@ -234,6 +235,10 @@ input[type=text], input[type=password], select, textarea {
 }
 
 #container table.switches td.name div.conditions div.group span.value {
+    background: #f0f0f0;
+    padding: 2px 4px;
+    margin-right: 2px;
+    font-size: 0.9em;
 }
 
 #container table.switches td.status {
