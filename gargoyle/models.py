@@ -91,10 +91,9 @@ class Switch(models.Model):
             ns = switch.get_namespace()
             if ns in self.value:
                 group = switch.get_group_label()
-                for field in switch.fields:
-                    for value in self.value[ns].get(field.name, []):
+                for name, field in switch.fields.iteritems():
+                    for value in self.value[ns].get(name, []):
                         yield group, field, value
-                        "User", field.label, field.render(value)
 
 class SwitchManager(ModelDict):
     _registry = []
