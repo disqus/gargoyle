@@ -31,7 +31,7 @@ class Switch(models.Model):
     """
     
     key = models.CharField(max_length=32, primary_key=True)
-    value = JSONField(default="{\"disable\": true}")
+    value = JSONField(default="{\"global\": false}")
     label = models.CharField(max_length=32, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     description = models.TextField(null=True)
@@ -56,17 +56,41 @@ class Switch(models.Model):
         }
     
     def get_status(self):
-        if self.value.get('disable'):
+        if self.value.get('global') is False:
             return DISABLED
-        elif self.value:
+        elif self.value.get('global'):
             return SELECTIVE
         else:
             return GLOBAL
             
     status = property(get_status)
 
+    def get_active_conditions(self):
+        "Returns groups of lists of active conditions"
+        for switch in sorted(gargoyle._registry, key=lambda x: x.get_group_label()):
+            ns = switch.get_namespace()
+            if ns in self.value:
+                group = switch.get_group_label()
+                for field in switch.fields:
+                    for value in self.value[ns].get(field.name, []):
+                        yield group, field, value
+
+    def add_condition(self, switch_id, field, condition):
+        switch = gargoyle.get_switch(switch_id)
+        self[switch.get_namespace()].setdefault(field, []).append(condition)
+
+    def remove_condition(self, switch_id, field, condition):
+        switch = gargoyle.get_switch(switch_id)
+        ns = switch.get_namespace()
+        if ns not in self:
+            return
+        if field not in self[ns]:
+            return
+        self[ns][field] = [c for c in self[ns][field] if c != condition]
+
+
 class SwitchManager(ModelDict):
-    _registry = []
+    _registry = {}
     
     def is_active(self, key, *instances):
         """
@@ -79,7 +103,9 @@ class SwitchManager(ModelDict):
             return False
 
         conditions = conditions.value
-        if conditions.get('disable'):
+        if conditions.get('global'):
+            return True
+        elif conditions.get('global') is False:
             return False
 
         if instances:
@@ -91,16 +117,25 @@ class SwitchManager(ModelDict):
 
             for instance in instances:
                 # check each switch to see if it can execute
-                for switch in self._registry:
+                for switch in self._registry.itervalues():
                     if switch.can_execute(instance):
                         if switch.is_active(instance, conditions):
                             return True
 
-        # if all other checks failed, look at our global 'disable' flag
         return not conditions
     
     def register(self, switch):
         if callable(switch):
             switch = switch()
-        self._registry.append(switch)
+        self._registry['%s.%s' % (switch.__module__, switch.__class__.__name__)] = switch
+
+    def get_switch(self, switch_id):
+        return self._registry[switch_id]
+
+    def get_all_conditions(self):
+        "Returns groups of lists of conditions"
+        for switch in sorted(self._registry.itervalues(), key=lambda x: x.get_group_label()):
+            group = switch.get_group_label()
+            for field in switch.fields:
+                yield group, field
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)

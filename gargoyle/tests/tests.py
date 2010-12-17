@@ -19,14 +19,14 @@ class GargoyleTest(TestCase):
         # TODO: this test shoudl just ensure we've registered our builtins
         self.assertEquals(len(gargoyle._registry), 2)
 
-    def test_isolations(self):
-        gargoyle['isolation'] = {'User': {'percent': [[0, 50]], 'is_staff': [True]}}
+    def test_user(self):
+        gargoyle['test_user'] = {'auth.user': {'percent': [[0, 50]], 'is_staff': [True]}}
 
         user = User(pk=5)
-        self.assertTrue(gargoyle.is_active('isolation', user))
+        self.assertTrue(gargoyle.is_active('test_user', user))
 
         user = User(pk=8771)
-        self.assertFalse(gargoyle.is_active('isolation', user))
+        self.assertFalse(gargoyle.is_active('test_user', user))
 
     def test_decorator_for_user(self):
         @switch_is_active('switched_for_user')
@@ -42,7 +42,7 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_user'] = {'User': {'username': ['foo']}}
+        gargoyle['switched_for_user'] = {'auth.user': {'username': ['foo']}}
 
         self.assertTrue(test(request))
 
@@ -81,19 +81,23 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(gargoyle.is_active('test_for_all'))
 
-        gargoyle['test_for_all'] = {'User': {'username': ['dcramer']}}
+        gargoyle['test_for_all'] = {'auth.user': {'username': ['dcramer']}}
 
         self.assertFalse(gargoyle.is_active('test_for_all'))
 
+        gargoyle['test_for_all'] = {'auth.user': {'username': ['dcramer']}, 'global': True}
+
+        self.assertTrue(gargoyle.is_active('test_for_all'))
+
     def test_disable(self):
-        gargoyle['test_disable'] = {'disable': True}
+        gargoyle['test_disable'] = {'global': False}
 
         self.assertFalse(gargoyle.is_active('test_disable'))
 
         self.assertFalse(gargoyle.is_active('test_disable', self.user))
 
     def test_expiration(self):
-        gargoyle['test_expiration'] = {'disable': True}
+        gargoyle['test_expiration'] = {'global': False}
 
         self.assertFalse(gargoyle.is_active('test_expiration'))
 
@@ -112,13 +116,13 @@ class GargoyleTest(TestCase):
         self.assertTrue(gargoyle.is_active('test_expiration'))
 
     def test_anonymous_user(self):
-        gargoyle['test_anonymous_user'] = {'disable': True}
+        gargoyle['test_anonymous_user'] = {'global': False}
 
         user = AnonymousUser()
 
         self.assertFalse(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'User': {'percent': [1, 10]}}
+        gargoyle['test_anonymous_user'] = {'auth.user': {'percent': [1, 10]}}
 
         self.assertFalse(gargoyle.is_active('test_anonymous_user', user))
 
@@ -126,11 +130,11 @@ class GargoyleTest(TestCase):
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'User': {'is_authenticated': False}}
+        gargoyle['test_anonymous_user'] = {'auth.user': {'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
-        gargoyle['test_anonymous_user'] = {'User': {'percent': [1, 10], 'is_authenticated': False}}
+        gargoyle['test_anonymous_user'] = {'auth.user': {'percent': [1, 10], 'is_authenticated': False}}
 
         self.assertTrue(gargoyle.is_active('test_anonymous_user', user))
 
@@ -159,4 +163,3 @@ class GargoyleTest(TestCase):
         gargoyle['test_ip_address'] = {'ip': {'percent': [[0, 50]]}}
         
         self.assertFalse(gargoyle.is_active('test_ip_address', request))
-        

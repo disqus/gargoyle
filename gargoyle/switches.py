@@ -3,16 +3,21 @@
 
 from django.http import HttpRequest
 
+class ValidationError(Exception): pass
+
 class Field(object):
     def __init__(self, label=None):
         self.label = label
-        self.set_instance_name(None)
+        self.set_name(None)
     
-    def set_instance_name(self, instance_name):
-        self.instance_name = instance_name
+    def set_name(self, name):
+        self.name = name
     
     def is_active(self, condition, value):
         return condition == value
+
+    def clean(self, value):
+        return value
 
 class Boolean(Field):
     def is_active(self, condition, value):
@@ -25,6 +30,11 @@ class Choice(Field):
 
     def is_active(self, condition, value):
         return value in self.choices
+    
+    def clean(self, value):
+        if value not in self.choices:
+            raise ValidationError
+        return value
 
 class Range(Field):
     def is_active(self, condition, value):
@@ -57,7 +67,7 @@ class SwitchBase(type):
         for field_name, obj in attrs.items():
             if isinstance(obj, Field):
                 field = attrs.pop(field_name)
-                field.set_instance_name(field_name)
+                field.set_name(field_name)
                 attrs['fields'][field_name] = field
         
         return super(SwitchBase, cls).__new__(cls, name, bases, attrs)
@@ -70,6 +80,12 @@ class Switch(object):
 
     def can_execute(self, instance):
         return True
+
+    def get_id(self):
+        return '%s.%s' % (self.__module__, self.__class__.__name__)
+
+    def get_namespace(self):
+        return self.__class__.__name__
 
     def get_field_value(self, instance, field_name):
         # XXX: can we come up w/ a better API?
@@ -87,7 +103,7 @@ class Switch(object):
         instance is the instance of our type
         """
         for name, field in self.fields.iteritems():
-            condition = conditions.get(self.get_type_label(), {}).get(name)
+            condition = conditions.get(self.get_namespace(), {}).get(name)
             if condition:
                 value = self.get_field_value(instance, name)
                 if any(field.is_active(c, value) for c in condition):
@@ -99,21 +115,24 @@ class ModelSwitch(Switch):
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.model.__name__)
-        
+
+    def get_id(self):
+        return '%s.%s:%s' % (self.__module__, self.__class__.__name__, self.model.__name__)
+    
     def can_execute(self, instance):
         return isinstance(instance, self.model)
     
+    def get_namespace(self):
+        return '%s.%s' % (self.model._meta.app_label, self.model.module_name)
+    
     def get_type(self):
         return self.model
-    
-    def get_type_label(self):
-        return self.model.__name__
     
     def get_group_label(self):
         return self.model._meta.verbose_name
 
 class RequestSwitch(Switch):
-    def get_type_label(self):
+    def get_namespace(self):
         return 'request'
     
     def can_execute(self, instance):
