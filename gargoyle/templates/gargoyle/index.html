@@ -76,7 +76,8 @@
                     <div class="group">
                       <label>{{ group }}</label>
                       {% for field, value, display in conds %}
-                        <span data-field="{{ field }}" data-value="{{ value }}" class="value">{{ display }}</span>{% if not forloop.last %}, {% endif %}
+                        <span data-field="{{ field }}" data-value="{{ value }}" class="value">
+                          <nobr>{{ display }}</nobr></span>{% if not forloop.last %}, {% endif %}
                       {% endfor %}
                     </div>
                   {% endfor %}
