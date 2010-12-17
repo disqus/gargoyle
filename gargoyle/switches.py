@@ -5,6 +5,9 @@ from django.http import HttpRequest
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+def titlize(s):
+    return s.title().replace('_', ' ')
+
 class ValidationError(Exception): pass
 
 class Field(object):
@@ -15,7 +18,7 @@ class Field(object):
     def set_name(self, name):
         self.name = name
         if name and not self.label:
-            self.label = name.title().replace('_', ' ')
+            self.label = titlize(name)
     
     def is_active(self, condition, value):
         return condition == value
@@ -31,7 +34,7 @@ class Field(object):
         return mark_safe('<input type="text" value="%s" name="%s"/>' % (escape(value or ''), escape(self.name)))
 
     def display(self, value):
-        return value
+        return '%s: %s' % (self.label, value)
 
 class Boolean(Field):
     def is_active(self, condition, value):
@@ -71,7 +74,7 @@ class Range(Field):
                          (escape(value[0]), escape(self.name), escape(value[1]), escape(self.name)))
 
     def display(self, value):
-        return '%s-%s' % (value[0], value[1])
+        return '%s: %s-%s' % (self.label, value[0], value[1])
 
 class Percent(Range):
     def is_active(self, condition, value):
@@ -79,7 +82,7 @@ class Percent(Range):
         return mod >= condition[0] and mod <= condition[1]
 
     def display(self, value):
-        return '%s%% (%s-%s)' % (value[1]-value[0], value[0], value[1])
+        return '%s: %s%% (%s-%s)' % (self.label, value[1]-value[0], value[0], value[1])
 
 class String(Field):
     pass
