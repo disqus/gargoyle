@@ -1,5 +1,6 @@
 from functools import wraps
 
+from django.conf import settings
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_protect
@@ -8,7 +9,7 @@ from django.shortcuts import render_to_response
 from django.utils import simplejson
 
 from gargoyle import conf
-from gargoyle.models import Switch, GLOBAL, DISABLED, gargoyle
+from gargoyle.models import Switch, GLOBAL, DISABLED, GLOBAL_NAMESPACE, INCLUDE, EXCLUDE, gargoyle
 from gargoyle.switches import ValidationError
 
 def login_required(func):
@@ -99,6 +100,11 @@ def json(func):
                 "success": False,
                 "data": u','.join(map(unicode, e.messages)),
             }
+        except Exception:
+            if settings.DEBUG:
+                import traceback
+                traceback.print_exc()
+            raise
         return HttpResponse(simplejson.dumps(response), mimetype="application/json")
     return wrapper
 
@@ -146,9 +152,9 @@ def status(request):
         raise GargoyleException("Status must be integer")
 
     if status in (GLOBAL, DISABLED):
-        switch.value["global"] = (status == GLOBAL)
+        switch.value[GLOBAL_NAMESPACE] = (status == GLOBAL)
     else:
-        switch.value.pop("global", None)
+        switch.value.pop(GLOBAL_NAMESPACE, None)
     switch.save()
 
     return switch.to_dict()
@@ -164,12 +170,18 @@ def add_condition(request):
     key = request.POST.get("key")
     switch_id = request.POST.get("id")
     field_name = request.POST.get("field")
+    exclude = request.POST.get("exclude")
     
     if not all([key, switch_id, field_name]):
         raise GargoyleException("Fields cannot be empty")
 
     field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
     value = field.validate(request.POST)
+    
+    if exclude:
+        value = [EXCLUDE, value]
+    else:
+        value = [INCLUDE, value]
     
     switch = Switch.objects.get(key=key)
     switch.add_condition(switch_id, field_name, value)

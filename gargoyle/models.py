@@ -19,6 +19,11 @@ DISABLED  = 1
 SELECTIVE = 2
 GLOBAL    = 3
 
+GLOBAL_NAMESPACE = 'global'
+
+INCLUDE = 'i'
+EXCLUDE = 'e'
+
 class Switch(models.Model):
     """
     
@@ -26,14 +31,14 @@ class Switch(models.Model):
     
     {
       disable: bool,
-      class.__name__: {
-          id: [0, 50] // 50% of users
+      namespace: {
+          id: [[INCLUDE, 0, 50], [INCLUDE, 'string']] // 50% of users
       }
     }
     """
     
     key = models.CharField(max_length=32, primary_key=True)
-    value = JSONField(default="{\"global\": false}")
+    value = JSONField(default="{\"%s\": false}" % GLOBAL_NAMESPACE)
     label = models.CharField(max_length=32, null=True)
     date_created = models.DateTimeField(default=datetime.datetime.now)
     description = models.TextField(null=True)
@@ -64,18 +69,18 @@ class Switch(models.Model):
             'conditions': {}
         }
 
-        for group, field, value in self.get_active_conditions():
+        for group, field, value, is_exclude in self.get_active_conditions():
             if group not in data['conditions']:
-                data['conditions'][group] = [(field.name, value, field.display(value))]
+                data['conditions'][group] = [(field.name, value, field.display(value), is_exclude)]
             else:
-                data['conditions'][group].append((field.name, value, field.display(value)))
+                data['conditions'][group].append((field.name, value, field.display(value), is_exclude))
 
         return data
     
     def get_status(self):
-        if self.value.get('global') is False:
+        if self.value.get(GLOBAL_NAMESPACE) is False:
             return DISABLED
-        elif self.value.get('global'):
+        elif self.value.get(GLOBAL_NAMESPACE):
             return GLOBAL
         else:
             return SELECTIVE
@@ -83,6 +88,11 @@ class Switch(models.Model):
     status = property(get_status)
 
     def add_condition(self, switch_id, field_name, condition, commit=True):
+        assert len(condition) == 2
+        
+        if condition[0] not in (INCLUDE, EXCLUDE):
+            raise ValueError('Condition must be a list who\'s first item is INCLUDE or EXCLUDE')
+
         switch = gargoyle.get_switch_by_id(switch_id)
         namespace = switch.get_namespace()
         if namespace not in self.value:
@@ -101,7 +111,7 @@ class Switch(models.Model):
             return
         if field_name not in self.value[namespace]:
             return
-        self.value[namespace][field_name] = [c for c in self.value[namespace][field_name] if c != condition]
+        self.value[namespace][field_name] = [c for c in self.value[namespace][field_name] if c[1] != condition]
         if commit:
             self.save()
 
@@ -113,7 +123,10 @@ class Switch(models.Model):
                 group = switch.get_group_label()
                 for name, field in switch.fields.iteritems():
                     for value in self.value[ns].get(name, []):
-                        yield group, field, value
+                        try:
+                            yield group, field, value[1], value[0] == EXCLUDE
+                        except TypeError:
+                            continue
 
 class SwitchManager(ModelDict):
     _registry = {}
@@ -134,9 +147,9 @@ class SwitchManager(ModelDict):
         conditions = conditions.value
         if not conditions:
             return True
-        elif conditions.get('global'):
+        elif conditions.get(GLOBAL_NAMESPACE):
             return True
-        elif conditions.get('global') is False:
+        elif conditions.get(GLOBAL_NAMESPACE) is False:
             return False
 
         if instances:

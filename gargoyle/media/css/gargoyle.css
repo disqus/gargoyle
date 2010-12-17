@@ -197,12 +197,14 @@ input[type=text], input[type=password], select, textarea {
 }
 
 #container table.switches td.name div.conditionsForm div.fields label {
-    display: none;
 }
 
 #container table.switches td.name div.conditionsForm div.fields input {
     font-size: 12px;
     margin: 0 5px;
+}
+#container table.switches td.name div.conditionsForm div.fields button {
+    margin-left: 5px;
 }
 
 #container table.switches td.name div.conditionsForm div.fields .helptext {

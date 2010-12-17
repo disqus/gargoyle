@@ -75,9 +75,9 @@
                   {% for group, conds in switch.conditions.iteritems %}
                     <div class="group">
                       <label>{{ group }}</label>
-                      {% for field, value, display in conds %}
+                      {% for field, value, display, is_exclude in conds %}
                         <span data-field="{{ field }}" data-value="{{ value }}" class="value">
-                          <nobr>{{ display }}</nobr></span>
+                          <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}</nobr></span>
                       {% endfor %}
                     </div>
                   {% endfor %}
@@ -188,7 +188,8 @@
               <div class="group">
                 <label>${group}</label>
                 {{ each(i, item) conds }}
-                  <span data-field="${item[0]}" data-value="${item[1]}" class="value">${item[2]}</span>
+                  <span data-field="${item[0]}" data-value="${item[1]}" class="value">
+                    <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}</nobr></span>
                 {{ /each }}
               </div>
             {{ /each }}
@@ -253,7 +254,8 @@
         {% for group, id, field in all_conditions %}
           <div class="fields" data-path="{{ id }}.{{ field.name }}" style="display:none;">
             <form action="" method="get" data-switch="{{ id }}" data-field="{{ field.name }}">
-              <label>{{ field.label }}: </label>{{ field|render_field }}
+              {{ field|render_field }}
+              <label><input type="checkbox" name="exclude" value="1"/> Exclude</label>
               <button type="submit" class="small button">Add</button>
               {% if field.help_text %}
                 <div class="helptext">{{ field.help_text }}</div>

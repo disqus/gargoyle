@@ -27,7 +27,9 @@ class Field(object):
 
     def validate(self, data):
         value = data.get(self.name)
-        return self.clean(value)
+        if value:
+            value = self.clean(value)
+        return value
 
     def clean(self, value):
         return value
