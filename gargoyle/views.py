@@ -170,7 +170,7 @@ def add_condition(request):
 
     field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
     value = field.validate(request.POST)
-
+    
     switch = Switch.objects.get(key=key)
     switch.add_condition(switch_id, field_name, value)
 

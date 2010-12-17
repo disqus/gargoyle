@@ -28,7 +28,8 @@ gargoyle.register(UserSwitch(User))
 
 class IPAddress(String):
     def clean(self, value):
-        return validate_ipv4_address(value)
+        validate_ipv4_address(value)
+        return value
 
 class IPAddressSwitch(RequestSwitch):
     percent = Percent()
