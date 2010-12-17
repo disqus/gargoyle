@@ -90,7 +90,7 @@ class Switch(models.Model):
 
 
 class SwitchManager(ModelDict):
-    _registry = {}
+    _registry = []
     
     def is_active(self, key, *instances):
         """
@@ -115,7 +115,7 @@ class SwitchManager(ModelDict):
 
             for instance in instances:
                 # check each switch to see if it can execute
-                for switch in self._registry.itervalues():
+                for switch in self._registry:
                     if switch.can_execute(instance):
                         if switch.is_active(instance, conditions):
                             return True
@@ -126,7 +126,7 @@ class SwitchManager(ModelDict):
     def register(self, switch):
         if callable(switch):
             switch = switch()
-        self._registry['%s.%s' % (switch.__module__, switch.__class__.__name__)].append(switch)
+        self._registry.append(switch)
 
     def get_switch(self, switch_id):
         return self._registry[switch_id]
