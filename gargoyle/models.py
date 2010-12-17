@@ -109,7 +109,7 @@ class SwitchManager(ModelDict):
 
         conditions = conditions.value
         if not conditions:
-            return False
+            return True
         elif conditions.get('global'):
             return True
         elif conditions.get('global') is False:
