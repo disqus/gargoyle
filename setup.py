@@ -27,7 +27,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'django-modeldict',
+        'django-modeldict>=1.0.1',
         'django-jsonfield',
     ],
     test_suite = 'gargoyle.tests',
