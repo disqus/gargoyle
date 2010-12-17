@@ -162,18 +162,23 @@ input[type=text], input[type=password], select, textarea {
     display: none;
     margin-top: 10px;
     line-height: 25px;
+    min-height: 25px;
     border: solid 1px #dfdfdf;
-    background-color: #eee;
+    background-color: #f0f0f0;
     padding: 5px 10px;
     vertical-align: middle;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    -o-border-radius: 3px;
+    -o-border-radius: 3px;;
+}
+#container table.switches td.name div.conditionsForm.visible {
+    display: inline-block;
 }
 
 #container table.switches td.name div.conditionsForm div.fields,
 #container table.switches td.name div.conditionsForm div.fields form {
     display: inline;
+    color: #999;
 }
 
 #container table.switches td.name div.conditionsForm div.fields label {
@@ -183,6 +188,16 @@ input[type=text], input[type=password], select, textarea {
 #container table.switches td.name div.conditionsForm div.fields input {
     font-size: 12px;
     margin: 0 5px;
+}
+
+#container table.switches td.name div.conditionsForm div.fields .helptext {
+    display: block;
+    color: #666;
+    font-size: 85%;
+}
+
+#container table.switches td.name div.condition {
+    display: block;
 }
 
 #container table.switches td.name div.conditions {

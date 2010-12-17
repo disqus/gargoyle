@@ -234,27 +234,32 @@
     {% endraw %}
 
     <script type="text/x-jquery-tmpl" id="switchConditions">
-      <select name="condition">
-        <option></option>
+      <div class="clearfix">
+        <select name="condition">
+          <option></option>
+          {% for group, namespace, field in all_conditions %}
+            {% ifchanged group %}
+              {% if not loop.first %}</optgroup>{% endif %}
+              <optgroup label="{{ group }}">
+            {% endifchanged %}
+
+            <option value="{{ namespace }},{{ field.name }}">{% if group != field.label %}{{ group }}: {% endif %}{{ field.label }}</option>
+          {% endfor %}
+          </optgroup>
+        </select>
+
         {% for group, namespace, field in all_conditions %}
-          {% ifchanged group %}
-            {% if not loop.first %}</optgroup>{% endif %}
-            <optgroup label="{{ group }}">
-          {% endifchanged %}
-
-          <option value="{{ namespace }},{{ field.name }}">{% if group != field.label %}{{ group }}: {% endif %}{{ field.label }}</option>
+          <div class="fields" data-path="{{ namespace }}.{{ field.name }}" style="display:none;">
+            <form action="" method="get" data-namespace="{{ namespace }}" data-field="{{ field.name }}">
+              <label>{{ field.label }}: </label>{{ field|render_field }}
+              <button type="submit" class="small button">Add</button>
+              {% if field.help_text %}
+                <div class="helptext">{{ field.help_text }}</div>
+              {% endif %}
+            </form>
+          </div>
         {% endfor %}
-        </optgroup>
-      </select>
-
-      {% for group, namespace, field in all_conditions %}
-        <div class="fields" data-path="{{ namespace }}.{{ field.name }}" style="display:none;">
-          <form action="" method="get" data-namespace="{{ namespace }}" data-field="{{ field.name }}">
-            <label>{{ field.label }}: </label>{{ field|render_field }}
-            <button type="submit" class="small button">Add</button>
-          </form>
-        </div>
-      {% endfor %}
+      </div>
     </script>
   </body>
 </html>

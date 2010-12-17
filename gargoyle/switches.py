@@ -11,8 +11,11 @@ def titlize(s):
 class ValidationError(Exception): pass
 
 class Field(object):
-    def __init__(self, label=None):
+    default_help_text = None
+    
+    def __init__(self, label=None, help_text=None):
         self.label = label
+        self.help_text = help_text or self.default_help_text
         self.set_name(None)
     
     def set_name(self, name):
@@ -77,6 +80,8 @@ class Range(Field):
         return '%s: %s-%s' % (self.label, value[0], value[1])
 
 class Percent(Range):
+    default_help_text = 'Enter two ranges. e.g. 0-50 is lower 50%'
+    
     def is_active(self, condition, value):
         mod = value % 100
         return mod >= condition[0] and mod <= condition[1]

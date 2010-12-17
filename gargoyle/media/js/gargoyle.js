@@ -75,9 +75,9 @@ $(document).ready(function () {
 
         if (form.is(":hidden")) {
             form.html($("#switchConditions").tmpl({}));
-            form.show();
+            form.addClass('visible');
         } else {
-            form.hide();
+            form.removeClass('visible');
         }
     });
     
