@@ -47,7 +47,7 @@ $(document).ready(function () {
         var status = el.attr("data-status");
         var labels = {
             3: "(Active for everyone)",
-            2: "(Active for everyone)",
+            2: "(Active for conditions)",
             1: "(Disabled for everyone)"
         };
 
@@ -61,6 +61,9 @@ $(document).ready(function () {
                 if (swtch.status == status) {
                     row.find(".toggled").removeClass("toggled");
                     el.addClass("toggled");
+                    if (!swtch.conditions && swtch.status == 2) {
+                        swtch.status = 3;
+                    }
                     row.find('.status p').text(labels[swtch.status]);
                 }
             });

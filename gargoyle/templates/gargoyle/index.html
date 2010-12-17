@@ -90,10 +90,10 @@
               Disabled
             </button>
             <p>
-              {% if status == 3 %}
+              {% if switch.status == 3 %}
                   (Active for everyone)
-              {% else %}{% if status == 2 %}
-                {% if switch.value %}
+              {% else %}{% if switch.status == 2 %}
+                {% if switch.conditions %}
                   (Active for conditions)
                 {% else %}
                   (Active for everyone)
@@ -200,7 +200,11 @@
                 (Active for everyone)
             {{else}}
               {{if status == 2}}
-                (Active for everyone)
+                {{if conditions}}
+                  (Active for conditions)
+                {{else}}
+                  (Active for everyone)
+                {{/if}}
               {{else}}
                 (Disabled for everyone)
               {{/if}}
