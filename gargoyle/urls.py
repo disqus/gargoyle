@@ -19,5 +19,7 @@ urlpatterns = patterns('',
     url(r'^update/$', 'gargoyle.views.update', name='gargoyle-update'),
     url(r'^delete/$', 'gargoyle.views.delete', name='gargoyle-delete'),
     url(r'^status/$', 'gargoyle.views.status', name='gargoyle-status'),
+    url(r'^conditions/add/$', 'gargoyle.views.add_condition', name='gargoyle-add-condition'),
+    url(r'^conditions/remove/$', 'gargoyle.views.remove_condition', name='gargoyle-remove-condition'),
     url(r'^$', 'gargoyle.views.index', name='gargoyle'),
 )

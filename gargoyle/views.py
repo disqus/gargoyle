@@ -1,6 +1,5 @@
 from functools import wraps
 
-from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
@@ -102,4 +101,35 @@ def delete(request):
     switch = Switch.objects.get(key=request.POST.get("key"))
     switch.delete()
     return {}
-    
+
+@json
+def add_condition(request):
+    key = request.POST.get("key")
+    namespace = request.POST.get("namespace")
+    field_name = request.POST.get("field")
+    value = request.POST.get("value")
+
+    if not all([key, namespace, field_name, value]):
+        raise GargoyleException("Fields cannot be empty")
+
+    switch = Switch.objects.get(key=key)
+
+    switch.add_condition(namespace, field_name, value)
+
+    return switch.to_dict()
+
+@json
+def remove_condition(request):
+    key = request.POST.get("key")
+    namespace = request.POST.get("namespace")
+    field_name = request.POST.get("field")
+    value = request.POST.get("value")
+
+    if not all([key, namespace, field_name, value]):
+        raise GargoyleException("Fields cannot be empty")
+
+    switch = Switch.objects.get(key=key)
+
+    switch.remove_condition(namespace, field_name, value)
+
+    return switch.to_dict()
