@@ -2,6 +2,8 @@
 # Credit to Haystack for abstraction concepts
 
 from django.http import HttpRequest
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 class ValidationError(Exception): pass
 
@@ -19,9 +21,19 @@ class Field(object):
     def clean(self, value):
         return value
 
+    def render(self, value):
+        return mark_safe('<input type="text" value="%s" name="%s"%s/>' % (escape(self.value), escape(self.name)))
+
 class Boolean(Field):
     def is_active(self, condition, value):
         return bool(value)
+    
+    def render(self, value):
+        if value:
+            selected = ' checked="checked"'
+        else:
+            selected = ''
+        return mark_safe('<input type="checkbox" value="1" name="%s"%s/>' % (escape(self.name), selected))
 
 class Choice(Field):
     def __init__(self, choices, **kwargs):
@@ -40,10 +52,16 @@ class Range(Field):
     def is_active(self, condition, value):
         return value >= condition[0] and value <= condition[1]
 
+    def render(self, value):
+        return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
+
 class Percent(Field):
     def is_active(self, condition, value):
         mod = value % 100
         return mod >= condition[0] and mod <= condition[1]
+
+    def render(self, value):
+        return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
 
 class String(Field):
     pass
