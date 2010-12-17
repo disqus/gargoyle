@@ -15,7 +15,7 @@ class Field(object):
     def set_name(self, name):
         self.name = name
         if name and not self.label:
-            self.label = name.title()
+            self.label = name.title().replace('_', ' ')
     
     def is_active(self, condition, value):
         return condition == value

@@ -67,6 +67,24 @@ class Switch(models.Model):
             
     status = property(get_status)
 
+    def add_condition(self, namespace, field_name, condition, commit=True):
+        if namespace not in self.value:
+            self.value[namespace] = {}
+        if field_name not in self.value[namespace]:
+            self.value[namespace][field_name] = []
+        self.value[namespace][field_name].append(condition)
+        if commit:
+            self.save()
+    
+    def remove_condition(self, namespace, field_name, condition, commit=True):
+        if namespace not in self.value:
+            return
+        if field_name not in self.value[namespace]:
+            return
+        self.value[namespace][field_name] = [c for c in self.value[namespace][field_name] if c != condition]
+        if commit:
+            self.save()
+
     def get_active_conditions(self):
         "Returns groups of lists of active conditions"
         for switch in sorted(gargoyle._registry, key=lambda x: x.get_group_label()):
