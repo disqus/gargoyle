@@ -222,12 +222,15 @@ input[type=text], input[type=password], select, textarea {
 #container table.switches td.name div.conditions div.group {
     font-size: 90%;
     margin-top: 5px;
+    padding-left: 100px;
+    position: relative;
 }
 
 #container table.switches td.name div.conditions div.group label {
-    display: inline-block;
+    position: absolute;
+    left: 0;
     width: 100px;
-    color: #666;
+    color: #999;
 }
 
 #container table.switches td.name div.conditions div.group span.value {
