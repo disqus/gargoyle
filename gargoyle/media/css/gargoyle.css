@@ -301,6 +301,7 @@ body {
 .button.toggled,
 .button.toggled:hover,
 .button.toggled:focus {
+    background-color: #5888b2;
     background-image: url('../img/button-bg-active.png');
     background-position: 0 0;
     color: #fff;
