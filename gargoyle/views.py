@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 
-from gargoyle.models import Switch, GLOBAL, SELECTIVE, DISABLED
+from gargoyle.models import Switch, GLOBAL, SELECTIVE, DISABLED, gargoyle
 
 json = lambda data: HttpResponse(simplejson.dumps(data), mimetype="application/json")
 
@@ -29,9 +29,11 @@ def update(request):
     except Switch.DoesNotExist:
         return json({})
 
+    switch.delete()
+
     switch.label = request.POST.get("name")
     switch.key = request.POST.get("key")
-    switch.description = request.POST.get("description")
+    switch.description = request.POST.get("desc")
     switch.save()
 
     return json(switch.to_dict())
