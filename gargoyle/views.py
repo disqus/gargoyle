@@ -1,18 +1,67 @@
 from functools import wraps
 
-from django.http import HttpResponse
+from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 
+from gargoyle import conf
 from gargoyle.models import Switch, GLOBAL, DISABLED, gargoyle
 
+def login_required(func):
+    def wrapped(request, *args, **kwargs):
+        if not conf.PUBLIC:
+            if not request.user.is_authenticated():
+                return HttpResponseRedirect(reverse('gargoyle-login'))
+            if not request.user.has_perm('gargoyle_switch.can_view'):
+                return HttpResponseRedirect(reverse('gargoyle-login'))
+        return func(request, *args, **kwargs)
+    wrapped.__doc__ = func.__doc__
+    wrapped.__name__ = func.__name__
+    return wrapped
+
+@login_required
 def index(request):
     switches = list(Switch.objects.all().order_by("date_created"))
 
     return render_to_response("gargoyle/index.html", {
         "switches": [s.to_dict() for s in switches],
         "all_conditions": list(gargoyle.get_all_conditions()),
+        "request": request,
     })
+
+@csrf_protect
+def login(request):
+    from django.contrib.auth import login as login_
+    from django.contrib.auth.forms import AuthenticationForm
+    
+    if request.POST:
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            login_(request, form.get_user())
+            return HttpResponseRedirect(request.POST.get('next') or reverse('gargoyle'))
+        else:
+            request.session.set_test_cookie()
+    else:
+        form = AuthenticationForm(request)
+        request.session.set_test_cookie()
+
+    
+    context = {
+        "form": form,
+        "request": request,
+    }
+    context.update(csrf(request))
+    return render_to_response('gargoyle/login.html', context)
+
+def logout(request):
+    from django.contrib.auth import logout
+    
+    logout(request)
+    
+    return HttpResponseRedirect(reverse('gargoyle'))
 
 # JSON views
 
@@ -27,6 +76,7 @@ def json(func):
     "Decorator to make JSON views simpler"
 
     @wraps(func)
+    @login_required
     def wrapper(request, *args, **kwargs):
         try:
             response = {

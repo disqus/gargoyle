@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Gargoyle</title>
+    <title>{% block title %}Gargoyle{% endblock %}</title>
 
     <link rel="stylesheet" href="{% url gargoyle-media 'css/gargoyle.css' %}">
     <link rel="stylesheet" href="{% url gargoyle-media 'css/facebox.css' %}">    
@@ -36,86 +36,93 @@
     <div id="header">
       <div class="wrapper">
         <h1>Gargoyle</h1>
-        <h2>Dashboard</h2>
+        <h2>{% block heading %}Dashboard{% endblock %}</h2>
+        <ul class="nav" id="account">
+            {% if request.user.is_authenticated %}
+                <li><a href="{% url gargoyle-logout %}">Logout</a>
+            {% endif %}
+        </ul>
       </div>
     </div>
 
-    <div id="container">
-      <div class="wrapper">
-        <div class="toolbar">
-          <button class="button addSwitch">Add a Switch</button>
+    {% block content %}
+      <div id="container">
+        <div class="wrapper">
+          <div class="toolbar">
+            <button class="button addSwitch">Add a Switch</button>
 
-          <!--
-          <span class="switchTest">
-            <input type="text">
-            <button class="button">Test Switch</button>
-          </span>
-          -->
-        </div>
+            <!--
+            <span class="switchTest">
+              <input type="text">
+              <button class="button">Test Switch</button>
+            </span>
+            -->
+          </div>
 
-        <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>
-          You do not have any switches yet. <a href="#" class="addSwitch">Add the first one</a>.
-        </div>
+          <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>
+            You do not have any switches yet. <a href="#" class="addSwitch">Add the first one</a>.
+          </div>
 
-        <table class="switches {% if not switches %}empty{% endif %}">
-          {% for switch in switches %}
-          <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
-            <td class="name">
-              <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
-              <p>{{ switch.description }}</p>
+          <table class="switches {% if not switches %}empty{% endif %}">
+            {% for switch in switches %}
+            <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
+              <td class="name">
+                <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
+                <p>{{ switch.description }}</p>
 
-              <div class="conditions">
-                {% for group, conds in switch.conditions.iteritems %}
-                  <div class="group">
-                    <label>{{ group }}</label>
-                    {% for field, value, display in conds %}
-                      <span data-field="{{ field }}" data-value="{{ value }}" class="value">{{ display }}</span>{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                  </div>
-                {% endfor %}
-              </div>
+                <div class="conditions">
+                  {% for group, conds in switch.conditions.iteritems %}
+                    <div class="group">
+                      <label>{{ group }}</label>
+                      {% for field, value, display in conds %}
+                        <span data-field="{{ field }}" data-value="{{ value }}" class="value">{{ display }}</span>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endfor %}
+                </div>
 
-              <p class="addCondition"><a href="#">Add a condition</a></p>
-              <div class="conditionsForm">
-              </div>
-            </td>
+                <p class="addCondition"><a href="#">Add a condition</a></p>
+                <div class="conditionsForm">
+                </div>
+              </td>
 
-            <td class="status">
-              <button class="xtrasmall button {% if switch.status == 3 %}toggled{% endif %}" data-status="3">
-                Global
-              </button>
+              <td class="status">
+                <button class="xtrasmall button {% if switch.status == 3 %}toggled{% endif %}" data-status="3">
+                  Global
+                </button>
 
-              <button class="xtrasmall button {% if switch.status == 2 %}toggled{% endif %}" data-status="2">
-                Selective
-              </button>
+                <button class="xtrasmall button {% if switch.status == 2 %}toggled{% endif %}" data-status="2">
+                  Selective
+                </button>
 
-              <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}" data-status="1">
-                Disabled
-              </button>
-              <p>
-                {% if switch.status == 3 %}
-                    (Active for everyone)
-                {% else %}{% if switch.status == 2 %}
-                  {% if switch.conditions %}
-                    (Active for conditions)
+                <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}" data-status="1">
+                  Disabled
+                </button>
+                <p>
+                  {% if switch.status == 3 %}
+                      (Active for everyone)
+                  {% else %}{% if switch.status == 2 %}
+                    {% if switch.conditions %}
+                      (Active for conditions)
+                    {% else %}
+                      (Active for everyone)
+                    {% endif %}
                   {% else %}
-                    (Active for everyone)
-                  {% endif %}
-                {% else %}
-                    (Disabled for everyone)
-                {% endif %}{% endif %}
-              </p>
-            </td>
+                      (Disabled for everyone)
+                  {% endif %}{% endif %}
+                </p>
+              </td>
 
-            <td class="actions">
-              <button class="edit xtrasmall button"><span></span></button>
-              <button class="delete xtrasmall button"><span></span></button>
-            </td> 
-          </tr>
-          {% endfor %}
-        </table>
+              <td class="actions">
+                <button class="edit xtrasmall button"><span></span></button>
+                <button class="delete xtrasmall button"><span></span></button>
+              </td> 
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
-    </div>
+    {% endblock %}
 
     <div id="footer">
       <div class="wrapper">

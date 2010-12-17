@@ -38,6 +38,12 @@ class Switch(models.Model):
     date_created = models.DateTimeField(default=datetime.datetime.now)
     description = models.TextField(null=True)
     
+    class Meta:
+        permissions = (
+            ("can_view", "Can view"),
+        )
+        
+    
     def __unicode__(self):
         return u"%s=%s" % (self.key, self.value)
     

@@ -1,5 +1,4 @@
 import os
-import re
 
 from django.conf.urls.defaults import *
 
@@ -21,5 +20,7 @@ urlpatterns = patterns('',
     url(r'^status/$', 'gargoyle.views.status', name='gargoyle-status'),
     url(r'^conditions/add/$', 'gargoyle.views.add_condition', name='gargoyle-add-condition'),
     url(r'^conditions/remove/$', 'gargoyle.views.remove_condition', name='gargoyle-remove-condition'),
+    url(r'^login/$', 'gargoyle.views.login', name='gargoyle-login'),
+    url(r'^logout/$', 'gargoyle.views.logout', name='gargoyle-logout'),
     url(r'^$', 'gargoyle.views.index', name='gargoyle'),
 )

@@ -45,7 +45,7 @@ body {
     background-color: #eee;
 }
 
-input[type=text], select, textarea {
+input[type=text], input[type=password], select, textarea {
     border: 1px solid #cdd2d6;
     border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -380,3 +380,38 @@ input[type=text], select, textarea {
     -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, .2);
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .2);    
 }
+
+#container.login-area .wrapper {
+    min-width: 0;
+    width: 300px;
+}
+#container.login-area p {
+    margin-bottom: 10px;
+}
+#container.login-area table { width: 295px; }
+#container.login-area td { padding: 2px 0; }
+#container.login-area form {
+    margin-bottom: 0;
+}
+#container.login-area form .submit {
+    text-align: right;
+}
+#container.login-area form td textarea,
+#container.login-area form td input {
+    width: 100%;
+}
+
+#account {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    color: #fff;
+}
+
+.nav {
+    list-style: none;
+    margin-left: 0;
+}
+.nav a { color: inherit; }
+.nav li { display: inline; }
+.nav li a { display: inline-block; }
