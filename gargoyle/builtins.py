@@ -2,11 +2,12 @@ from gargoyle.models import gargoyle
 from gargoyle.switches import ModelSwitch, RequestSwitch, Percent, String, Boolean
 
 from django.contrib.auth.models import AnonymousUser, User
+from django.core.validators import validate_ipv4_address
 
 class UserSwitch(ModelSwitch):
     percent = Percent()
     username = String()
-    is_authenticated = Boolean(label='Registered')
+    is_anonymous = Boolean(label='Anonymous')
 
     def can_execute(self, instance):
         return isinstance(instance, (User, AnonymousUser))
@@ -25,9 +26,13 @@ class UserSwitch(ModelSwitch):
 
 gargoyle.register(UserSwitch(User))
 
+class IPAddress(String):
+    def clean(self, value):
+        return validate_ipv4_address(value)
+
 class IPAddressSwitch(RequestSwitch):
     percent = Percent()
-    ip_address = String(label='IP Address')
+    ip_address = IPAddress(label='IP Address')
 
     def get_namespace(self):
         return 'ip'

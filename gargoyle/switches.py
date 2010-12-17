@@ -4,11 +4,10 @@
 from django.http import HttpRequest
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.core.validators import ValidationError
 
 def titlize(s):
     return s.title().replace('_', ' ')
-
-class ValidationError(Exception): pass
 
 class Field(object):
     default_help_text = None
@@ -16,9 +15,9 @@ class Field(object):
     def __init__(self, label=None, help_text=None):
         self.label = label
         self.help_text = help_text or self.default_help_text
-        self.set_name(None)
+        self.set_values(None)
     
-    def set_name(self, name):
+    def set_values(self, name):
         self.name = name
         if name and not self.label:
             self.label = titlize(name)
@@ -28,10 +27,7 @@ class Field(object):
 
     def validate(self, data):
         value = data.get(self.name)
-        value = self.clean(value)
-        if hasattr(self, 'clean_%s' % self.name):
-            value = getattr(self, 'clean_%s' % self.name)
-        return value
+        return self.clean(value)
 
     def clean(self, value):
         return value
@@ -117,13 +113,16 @@ class SwitchBase(type):
             if fields:
                 attrs['fields'].update(fields)
             
+        instance = super(SwitchBase, cls).__new__(cls, name, bases, attrs)
+    
         for field_name, obj in attrs.items():
             if isinstance(obj, Field):
                 field = attrs.pop(field_name)
-                field.set_name(field_name)
+                field.set_values(field_name)
                 attrs['fields'][field_name] = field
         
-        return super(SwitchBase, cls).__new__(cls, name, bases, attrs)
+        return instance
+    
 
 class Switch(object):
     __metaclass__ = SwitchBase

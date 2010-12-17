@@ -9,6 +9,7 @@ from django.utils import simplejson
 
 from gargoyle import conf
 from gargoyle.models import Switch, GLOBAL, DISABLED, gargoyle
+from gargoyle.switches import ValidationError
 
 def login_required(func):
     def wrapped(request, *args, **kwargs):
@@ -93,7 +94,11 @@ def json(func):
                 "success": False,
                 "data": "Switch cannot be found"
             }
-
+        except ValidationError, e:
+            response = {
+                "success": False,
+                "data": u','.join(map(unicode, e.messages)),
+            }
         return HttpResponse(simplejson.dumps(response), mimetype="application/json")
     return wrapper
 
