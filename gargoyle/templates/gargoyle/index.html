@@ -40,10 +40,12 @@
       <div class="toolbar">
         <button class="button addSwitch">Add a Switch</button>
 
+        <!--
         <span class="switchTest">
           <input type="text">
           <button class="button">Test Switch</button>
         </span>
+        -->
       </div>
 
       {% if not switches %}
@@ -128,7 +130,7 @@
           <td colspan="2" class="buttons">
             <button
               data-action="{{ if add }}add{{ else }}update{{ /if }}"
-              {{ if add }}data-curkey="${curkey}"{{ /if }}              
+              data-curkey="${curkey}"
               class="submitSwitch small button">{{ if add }}Add{{ else }}Update{{ /if }}</button>
             or <a href="#" class="closeFacebox">cancel</a>
           </td>
