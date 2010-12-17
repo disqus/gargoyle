@@ -50,12 +50,21 @@ class Switch(models.Model):
         gargoyle._populate(reset=True)
     
     def to_dict(self):
-        return {
+        data = {
             'key': self.key,
             'status': self.status,
             'label': self.label,
             'description': self.description,
+            'conditions': {}
         }
+
+        for group, field, value in self.get_active_conditions():
+            if group not in data['conditions']:
+                data['conditions'][group] = [(field.name, value)]
+            else:
+                data['conditions'][group].append((field.name, value))
+
+        return data
     
     def get_status(self):
         if self.value.get('global') is False:

@@ -10,7 +10,7 @@ def index(request):
     switches = list(Switch.objects.all().order_by("date_created"))
 
     return render_to_response("gargoyle/index.html", {
-        "switches": switches,
+        "switches": [s.to_dict() for s in switches],
         "all_conditions": list(gargoyle.get_all_conditions()),
     })
 
@@ -113,7 +113,6 @@ def add_condition(request):
         raise GargoyleException("Fields cannot be empty")
 
     switch = Switch.objects.get(key=key)
-
     switch.add_condition(namespace, field_name, value)
 
     return switch.to_dict()
@@ -129,7 +128,6 @@ def remove_condition(request):
         raise GargoyleException("Fields cannot be empty")
 
     switch = Switch.objects.get(key=key)
-
     switch.remove_condition(namespace, field_name, value)
 
     return switch.to_dict()

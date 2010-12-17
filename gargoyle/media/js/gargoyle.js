@@ -89,6 +89,23 @@ $(document).ready(function () {
             find("div[data-path=" + field[0] + "." + field[1] + "]").show();
     });
 
+    $("div.conditionsForm form").live("submit", function (ev) {
+        ev.preventDefault();
+
+        var data = {
+            key: $(this).parents("tr:first").attr("data-switch-key"),
+            namespace: $(this).attr("data-namespace"),
+            field: $(this).attr("data-field")
+        };
+        
+        data.value = $(this).find("input[name=" + data.field + "]:first").val()
+
+        api(GARGOYLE.addCondition, data, function (swtch) {
+            var result = $("#switchData").tmpl(swtch);
+            $("table.switches tr[data-switch-key="+ data.key + "]").replaceWith(result);
+        });
+    });
+
     $("#facebox .closeFacebox").live("click", function (ev) {
         ev.preventDefault();
         $.facebox.close();

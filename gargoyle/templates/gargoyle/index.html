@@ -16,6 +16,8 @@
         updateSwitch: "{% url gargoyle-update %}",
         deleteSwitch: "{% url gargoyle-delete %}",
         updateStatus: "{% url gargoyle-status %}",
+        addCondition: "{% url gargoyle-add-condition %}",
+        delCondition: "{% url gargoyle-remove-condition %}",
 
         facebox: {
           loadingImage: "{% url gargoyle-media 'img/facebox/loading.gif' %}",
@@ -58,9 +60,17 @@
           <td class="name">
             <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
             <p>{{ switch.description }}</p>
-              {% for group, field, value in switch.get_active_conditions %}
-                {{ group }} {{ field.label }}={{ value}}
+
+            <div class="conditions">
+              {% for group, conds in switch.conditions.items %}
+                <div class="group">
+                  <label>{{ group }}</label>
+                  {% for field, value in conds %}
+                    <span data-field="{{ field }}" class="value">{{ value }}</span>{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                </div>
               {% endfor %}
+            </div>
 
             <p class="addCondition"><a href="#">Add a condition</a></p>
             <div class="conditionsForm">
@@ -153,6 +163,17 @@
         <td class="name">
           <h4>${label} <small class="command">(${key})</small></h4>
           <p>${description}</p>
+          
+          <div class="conditions">
+            {{ each(group, conds) conditions }}
+              <div class="group">
+                <label>${group}</label>
+                {{ each(i, item) conds }}
+                  <span data-field="${item[0]}" class="value">${item[1]}</span>{{ if i < conds.length - 1 }}, {{ /if }}
+                {{ /each }}
+              </div>
+            {{ /each }}
+          </div>          
 
           <p class="addCondition"><a href="#">Add a condition</a></p>
           <div class="conditionsForm"></div>          
@@ -207,8 +228,10 @@
 
       {% for group, namespace, field in all_conditions %}
         <div class="fields" data-path="{{ namespace }}.{{ field.name }}" style="display:none;">
-          <label>{{ field.label }}: </label>{{ field|render_field }}
-          <button class="small button">Add</button>
+          <form action="" method="get" data-namespace="{{ namespace }}" data-field="{{ field.name }}">
+            <label>{{ field.label }}: </label>{{ field|render_field }}
+            <button type="submit" class="small button">Add</button>
+          </form>
         </div>
       {% endfor %}
     </script>

@@ -164,7 +164,8 @@ input[type=text], select, textarea {
     -o-border-radius: 3px;
 }
 
-#container table.switches td.name div.conditionsForm div.fields {
+#container table.switches td.name div.conditionsForm div.fields,
+#container table.switches td.name div.conditionsForm div.fields form {
     display: inline;
 }
 
@@ -175,6 +176,24 @@ input[type=text], select, textarea {
 #container table.switches td.name div.conditionsForm div.fields input {
     font-size: 12px;
     margin: 0 5px;
+}
+
+#container table.switches td.name div.conditions {
+    margin: 15px 0 0 15px;
+}
+
+#container table.switches td.name div.conditions div.group {
+    font-size: 90%;
+    margin-top: 5px;
+}
+
+#container table.switches td.name div.conditions div.group label {
+    display: inline-block;
+    width: 100px;
+    color: #666;
+}
+
+#container table.switches td.name div.conditions div.group span.value {
 }
 
 #container table.switches td.status {
