@@ -61,6 +61,10 @@
               {% for group, field, value in switch.get_active_conditions %}
                 {{ group }} {{ field.label }}={{ value}}
               {% endfor %}
+
+            <p class="addCondition"><a href="#">Add a condition</a></p>
+            <div class="conditionsForm">
+            </div>
           </td>
 
           <td class="status">
@@ -92,25 +96,7 @@
           </td> 
         </tr>
         {% endfor %}
-      </table>
-      <div id="add-conditions">
-          Add conditions stuff: <select name="condition">
-            {% for group, namespace, field in all_conditions %}
-              {% ifchanged group %}
-                  {% if not loop.first %}</optgroup>{% endif %}
-                  <optgroup label="{{ group }}">
-              {% endifchanged %}
-              <option value="{{ namespace }},{{ field.name }}">{{ field.label }}</option>
-            {% endfor %}
-            </optgroup>
-          </select>
-          {% for group, namespace, field in all_conditions %}
-            <div id="widget-{{ namespace }}/{{ field.name }}">
-                {{ field|render_field }}
-            </div>
-          {% endfor %}
-      </div>
-      
+      </table>      
     </div>
 
     <div id="footer">
@@ -167,6 +153,9 @@
         <td class="name">
           <h4>${label} <small class="command">(${key})</small></h4>
           <p>${description}</p>
+
+          <p class="addCondition"><a href="#">Add a condition</a></p>
+          <div class="conditionsForm"></div>          
         </td>
 
         <td class="status">
@@ -201,6 +190,28 @@
       </tr>
     </script>
     {% endraw %}
+
+    <script type="text/x-jquery-tmpl" id="switchConditions">
+      <select name="condition">
+        <option disabled>Add a condition</option>
+        {% for group, namespace, field in all_conditions %}
+          {% ifchanged group %}
+            {% if not loop.first %}</optgroup>{% endif %}
+            <optgroup label="{{ group }}">
+          {% endifchanged %}
+
+          <option value="{{ namespace }},{{ field.name }}">{{ field.label }}</option>
+        {% endfor %}
+        </optgroup>
+      </select>
+
+      {% for group, namespace, field in all_conditions %}
+        <div class="fields" data-path="{{ namespace }}.{{ field.name }}" style="display:none;">
+          {{ field.label }}: {{ field|render_field }}
+          <button class="small button">Add</button>
+        </div>
+      {% endfor %}
+    </script>
   </body>
 </html>
   
