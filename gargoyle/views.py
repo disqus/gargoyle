@@ -157,35 +157,35 @@ def delete(request):
 @json
 def add_condition(request):
     key = request.POST.get("key")
-    namespace = request.POST.get("namespace")
+    switch_id = request.POST.get("id")
     field_name = request.POST.get("field")
     
-    if not all([key, namespace, field_name]):
+    if not all([key, switch_id, field_name]):
         raise GargoyleException("Fields cannot be empty")
 
-    field = gargoyle._registry[namespace].fields[field_name]
+    field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
 
     value = field.validate(request.POST)
 
     switch = Switch.objects.get(key=key)
-    switch.add_condition(namespace, field_name, value)
+    switch.add_condition(switch_id, field_name, value)
 
     return switch.to_dict()
 
 @json
 def remove_condition(request):
     key = request.POST.get("key")
-    namespace = request.POST.get("namespace")
+    switch_id = request.POST.get("id")
     field_name = request.POST.get("field")
 
-    if not all([key, namespace, field_name]):
+    if not all([key, switch_id, field_name]):
         raise GargoyleException("Fields cannot be empty")
 
-    field = gargoyle._registry[namespace].fields[field_name]
+    field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
 
     value = field.validate(request.POST)
 
     switch = Switch.objects.get(key=key)
-    switch.remove_condition(namespace, field_name, value)
+    switch.remove_condition(switch_id, field_name, value)
 
     return switch.to_dict()

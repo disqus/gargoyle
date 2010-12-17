@@ -110,7 +110,7 @@ $(document).ready(function () {
 
         var data = {
             key: $(this).parents("tr:first").attr("data-switch-key"),
-            namespace: $(this).attr("data-namespace"),
+            id: $(this).attr("data-switch"),
             field: $(this).attr("data-field")
         };
         
