@@ -301,9 +301,9 @@ body {
 .button.toggled,
 .button.toggled:hover,
 .button.toggled:focus {
-    background-color: #5888b2;
-    background-image: url('../img/button-bg-active.png');
-    background-position: 0 0;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#437ba3', endColorstr='#234b6f'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#437ba3), to(#234b6f)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #555,  #437ba3); /* for firefox 3.6+ */        
     color: #fff;
     border-color: #537789;
     text-shadow: 0 1px 0 #000;
