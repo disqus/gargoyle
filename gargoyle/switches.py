@@ -101,9 +101,6 @@ class Switch(object):
     def can_execute(self, instance):
         return True
 
-    def get_id(self):
-        return '%s.%s' % (self.__module__, self.__class__.__name__)
-
     def get_namespace(self):
         return self.__class__.__name__
 
@@ -136,9 +133,6 @@ class ModelSwitch(Switch):
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.model.__name__)
 
-    def get_id(self):
-        return '%s.%s:%s' % (self.__module__, self.__class__.__name__, self.model.__name__)
-    
     def can_execute(self, instance):
         return isinstance(instance, self.model)
     

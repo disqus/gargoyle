@@ -76,20 +76,7 @@ class Switch(models.Model):
                 for field in switch.fields:
                     for value in self.value[ns].get(field.name, []):
                         yield group, field, value
-
-    def add_condition(self, switch_id, field, condition):
-        switch = gargoyle.get_switch(switch_id)
-        self[switch.get_namespace()].setdefault(field, []).append(condition)
-
-    def remove_condition(self, switch_id, field, condition):
-        switch = gargoyle.get_switch(switch_id)
-        ns = switch.get_namespace()
-        if ns not in self:
-            return
-        if field not in self[ns]:
-            return
-        self[ns][field] = [c for c in self[ns][field] if c != condition]
-
+                        "User", field.label, field.render(value)
 
 class SwitchManager(ModelDict):
     _registry = {}
