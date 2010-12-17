@@ -41,4 +41,7 @@ class IPAddressSwitch(RequestSwitch):
             return instance.META['REMOTE_ADDR']
         return super(IPAddressSwitch, self).get_field_value(instance, field_name)
 
+    def get_group_label(self):
+        return 'IP Address'
+
 gargoyle.register(IPAddressSwitch())

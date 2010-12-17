@@ -58,6 +58,9 @@
           <td class="name">
             <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
             <p>{{ switch.description }}</p>
+              {% for group, field, value in switch.get_active_conditions %}
+                {{ group }} {{ field.label }}={{ value}}
+              {% endfor %}
           </td>
 
           <td class="status">
@@ -86,10 +89,28 @@
           <td class="actions">
             <button class="edit xtrasmall button"><span></span></button>
             <button class="delete xtrasmall button"><span></span></button>
-          </td>          
+          </td> 
         </tr>
         {% endfor %}
       </table>
+      <div id="add-conditions">
+          Add conditions stuff: <select name="condition">
+            {% for group, namespace, field in all_conditions %}
+              {% ifchanged group %}
+                  {% if not loop.first %}</optgroup>{% endif %}
+                  <optgroup label="{{ group }}">
+              {% endifchanged %}
+              <option value="{{ namespace }},{{ field.name }}">{{ field.label }}</option>
+            {% endfor %}
+            </optgroup>
+          </select>
+          {% for group, namespace, field in all_conditions %}
+            <div id="widget-{{ namespace }}/{{ field.name }}">
+                {{ field|render_field }}
+            </div>
+          {% endfor %}
+      </div>
+      
     </div>
 
     <div id="footer">
@@ -109,7 +130,7 @@
           <th>Name:</th>
           <td>
             <input name="name" type="text" value="{{ if name }}${name}{{ /if }}">
-            <p>A descriptive name for this switch.
+            <p>A descriptive name for this switch.</p>
           </td>
         </tr>
 

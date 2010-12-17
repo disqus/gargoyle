@@ -5,13 +5,14 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 
-from gargoyle.models import Switch, GLOBAL, SELECTIVE, DISABLED, gargoyle
+from gargoyle.models import Switch, GLOBAL, DISABLED, gargoyle
 
 def index(request):
     switches = list(Switch.objects.all().order_by("date_created"))
 
     return render_to_response("gargoyle/index.html", {
-        "switches": switches
+        "switches": switches,
+        "all_conditions": list(gargoyle.get_all_conditions()),
     })
 
 # JSON views
