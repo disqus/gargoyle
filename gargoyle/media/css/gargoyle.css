@@ -105,6 +105,21 @@ input[type=text], input[type=password], select, textarea {
     box-shadow: 0 1px 2px rgba(0,0,0,.2);    
 }
 
+#status {
+    position: absolute;
+    right: 20px;
+    top: 28px;
+    background: #437ba3 url('../img/loading.gif') 8px center no-repeat;
+    color: #fff;
+    width: 25px;
+    padding: 2px 3px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    text-indent: -10000em;
+    display: none;
+}
+
 #container div.noSwitches {
     margin: 20px 0 0 0;
     text-align: center;

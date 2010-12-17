@@ -1,6 +1,9 @@
 $(document).ready(function () {
     var api = function (url, params, succ) {
+        $('#status').show();
         $.post(url, params, function (resp) {
+            $('#status').hide();
+            
             if (resp.success) {
                 succ(resp.data);
             } else {
