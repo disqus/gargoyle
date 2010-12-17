@@ -89,7 +89,8 @@ class Switch(models.Model):
             self.value[namespace] = {}
         if field_name not in self.value[namespace]:
             self.value[namespace][field_name] = []
-        self.value[namespace][field_name].append(condition)
+        if condition not in self.value[namespace][field_name]:
+            self.value[namespace][field_name].append(condition)
         if commit:
             self.save()
     
