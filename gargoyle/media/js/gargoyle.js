@@ -1,15 +1,25 @@
 $(document).ready(function () {
     var api = function (url, params, succ) {
         $('#status').show();
-        $.post(url, params, function (resp) {
-            $('#status').hide();
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: params,
+            dataType: "json",
+            success: function (resp) {
+                $('#status').hide();
             
-            if (resp.success) {
-                succ(resp.data);
-            } else {
-                alert(resp.data);
+                if (resp.success) {
+                    succ(resp.data);
+                } else {
+                    alert(resp.data);
+                }
+            },
+            failure: function() {
+                $('#status').hide();
+                alert('There was an internal error. Data probably wasn\'t saved');
             }
-        }, "json");
+        });
     };
 
     // Events

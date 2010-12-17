@@ -106,8 +106,10 @@ def add(request):
 
     switch, created = Switch.objects.get_or_create(
         key         = key,
-        label       = request.POST.get("name", ""),
-        description = request.POST.get("desc", "")
+        defaults    = dict(
+            label       = request.POST.get("name", ""),
+            description = request.POST.get("desc", "")
+        )
     )
 
     if not created:
@@ -130,7 +132,7 @@ def update(request):
     return switch.to_dict()
 
 @json
-def status(request):    
+def status(request):
     switch = Switch.objects.get(key=request.POST.get("key"))
 
     try:
