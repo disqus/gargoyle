@@ -164,7 +164,6 @@ def add_condition(request):
         raise GargoyleException("Fields cannot be empty")
 
     field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
-
     value = field.validate(request.POST)
 
     switch = Switch.objects.get(key=key)

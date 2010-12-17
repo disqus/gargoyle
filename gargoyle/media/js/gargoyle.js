@@ -114,7 +114,9 @@ $(document).ready(function () {
             field: $(this).attr("data-field")
         };
         
-        data.value = $(this).find("input[name=" + data.field + "]:first").val()
+        $.each($(this).find("input"), function () {
+            data[$(this).attr("name")] = $(this).val();
+        });
 
         api(GARGOYLE.addCondition, data, function (swtch) {
             var result = $("#switchData").tmpl(swtch);

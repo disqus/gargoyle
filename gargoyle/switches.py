@@ -37,7 +37,8 @@ class Field(object):
         return mark_safe('<input type="text" value="%s" name="%s"/>' % (escape(value or ''), escape(self.name)))
 
     def display(self, value):
-        return '%s: %s' % (self.label, value)
+        return value
+        # return '%s: %s' % (self.label, value) - For Cramer to not to forget how to use his own code
 
 class Boolean(Field):
     def is_active(self, condition, value):
