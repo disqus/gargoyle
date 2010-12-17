@@ -28,9 +28,5 @@ def raw(parser, token):
 raw = register.tag(raw)
 
 def render_field(field, value=None):
-    try:
-        print field.render(value)
-    except Exception, e:
-        print e
     return field.render(value)
 render_field = register.filter(render_field)
