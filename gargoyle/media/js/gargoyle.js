@@ -1,6 +1,18 @@
 $(document).ready(function () {
     $(".addSwitch").click(function () {
-        $.facebox($("#addSwitch").tmpl({}));
+        $.facebox($("#switchForm").tmpl({ add: true }));
+    });
+
+    $(".switches .edit").live("click", function () {
+        var row = $(this).parents("tr:first");
+
+        $.facebox($("#switchForm").tmpl({
+            add:    false,
+            curkey: row.attr("data-switch-key"),
+            key:    row.attr("data-switch-key"),
+            name:   row.attr("data-switch-name"),
+            desc:   row.attr("data-switch-desc")
+        }))
     });
 
     $(".switches .delete").live("click", function () {
@@ -38,22 +50,33 @@ $(document).ready(function () {
         "json");
     });
 
-    $("#facebox .closeFacebox").live("click", function () {
+    $("#facebox .closeFacebox").live("click", function (ev) {
+        ev.preventDefault();
         $.facebox.close();
     });
 
     $("#facebox .submitSwitch").live("click", function () {
-        $.post(GARGOYLE.addSwitch,
+        var action = $(this).attr("data-action");
+        var curkey = $(this).attr("data-curkey");
+
+        $.post(action == "add" ? GARGOYLE.addSwitch : GARGOYLE.updateSwitch,
             {
-                name: $("#facebox input[name=name]").val(),
-                key:  $("#facebox input[name=key]").val(),
-                desc: $("#facebox textarea[name=desc]").val()
+                curkey: curkey,
+                name:   $("#facebox input[name=name]").val(),
+                key:    $("#facebox input[name=key]").val(),
+                desc:   $("#facebox textarea[name=desc]").val()
             },
             
             function (data) {
                 var result = $("#switchData").tmpl(data);
-                $("table.switches tr:last").after(result);
-                $.facebox.close();
+
+                if (action == "add") {
+                    $("table.switches tr:last").after(result);
+                    $.facebox.close();
+                } else {
+                    $("table.switches tr[data-key=" + curkey + "]").replaceWith(result);
+                    $.facebox.close();
+                }
             },
         "json");
     });

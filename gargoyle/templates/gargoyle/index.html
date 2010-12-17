@@ -13,6 +13,7 @@
     <script>
       var GARGOYLE = {
         addSwitch:    "{% url gargoyle-add %}",
+        updateSwitch: "{% url gargoyle-update %}",
         deleteSwitch: "{% url gargoyle-delete %}",
         updateStatus: "{% url gargoyle-status %}",
 
@@ -53,7 +54,7 @@
 
       <table class="switches {% if not switches %}empty{% endif %}">
         {% for switch in switches %}
-        <tr data-switch-key="{{ switch.key }}">
+        <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
           <td class="name">
             <h4>{{ switch.label }}</h4>
             <p>{{ switch.description }}</p>
@@ -90,14 +91,19 @@
       Gargoyle | Created by <a href="http://code.disqus.com/">DISQUS Open Source</a> team.
     </div>
 
-    <script type="text/x-jquery-tmpl" id="addSwitch">
+    {% raw %}
+    <script type="text/x-jquery-tmpl" id="switchForm">
+      {{ if add }}
       <h2>Add a Switch</h2>
+      {{ else }}
+      <h2>Update a Switch</h2>
+      {{ /if }}
 
-      <table class="addSwitchForm">
+      <table class="switchForm">
         <tr>
           <th>Name:</th>
           <td>
-            <input name="name" type="text">
+            <input name="name" type="text" value="{{ if name }}${name}{{ /if }}">
             <p>A descriptive name for this switch.
           </td>
         </tr>
@@ -105,7 +111,7 @@
         <tr>
           <th>Key:</th>
           <td>
-            <input name="key" type="text">
+            <input name="key" type="text" value="{{ if key }}${key}{{ /if }}">
             <p>The key can be any valid JSON string.</p>
           </td>
         </tr>
@@ -113,22 +119,25 @@
         <tr>
           <th>Description:</th>
           <td>
-            <textarea name="desc"></textarea>
+            <textarea name="desc">{{ if desc }}${desc}{{ /if }}</textarea>
             <p>A brief description on what this switch accomplishes.</p>
           </td>
         </tr>
 
         <tr>
           <td colspan="2" class="buttons">
-            <button class="submitSwitch small button">Add</button> or <a href="#" class="closeFacebox">cancel</a>
+            <button
+              data-action="{{ if add }}add{{ else }}update{{ /if }}"
+              {{ if add }}data-curkey="${curkey}"{{ /if }}              
+              class="submitSwitch small button">{{ if add }}Add{{ else }}Update{{ /if }}</button>
+            or <a href="#" class="closeFacebox">cancel</a>
           </td>
         </tr>
       </table>
     </script>
 
-    {% raw %}
     <script type="text/x-jquery-tmpl" id="switchData">
-      <tr data-switch-key="${key}">
+      <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
         <td class="name">
           <h4>${label}</h4>
           <p>${description}</p>
