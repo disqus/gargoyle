@@ -31,7 +31,7 @@ class Switch(models.Model):
     """
     
     key = models.CharField(max_length=32, primary_key=True)
-    value = JSONField(default="{\"disable\": true}")
+    value = JSONField(default="{\"global\": false}")
     label = models.CharField(max_length=32, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     description = models.TextField(null=True)
@@ -56,9 +56,9 @@ class Switch(models.Model):
         }
     
     def get_status(self):
-        if self.value.get('disable'):
+        if self.value.get('global') is False:
             return DISABLED
-        elif self.value:
+        elif self.value.get('global'):
             return SELECTIVE
         else:
             return GLOBAL
@@ -103,7 +103,9 @@ class SwitchManager(ModelDict):
             return False
 
         conditions = conditions.value
-        if conditions.get('disable'):
+        if conditions.get('global'):
+            return True
+        elif conditions.get('global') is False:
             return False
 
         if instances:
@@ -120,7 +122,6 @@ class SwitchManager(ModelDict):
                         if switch.is_active(instance, conditions):
                             return True
 
-        # if all other checks failed, look at our global 'disable' flag
         return not conditions
     
     def register(self, switch):

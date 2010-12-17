@@ -85,15 +85,19 @@ class GargoyleTest(TestCase):
 
         self.assertFalse(gargoyle.is_active('test_for_all'))
 
+        gargoyle['test_for_all'] = {'User': {'username': ['dcramer']}, 'global': True}
+
+        self.assertTrue(gargoyle.is_active('test_for_all'))
+
     def test_disable(self):
-        gargoyle['test_disable'] = {'disable': True}
+        gargoyle['test_disable'] = {'global': False}
 
         self.assertFalse(gargoyle.is_active('test_disable'))
 
         self.assertFalse(gargoyle.is_active('test_disable', self.user))
 
     def test_expiration(self):
-        gargoyle['test_expiration'] = {'disable': True}
+        gargoyle['test_expiration'] = {'global': False}
 
         self.assertFalse(gargoyle.is_active('test_expiration'))
 
@@ -112,7 +116,7 @@ class GargoyleTest(TestCase):
         self.assertTrue(gargoyle.is_active('test_expiration'))
 
     def test_anonymous_user(self):
-        gargoyle['test_anonymous_user'] = {'disable': True}
+        gargoyle['test_anonymous_user'] = {'global': False}
 
         user = AnonymousUser()
 
