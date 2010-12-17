@@ -100,7 +100,7 @@ class SwitchManager(ModelDict):
         conditions = self.get(key)
         if not conditions:
             # XXX: option to have default return value?
-            return False
+            return True
 
         conditions = conditions.value
         if conditions.get('global'):
