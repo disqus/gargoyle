@@ -59,9 +59,9 @@ class Switch(models.Model):
         if self.value.get('global') is False:
             return DISABLED
         elif self.value.get('global'):
-            return SELECTIVE
-        else:
             return GLOBAL
+        else:
+            return SELECTIVE
             
     status = property(get_status)
 
