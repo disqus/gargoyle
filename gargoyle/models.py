@@ -60,7 +60,7 @@ class Switch(models.Model):
     def get_status(self):
         if self.value.get('global') is False:
             return DISABLED
-        elif self.value.get('global') or not self.value:
+        elif self.value.get('global'):
             return GLOBAL
         else:
             return SELECTIVE
