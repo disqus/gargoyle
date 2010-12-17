@@ -53,7 +53,8 @@ class Range(Field):
         return value >= condition[0] and value <= condition[1]
 
     def render(self, value):
-        return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
+        return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % \
+                         (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
 
 class Percent(Field):
     def is_active(self, condition, value):
@@ -61,7 +62,8 @@ class Percent(Field):
         return mod >= condition[0] and mod <= condition[1]
 
     def render(self, value):
-        return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
+        return mark_safe('<input type="text" value="%s" name="%s[min]"/> - <input type="text" value="%s" name="%s[max]"/>' % \
+                         (escape(self.value[0]), escape(self.name), escape(self.value[1]), escape(self.name)))
 
 class String(Field):
     pass
