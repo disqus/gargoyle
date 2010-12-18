@@ -48,13 +48,13 @@ Use it::
 Extend it::
 
 	# myapp/gargoyle.py
-	from gargoyle import switches
+	from gargoyle import conditions
 	from django.contrib.sites.models import Site
 	
-	class SiteSwitch(switches.ModelSwitch):
-	    percent = switches.Percent()
-	    domain = switches.String()
+	class SiteConditionSet(conditions.ModelConditionSet):
+	    percent = conditions.Percent()
+	    domain = conditions.String()
 	
-	gargoyle.register(SiteSwitch(Site))
+	gargoyle.register(SiteConditionSet(Site))
 	
 	gargoyle.is_active('my switch name', Site.objects.get_current())

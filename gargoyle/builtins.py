@@ -1,10 +1,10 @@
 from gargoyle.models import gargoyle
-from gargoyle.switches import ModelSwitch, RequestSwitch, Percent, String, Boolean
+from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent, String, Boolean
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.validators import validate_ipv4_address
 
-class UserSwitch(ModelSwitch):
+class UserConditionSet(ModelConditionSet):
     percent = Percent()
     username = String()
     is_anonymous = Boolean(label='Anonymous')
@@ -18,20 +18,20 @@ class UserSwitch(ModelSwitch):
         instance is the instance of our type
         """
         if isinstance(instance, User):
-            return super(UserSwitch, self).is_active(instance, conditions)
+            return super(UserConditionSet, self).is_active(instance, conditions)
         
         # HACK: allow is_authenticated to work on AnonymousUser
         condition = conditions.get(self.get_namespace(), {}).get('is_authenticated')
         return bool(condition is False)
 
-gargoyle.register(UserSwitch(User))
+gargoyle.register(UserConditionSet(User))
 
 class IPAddress(String):
     def clean(self, value):
         validate_ipv4_address(value)
         return value
 
-class IPAddressSwitch(RequestSwitch):
+class IPAddressConditionSet(RequestConditionSet):
     percent = Percent()
     ip_address = IPAddress(label='IP Address')
 
@@ -45,9 +45,9 @@ class IPAddressSwitch(RequestSwitch):
             return sum([int(x) for x in instance.META['REMOTE_ADDR'].split('.')])
         elif field_name == 'ip_address':
             return instance.META['REMOTE_ADDR']
-        return super(IPAddressSwitch, self).get_field_value(instance, field_name)
+        return super(IPAddressConditionSet, self).get_field_value(instance, field_name)
 
     def get_group_label(self):
         return 'IP Address'
 
-gargoyle.register(IPAddressSwitch())
+gargoyle.register(IPAddressConditionSet())

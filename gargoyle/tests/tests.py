@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.http import HttpRequest, Http404
 from django.test import TestCase
 
-from gargoyle.models import gargoyle, Switch
+from gargoyle.models import gargoyle, Switch, SELECTIVE, DISABLED
 from gargoyle.decorators import switch_is_active
 from gargoyle import autodiscover
 
@@ -14,13 +14,25 @@ class GargoyleTest(TestCase):
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
-
     def test_builtin_discovery(self):
-        # TODO: this test shoudl just ensure we've registered our builtins
+        # TODO: this test should just ensure we've registered our builtins
         self.assertEquals(len(gargoyle._registry), 2)
 
     def test_user(self):
-        gargoyle['test_user'] = {'auth.user': {'percent': [[0, 50]], 'is_staff': [True]}}
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+        
+        # we need a better API for this (model dict isnt cutting it)
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = gargoyle['test']
+        
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='0-50',
+        )
 
         user = User(pk=5)
         self.assertTrue(gargoyle.is_active('test_user', user))
@@ -28,8 +40,43 @@ class GargoyleTest(TestCase):
         user = User(pk=8771)
         self.assertFalse(gargoyle.is_active('test_user', user))
 
+    def test_exclusions(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+        
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = gargoyle['test']
+        
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='0-50',
+            exclude=True,
+        )
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='foo',
+        )
+
+        user = User(pk=5, username='foo')
+        self.assertFalse(gargoyle.is_active('test_user', user))
+
+        user = User(pk=8771, username='foo')
+        self.assertTrue(gargoyle.is_active('test_user', user))
+
     def test_decorator_for_user(self):
-        @switch_is_active('switched_for_user')
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+        
+        switch = Switch.objects.create(
+            key='test',
+            status=DISABLED,
+        )
+        switch = gargoyle['test']
+        
+        @switch_is_active('test')
         def test(request):
             return True
 
@@ -38,16 +85,29 @@ class GargoyleTest(TestCase):
 
         self.assertRaises(Http404, test, request)
 
-        gargoyle['switched_for_user'] = {}
+        switch.status = SELECTIVE
+        switch.save()
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_user'] = {'auth.user': {'username': ['foo']}}
-
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='foo',
+        )
+        
         self.assertTrue(test(request))
 
     def test_decorator_for_ip_address(self):
-        @switch_is_active('switched_for_ipaddress')
+        condition_set = 'gargoyle.builtins.IPAddressConditionSet'
+        
+        switch = Switch.objects.create(
+            key='test',
+            status=DISABLED,
+        )
+        switch = gargoyle['test']
+        
+        @switch_is_active('test')
         def test(request):
             return True
 
@@ -56,23 +116,56 @@ class GargoyleTest(TestCase):
 
         self.assertRaises(Http404, test, request)
 
-        gargoyle['switched_for_ipaddress'] = {'ip': {'ip_address': ['192.168.1.1']}}
+        switch.status = SELECTIVE
+        switch.save()
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='ip_address',
+            condition='192.168.1.1',
+        )
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_ipaddress'] = {'ip': {'ip_address': ['127.0.0.1']}}
+        switch.remove_condition(
+            condition_set=condition_set,
+            field_name='ip_address',
+            condition='192.168.1.1',
+        )
 
         self.assertRaises(Http404, test, request)
 
-        gargoyle['switched_for_ipaddress'] = {}
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='ip_address',
+            condition='192.168.1.1',
+        )
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_ipaddress'] = {'ip': {'percent': [[50, 100]]}}
+        switch.clear_conditions(
+            condition_set=condition_set,
+            field_name='ip_address',
+        )
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='50-100',
+        )
 
         self.assertTrue(test(request))
 
-        gargoyle['switched_for_ipaddress'] = {'ip': {'percent': [[0, 50]]}}
+        switch.clear_conditions(
+            condition_set=condition_set,
+            field_name='ip_address',
+        )
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='0-50',
+        )
 
         self.assertRaises(Http404, test, request)
 

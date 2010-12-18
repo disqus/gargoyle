@@ -112,12 +112,12 @@ class Percent(Range):
 class String(Field):
     pass
 
-class SwitchBase(type):
+class ConditionSetBase(type):
     def __new__(cls, name, bases, attrs):
         attrs['fields'] = {}
         
         # Inherit any fields from parent(s).
-        parents = [b for b in bases if isinstance(b, SwitchBase)]
+        parents = [b for b in bases if isinstance(b, ConditionSetBase)]
         
         for p in parents:
             fields = getattr(p, 'fields', None)
@@ -125,7 +125,7 @@ class SwitchBase(type):
             if fields:
                 attrs['fields'].update(fields)
             
-        instance = super(SwitchBase, cls).__new__(cls, name, bases, attrs)
+        instance = super(ConditionSetBase, cls).__new__(cls, name, bases, attrs)
     
         for field_name, obj in attrs.items():
             if isinstance(obj, Field):
@@ -136,8 +136,8 @@ class SwitchBase(type):
         return instance
     
 
-class Switch(object):
-    __metaclass__ = SwitchBase
+class ConditionSet(object):
+    __metaclass__ = ConditionSetBase
 
     def __repr__(self):
         return '<%s>' % (self.__class__.__name__,)
@@ -173,7 +173,7 @@ class Switch(object):
                 if any(field.is_active(c, value) for c in condition):
                     return True
 
-class ModelSwitch(Switch):
+class ModelConditionSet(ConditionSet):
     def __init__(self, model):
         self.model = model
 
@@ -195,7 +195,7 @@ class ModelSwitch(Switch):
     def get_group_label(self):
         return self.model._meta.verbose_name.title()
 
-class RequestSwitch(Switch):
+class RequestConditionSet(ConditionSet):
     def get_namespace(self):
         return 'request'
     

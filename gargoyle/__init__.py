@@ -3,9 +3,9 @@
 from django.utils.importlib import import_module
 
 from models import gargoyle
-from switches import ModelSwitch
+from conditions import ConditionSet
 
-__all__ = ('gargoyle', 'ModelSwitch', 'autodiscover')
+__all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
 
 import imp
 

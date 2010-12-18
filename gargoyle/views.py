@@ -10,7 +10,7 @@ from django.utils import simplejson
 
 from gargoyle import conf
 from gargoyle.models import Switch, gargoyle
-from gargoyle.switches import ValidationError
+from gargoyle.conditions import ValidationError
 
 def login_required(func):
     def wrapped(request, *args, **kwargs):
