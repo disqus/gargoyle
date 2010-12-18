@@ -165,35 +165,35 @@ def delete(request):
 @json
 def add_condition(request):
     key = request.POST.get("key")
-    switch_id = request.POST.get("id")
+    condition_set_id = request.POST.get("id")
     field_name = request.POST.get("field")
-    exclude = request.POST.get("exclude")
+    exclude = int(request.POST.get("exclude") or 0)
     
-    if not all([key, switch_id, field_name]):
+    if not all([key, condition_set_id, field_name]):
         raise GargoyleException("Fields cannot be empty")
 
-    field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
+    field = gargoyle.get_condition_set_by_id(condition_set_id).fields[field_name]
     value = field.validate(request.POST)
     
     switch = Switch.objects.get(key=key)
-    switch.add_condition(switch_id, field_name, value, exclude=exclude)
+    switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
 
     return switch.to_dict()
 
 @json
 def remove_condition(request):
     key = request.POST.get("key")
-    switch_id = request.POST.get("id")
+    condition_set_id = request.POST.get("id")
     field_name = request.POST.get("field")
 
-    if not all([key, switch_id, field_name]):
+    if not all([key, condition_set_id, field_name]):
         raise GargoyleException("Fields cannot be empty")
 
-    field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
+    field = gargoyle.get_condition_set_by_id(condition_set_id).fields[field_name]
 
     value = field.validate(request.POST)
 
     switch = Switch.objects.get(key=key)
-    switch.remove_condition(switch_id, field_name, value)
+    switch.remove_condition(condition_set_id, field_name, value)
 
     return switch.to_dict()
