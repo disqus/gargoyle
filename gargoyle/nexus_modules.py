@@ -52,7 +52,7 @@ def json(func):
                 traceback.print_exc()
             raise
         return HttpResponse(simplejson.dumps(response), mimetype="application/json")
-    func = wraps(func)(wrapper)
+    wrapper = wraps(func)(wrapper)
     return wrapper
 
 class GargoyleModule(nexus.NexusModule):
