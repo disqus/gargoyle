@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response
 from django.utils import simplejson
 
 from gargoyle import conf
-from gargoyle.models import Switch, GLOBAL, DISABLED, GLOBAL_NAMESPACE, INCLUDE, EXCLUDE, gargoyle
+from gargoyle.models import Switch, gargoyle
 from gargoyle.switches import ValidationError
 
 def login_required(func):
@@ -151,10 +151,7 @@ def status(request):
     except ValueError:
         raise GargoyleException("Status must be integer")
 
-    if status in (GLOBAL, DISABLED):
-        switch.value[GLOBAL_NAMESPACE] = (status == GLOBAL)
-    else:
-        switch.value.pop(GLOBAL_NAMESPACE, None)
+    switch.status = status
     switch.save()
 
     return switch.to_dict()
@@ -178,13 +175,8 @@ def add_condition(request):
     field = gargoyle.get_switch_by_id(switch_id).fields[field_name]
     value = field.validate(request.POST)
     
-    if exclude:
-        value = [EXCLUDE, value]
-    else:
-        value = [INCLUDE, value]
-    
     switch = Switch.objects.get(key=key)
-    switch.add_condition(switch_id, field_name, value)
+    switch.add_condition(switch_id, field_name, value, exclude=exclude)
 
     return switch.to_dict()
 

@@ -19,8 +19,6 @@ DISABLED  = 1
 SELECTIVE = 2
 GLOBAL    = 3
 
-GLOBAL_NAMESPACE = 'global'
-
 INCLUDE = 'i'
 EXCLUDE = 'e'
 
@@ -30,19 +28,25 @@ class Switch(models.Model):
     ``value`` is stored with by type label, and then by column:
     
     {
-      disable: bool,
       namespace: {
           id: [[INCLUDE, 0, 50], [INCLUDE, 'string']] // 50% of users
       }
     }
     """
     
+    STATUS_CHOICES = (
+        (DISABLED, 'Disabled'),
+        (SELECTIVE, 'Selective'),
+        (GLOBAL, 'Global'),
+    )
+    
     key = models.CharField(max_length=32, primary_key=True)
-    value = JSONField(default="{\"%s\": false}" % GLOBAL_NAMESPACE)
+    value = JSONField(default="{}")
     label = models.CharField(max_length=32, null=True)
     date_created = models.DateTimeField(default=datetime.datetime.now)
     description = models.TextField(null=True)
-    
+    status = models.PositiveSmallIntegerField(default=DISABLED, choices=STATUS_CHOICES)
+
     class Meta:
         permissions = (
             ("can_view", "Can view"),
@@ -76,23 +80,13 @@ class Switch(models.Model):
                 data['conditions'][group].append((field.name, value, field.display(value), is_exclude))
 
         return data
-    
-    def get_status(self):
-        if self.value.get(GLOBAL_NAMESPACE) is False:
-            return DISABLED
-        elif self.value.get(GLOBAL_NAMESPACE):
-            return GLOBAL
+
+    def add_condition(self, switch_id, field_name, condition, exclude=False, commit=True):
+        if exclude:
+            condition = [EXCLUDE, condition]
         else:
-            return SELECTIVE
-            
-    status = property(get_status)
-
-    def add_condition(self, switch_id, field_name, condition, commit=True):
-        assert len(condition) == 2
+            condition = [INCLUDE, condition]
         
-        if condition[0] not in (INCLUDE, EXCLUDE):
-            raise ValueError('Condition must be a list who\'s first item is INCLUDE or EXCLUDE')
-
         switch = gargoyle.get_switch_by_id(switch_id)
         namespace = switch.get_namespace()
         if namespace not in self.value:
@@ -137,20 +131,18 @@ class SwitchManager(ModelDict):
         """
         
         try:
-            conditions = self[key]
+            switch = self[key]
         except KeyError:
             return False
 
-        if not conditions:
+        if switch.status == GLOBAL:
             return True
-
-        conditions = conditions.value
-        if not conditions:
-            return True
-        elif conditions.get(GLOBAL_NAMESPACE):
-            return True
-        elif conditions.get(GLOBAL_NAMESPACE) is False:
+        elif switch.status == DISABLED:
             return False
+
+        conditions = switch.value
+        if not conditions:
+            return True
 
         if instances:
             # HACK: support request.user by swapping in User instance

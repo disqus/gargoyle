@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'gargoyle',
+    'south',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
 )
