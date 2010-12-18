@@ -105,6 +105,7 @@ class Percent(Range):
     def clean(self, value):
         value = super(Percent, self).clean(value)
         if value:
+            value = value.split('-')
             if int(value[0]) < 0 or int(value[1]) > 100:
                 raise ValidationError('You must enter values between 0 and 100.')
             if int(value[0]) > int(value[1]):
