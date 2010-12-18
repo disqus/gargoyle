@@ -1,8 +1,9 @@
-{% extends "nexus/base.html" %}
+{% extends "nexus/module.html" %}
 
 {% load gargoyle_helpers %}
 
 {% block head %}
+    {{ block.super }}
     <link rel="stylesheet" href="{% url gargoyle-media 'css/gargoyle.css' %}">
     <script>
         var GARGOYLE = {
