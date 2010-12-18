@@ -1,270 +1,233 @@
-{% load gargoyle_helpers %}<!DOCTYPE html>
+{% extends "nexus/base.html" %}
 
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Gargoyle{% endblock %}</title>
+{% load gargoyle_helpers %}
 
+{% block head %}
     <link rel="stylesheet" href="{% url gargoyle-media 'css/gargoyle.css' %}">
-    <link rel="stylesheet" href="{% url gargoyle-media 'css/facebox.css' %}">    
-    <link href='//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:light,regular&amp;subset=latin' rel='stylesheet'>
-    <link href='//fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
-
     <script>
-      var GARGOYLE = {
-        addSwitch:    "{% url gargoyle-add %}",
-        updateSwitch: "{% url gargoyle-update %}",
-        deleteSwitch: "{% url gargoyle-delete %}",
-        updateStatus: "{% url gargoyle-status %}",
-        addCondition: "{% url gargoyle-add-condition %}",
-        delCondition: "{% url gargoyle-remove-condition %}",
+        var GARGOYLE = {
+            addSwitch:        "{% url gargoyle-add %}",
+            updateSwitch: "{% url gargoyle-update %}",
+            deleteSwitch: "{% url gargoyle-delete %}",
+            updateStatus: "{% url gargoyle-status %}",
+            addCondition: "{% url gargoyle-add-condition %}",
+            delCondition: "{% url gargoyle-remove-condition %}",
 
-        facebox: {
-          loadingImage: "{% url gargoyle-media 'img/facebox/loading.gif' %}",
-          closeImage:   "{% url gargoyle-media 'img/facebox/closelabel.png' %}"
-        }
-      };
+            facebox: {
+                loadingImage: "{% url gargoyle-media 'img/facebox/loading.gif' %}",
+                closeImage:     "{% url gargoyle-media 'img/facebox/closelabel.png' %}"
+            }
+        };
     </script>
 
-    <script src="{% url gargoyle-media 'js/lib/jquery.js' %}"></script>
-    <script src="{% url gargoyle-media 'js/lib/jquery.tmpl.js' %}"></script>    
-    <script src="{% url gargoyle-media 'js/lib/facebox/facebox.js' %}"></script>
     <script src="{% url gargoyle-media 'js/gargoyle.js' %}"></script>
-  </head>
+{% endblock %}
 
-  <body>
-    <div id="header">
-      <div class="wrapper">
-        <h1>Gargoyle</h1>
-        <h2>{% block heading %}Dashboard{% endblock %}</h2>
-        <ul class="nav" id="account">
-            {% if request.user.is_authenticated %}
-                <li><a href="{% url gargoyle-logout %}">Logout</a>
-            {% endif %}
-        </ul>
-      </div>
+{% block content %}
+    <div class="toolbar">
+        <button class="button addSwitch">Add a Switch</button>
+
+        <!--
+        <span class="switchTest">
+            <input type="text">
+            <button class="button">Test Switch</button>
+        </span>
+        -->
     </div>
 
-    {% block content %}
-      <div id="container">
-        <div class="wrapper">
-          <div id="status">Saving...</div>
-          <div class="toolbar">
-            <button class="button addSwitch">Add a Switch</button>
+    <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>
+        You do not have any switches yet. <a href="#" class="addSwitch">Add the first one</a>.
+    </div>
 
-            <!--
-            <span class="switchTest">
-              <input type="text">
-              <button class="button">Test Switch</button>
-            </span>
-            -->
-          </div>
-
-          <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>
-            You do not have any switches yet. <a href="#" class="addSwitch">Add the first one</a>.
-          </div>
-
-          <table class="switches {% if not switches %}empty{% endif %}">
-            {% for switch in switches %}
-            <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
-              <td class="name">
+    <table class="switches {% if not switches %}empty{% endif %}">
+        {% for switch in switches %}
+        <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
+            <td class="name">
                 <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
                 <p>{{ switch.description }}</p>
 
                 <div class="conditions">
-                  {% for group, conds in switch.conditions.iteritems %}
-                    <div class="group">
-                      <label>{{ group }}</label>
-                      {% for field, value, display, is_exclude in conds %}
-                        <span data-field="{{ field }}" data-value="{{ value }}" class="value">
-                          <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}</nobr></span>
-                      {% endfor %}
-                    </div>
-                  {% endfor %}
+                    {% for group, conds in switch.conditions.iteritems %}
+                        <div class="group">
+                            <label>{{ group }}</label>
+                            {% for field, value, display, is_exclude in conds %}
+                                <span data-field="{{ field }}" data-value="{{ value }}" class="value">
+                                    <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}</nobr></span>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
 
                 <p class="addCondition"><a href="#">Add a condition</a></p>
                 <div class="conditionsForm">
                 </div>
-              </td>
+            </td>
 
-              <td class="status">
+            <td class="status">
                 <button class="xtrasmall button {% if switch.status == 3 %}toggled{% endif %}" data-status="3">
-                  Global
+                    Global
                 </button>
 
                 <button class="xtrasmall button {% if switch.status == 2 %}toggled{% endif %}" data-status="2">
-                  Selective
+                    Selective
                 </button>
 
                 <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}" data-status="1">
-                  Disabled
+                    Disabled
                 </button>
                 <p>
-                  {% if switch.status == 3 %}
-                      (Active for everyone)
-                  {% else %}{% if switch.status == 2 %}
-                    {% if switch.conditions %}
-                      (Active for conditions)
+                    {% if switch.status == 3 %}
+                            (Active for everyone)
+                    {% else %}{% if switch.status == 2 %}
+                        {% if switch.conditions %}
+                            (Active for conditions)
+                        {% else %}
+                            (Active for everyone)
+                        {% endif %}
                     {% else %}
-                      (Active for everyone)
-                    {% endif %}
-                  {% else %}
-                      (Disabled for everyone)
-                  {% endif %}{% endif %}
+                            (Disabled for everyone)
+                    {% endif %}{% endif %}
                 </p>
-              </td>
+            </td>
 
-              <td class="actions">
+            <td class="actions">
                 <button class="edit xtrasmall button"><span></span></button>
                 <button class="delete xtrasmall button"><span></span></button>
-              </td> 
-            </tr>
-            {% endfor %}
-          </table>
-        </div>
-      </div>
-    {% endblock %}
-
-    <div id="footer">
-      <div class="wrapper">
-        Gargoyle | Powered by sexy Django magic | Conjured up by the <a href="http://code.disqus.com">DISQUS</a> team and other noble <a href="https://github.com/disqus/gargoyle/contributors">sorcerers</a>.
-      </div>
-    </div>
-
+            </td> 
+        </tr>
+        {% endfor %}
+    </table>
     {% raw %}
-    <script type="text/x-jquery-tmpl" id="switchForm">
-      {{ if add }}
-      <h2>Add a Switch</h2>
-      {{ else }}
-      <h2>Update a Switch</h2>
-      {{ /if }}
+        <script type="text/x-jquery-tmpl" id="switchForm">
+            {{ if add }}
+            <h2>Add a Switch</h2>
+            {{ else }}
+            <h2>Update a Switch</h2>
+            {{ /if }}
 
-      <table class="switchForm">
-        <tr>
-          <th>Name:</th>
-          <td>
-            <input name="name" type="text" value="{{ if name }}${name}{{ /if }}">
-            <p>A descriptive name for this switch.</p>
-          </td>
-        </tr>
+            <table class="switchForm">
+                <tr>
+                    <th>Name:</th>
+                    <td>
+                        <input name="name" type="text" value="{{ if name }}${name}{{ /if }}">
+                        <p>A descriptive name for this switch.</p>
+                    </td>
+                </tr>
 
-        <tr>
-          <th>Key:</th>
-          <td>
-            <input name="key" type="text" value="{{ if key }}${key}{{ /if }}">
-            <p>The key can be any valid JSON string.</p>
-          </td>
-        </tr>
+                <tr>
+                    <th>Key:</th>
+                    <td>
+                        <input name="key" type="text" value="{{ if key }}${key}{{ /if }}">
+                        <p>The key can be any valid JSON string.</p>
+                    </td>
+                </tr>
 
-        <tr>
-          <th>Description:</th>
-          <td>
-            <textarea name="desc">{{ if desc }}${desc}{{ /if }}</textarea>
-            <p>A brief description on what this switch accomplishes.</p>
-          </td>
-        </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td>
+                        <textarea name="desc">{{ if desc }}${desc}{{ /if }}</textarea>
+                        <p>A brief description on what this switch accomplishes.</p>
+                    </td>
+                </tr>
 
-        <tr>
-          <td colspan="2" class="buttons">
-            <button
-              data-action="{{ if add }}add{{ else }}update{{ /if }}"
-              data-curkey="${curkey}"
-              class="submitSwitch small button">{{ if add }}Add{{ else }}Update{{ /if }}</button>
-            or <a href="#" class="closeFacebox">cancel</a>
-          </td>
-        </tr>
-      </table>
-    </script>
+                <tr>
+                    <td colspan="2" class="buttons">
+                        <button
+                            data-action="{{ if add }}add{{ else }}update{{ /if }}"
+                            data-curkey="${curkey}"
+                            class="submitSwitch small button">{{ if add }}Add{{ else }}Update{{ /if }}</button>
+                        or <a href="#" class="closeFacebox">cancel</a>
+                    </td>
+                </tr>
+            </table>
+        </script>
 
-    <script type="text/x-jquery-tmpl" id="switchData">
-      <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
-        <td class="name">
-          <h4>${label} <small class="command">(${key})</small></h4>
-          <p>${description}</p>
-          
-          <div class="conditions">
-            {{ each(group, conds) conditions }}
-              <div class="group">
-                <label>${group}</label>
-                {{ each(i, item) conds }}
-                  <span data-field="${item[0]}" data-value="${item[1]}" class="value">
-                    <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}</nobr></span>
-                {{ /each }}
-              </div>
-            {{ /each }}
-          </div>          
+        <script type="text/x-jquery-tmpl" id="switchData">
+            <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
+                <td class="name">
+                    <h4>${label} <small class="command">(${key})</small></h4>
+                    <p>${description}</p>
+                    
+                    <div class="conditions">
+                        {{ each(group, conds) conditions }}
+                            <div class="group">
+                                <label>${group}</label>
+                                {{ each(i, item) conds }}
+                                    <span data-field="${item[0]}" data-value="${item[1]}" class="value">
+                                        <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}</nobr></span>
+                                {{ /each }}
+                            </div>
+                        {{ /each }}
+                    </div>                    
 
-          <p class="addCondition"><a href="#">Add a condition</a></p>
-          <div class="conditionsForm"></div>          
-        </td>
+                    <p class="addCondition"><a href="#">Add a condition</a></p>
+                    <div class="conditionsForm"></div>                    
+                </td>
 
-        <td class="status">
-          <button class="xtrasmall button {{if status == 3}}toggled{{/if}}" data-status="3">
-            Global
-          </button>
+                <td class="status">
+                    <button class="xtrasmall button {{if status == 3}}toggled{{/if}}" data-status="3">
+                        Global
+                    </button>
 
-          <button class="xtrasmall button {{if status == 2}}toggled{{/if}}" data-status="2">
-            Selective
-          </button>
+                    <button class="xtrasmall button {{if status == 2}}toggled{{/if}}" data-status="2">
+                        Selective
+                    </button>
 
-          <button class="xtrasmall button {{if status == 1}}toggled{{/if}}" data-status="1">
-            Disabled
-          </button>
-          <p>
-            {{if status == 3}}
-                (Active for everyone)
-            {{else}}
-              {{if status == 2}}
-                {{if conditions}}
-                  (Active for conditions)
-                {{else}}
-                  (Active for everyone)
-                {{/if}}
-              {{else}}
-                (Disabled for everyone)
-              {{/if}}
-            {{/if}}
-          </p>
-        </td>
+                    <button class="xtrasmall button {{if status == 1}}toggled{{/if}}" data-status="1">
+                        Disabled
+                    </button>
+                    <p>
+                        {{if status == 3}}
+                                (Active for everyone)
+                        {{else}}
+                            {{if status == 2}}
+                                {{if conditions}}
+                                    (Active for conditions)
+                                {{else}}
+                                    (Active for everyone)
+                                {{/if}}
+                            {{else}}
+                                (Disabled for everyone)
+                            {{/if}}
+                        {{/if}}
+                    </p>
+                </td>
 
-        <td class="actions">
-          <button class="edit xtrasmall button"><span></span></button>
-          <button class="delete xtrasmall button"><span></span></button>
-        </td>          
-      </tr>
-    </script>
+                <td class="actions">
+                    <button class="edit xtrasmall button"><span></span></button>
+                    <button class="delete xtrasmall button"><span></span></button>
+                </td>                    
+            </tr>
+        </script>
     {% endraw %}
 
     <script type="text/x-jquery-tmpl" id="switchConditions">
-      <div class="clearfix">
-        <select name="condition">
-          <option></option>
-          {% for group, id, field in all_conditions %}
-            {% ifchanged group %}
-              {% if not loop.first %}</optgroup>{% endif %}
-              <optgroup label="{{ group }}">
-            {% endifchanged %}
+        <div class="clearfix">
+            <select name="condition">
+                <option></option>
+                {% for group, id, field in all_conditions %}
+                    {% ifchanged group %}
+                        {% if not loop.first %}</optgroup>{% endif %}
+                        <optgroup label="{{ group }}">
+                    {% endifchanged %}
 
-            <option value="{{ id }},{{ field.name }}">{% if group != field.label %}{{ group }}: {% endif %}{{ field.label }}</option>
-          {% endfor %}
-          </optgroup>
-        </select>
+                    <option value="{{ id }},{{ field.name }}">{% if group != field.label %}{{ group }}: {% endif %}{{ field.label }}</option>
+                {% endfor %}
+                </optgroup>
+            </select>
 
-        {% for group, id, field in all_conditions %}
-          <div class="fields" data-path="{{ id }}.{{ field.name }}" style="display:none;">
-            <form action="" method="get" data-switch="{{ id }}" data-field="{{ field.name }}">
-              {{ field|render_field }}
-              <label><input type="checkbox" name="exclude" value="1"/> Exclude</label>
-              <button type="submit" class="small button">Add</button>
-              {% if field.help_text %}
-                <div class="helptext">{{ field.help_text }}</div>
-              {% endif %}
-            </form>
-          </div>
-        {% endfor %}
-      </div>
+            {% for group, id, field in all_conditions %}
+                <div class="fields" data-path="{{ id }}.{{ field.name }}" style="display:none;">
+                    <form action="" method="get" data-switch="{{ id }}" data-field="{{ field.name }}">
+                        {{ field|render_field }}
+                        <label><input type="checkbox" name="exclude" value="1"/> Exclude</label>
+                        <button type="submit" class="small button">Add</button>
+                        {% if field.help_text %}
+                            <div class="helptext">{{ field.help_text }}</div>
+                        {% endif %}
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
     </script>
-  </body>
-</html>
-  
+{% endblock %}

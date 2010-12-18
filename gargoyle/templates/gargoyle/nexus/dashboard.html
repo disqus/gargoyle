@@ -1,0 +1,18 @@
+{% if not switches %}
+    <p>There are no active switches.</p>
+{% else %}
+    <style type="text/css">
+        .switch-list {
+            width: 100%;
+        }
+    </style>
+    <p>There are {{ active_switches_count }} active switches.</p>
+    <table class="switch-list">
+        {% for switch in switches %}
+            <tr>
+                <td>{{ switch.label }}</td>
+                <td>{{ switch.get_status_display }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

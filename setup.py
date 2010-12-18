@@ -28,6 +28,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'django-modeldict>=1.0.1',
+        'nexus>=0.1.0',
         'django-jsonfield',
     ],
     test_suite = 'gargoyle.tests',

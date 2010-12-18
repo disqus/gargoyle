@@ -14,6 +14,7 @@ Enable it::
 	)
 
 	# urls.py
+	
 	urlpatterns = patterns('',
 	    ('^gargoyle/', include('gargoyle.urls')),
 	)
