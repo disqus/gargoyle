@@ -115,7 +115,14 @@ $(document).ready(function () {
         };
         
         $.each($(this).find("input"), function () {
-            data[$(this).attr("name")] = $(this).val();
+            var val;
+
+            if ($(this).attr('type') == 'checkbox') {
+                val = $(this).is(':checked') ? '1' : '0';
+            } else {
+                val = $(this).val();
+            }
+            data[$(this).attr("name")] = val;
         });
 
         api(GARGOYLE.addCondition, data, function (swtch) {
