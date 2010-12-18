@@ -73,11 +73,6 @@ class Switch(models.Model):
         return data
 
     def add_condition(self, condition_set, field_name, condition, exclude=False, commit=True):
-        if exclude:
-            condition = [EXCLUDE, condition]
-        else:
-            condition = [INCLUDE, condition]
-        
         condition_set = gargoyle.get_condition_set_by_id(condition_set)
 
         namespace = condition_set.get_namespace()
@@ -85,8 +80,9 @@ class Switch(models.Model):
         if namespace not in self.value:
             self.value[namespace] = {}
         if field_name not in self.value[namespace]:
-            self.value[namespace][field_name] = set()
-        self.value[namespace][field_name].add(condition)
+            self.value[namespace][field_name] = []
+        if condition not in self.value[namespace][field_name]:
+            self.value[namespace][field_name].append((exclude and EXCLUDE or INCLUDE, condition))
 
         if commit:
             self.save()
@@ -98,11 +94,30 @@ class Switch(models.Model):
 
         if namespace not in self.value:
             return
+            
         if field_name not in self.value[namespace]:
             return
 
         self.value[namespace][field_name] = [c for c in self.value[namespace][field_name] if c[1] != condition]
 
+        if commit:
+            self.save()
+
+    def clear_conditions(self, condition_set, field_name=None, commit=True):
+        condition_set = gargoyle.get_condition_set_by_id(condition_set)
+
+        namespace = condition_set.get_namespace()
+
+        if namespace not in self.value:
+            return
+        
+        if not field_name:
+            del self.value[namespace]
+        elif field_name not in self.value[namespace]:
+            return
+        else:
+            del self.value[namespace][field_name]
+        
         if commit:
             self.save()
 
@@ -113,7 +128,7 @@ class Switch(models.Model):
             if ns in self.value:
                 group = condition_set.get_group_label()
                 for name, field in condition_set.fields.iteritems():
-                    for value in self.value[ns].get(name, set()):
+                    for value in self.value[ns].get(name, []):
                         try:
                             yield group, field, value[1], value[0] == EXCLUDE
                         except TypeError:

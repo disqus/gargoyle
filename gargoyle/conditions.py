@@ -6,6 +6,8 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.core.validators import ValidationError
 
+from gargoyle.models import EXCLUDE
+
 def titlize(s):
     return s.title().replace('_', ' ')
 
@@ -75,10 +77,10 @@ class Range(Field):
     def clean(self, value):
         if value:
             try:
-                value = map(int, value)
+                map(int, value)
             except (TypeError, ValueError):
                 raise ValidationError('You must enter valid integer values.')
-        return value
+        return '-'.join(value)
 
     def render(self, value):
         if not value:
@@ -93,6 +95,7 @@ class Percent(Range):
     default_help_text = 'Enter two ranges. e.g. 0-50 is lower 50%'
     
     def is_active(self, condition, value):
+        condition = map(int, condition.split('-'))
         mod = value % 100
         return mod >= condition[0] and mod <= condition[1]
 
@@ -102,12 +105,11 @@ class Percent(Range):
     def clean(self, value):
         value = super(Percent, self).clean(value)
         if value:
-            if value[0] < 0 or value[1] > 100:
+            if int(value[0]) < 0 or int(value[1]) > 100:
                 raise ValidationError('You must enter values between 0 and 100.')
-            if value[0] > value[1]:
+            if int(value[0]) > int(value[1]):
                 raise ValidationError('Start value must be less than end value.')
         return value
-
 
 class String(Field):
     pass
@@ -166,12 +168,18 @@ class ConditionSet(object):
         conditions are the current value of the switch
         instance is the instance of our type
         """
+        return_value = None
         for name, field in self.fields.iteritems():
-            condition = conditions.get(self.get_namespace(), {}).get(name)
-            if condition:
+            field_conditions = conditions.get(self.get_namespace(), {}).get(name)
+            if field_conditions:
                 value = self.get_field_value(instance, name)
-                if any(field.is_active(c, value) for c in condition):
-                    return True
+                for status, condition in field_conditions:
+                    exclude = status == EXCLUDE
+                    if field.is_active(condition, value):
+                        if exclude:
+                            return False
+                        return_value = True
+        return return_value
 
 class ModelConditionSet(ConditionSet):
     def __init__(self, model):

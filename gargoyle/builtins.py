@@ -21,8 +21,8 @@ class UserConditionSet(ModelConditionSet):
             return super(UserConditionSet, self).is_active(instance, conditions)
         
         # HACK: allow is_authenticated to work on AnonymousUser
-        condition = conditions.get(self.get_namespace(), {}).get('is_authenticated')
-        return bool(condition is False)
+        condition = conditions.get(self.get_namespace(), {}).get('is_anonymous')
+        return bool(condition)
 
 gargoyle.register(UserConditionSet(User))
 
