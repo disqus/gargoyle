@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.http import HttpRequest
+from django.utils.translation import ugettext_lazy as _
 
 from jsonfield import JSONField
 from modeldict import ModelDict
@@ -40,8 +41,10 @@ class Switch(models.Model):
 
     class Meta:
         permissions = (
-            ("can_view", "Can view"),
+            ("can_view", _("can view")),
         )
+        verbose_name = _('switch')
+        verbose_name_plural = _('switches')
         
     
     def __unicode__(self):
