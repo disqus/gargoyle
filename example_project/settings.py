@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'nexus',
     'gargoyle',
     'south',
     # Uncomment the next line to enable the admin:
