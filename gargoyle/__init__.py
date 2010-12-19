@@ -1,4 +1,13 @@
-# XXX: code based on django.contrib.admin auto discovery
+"""
+Gargoyle
+~~~~~~~~
+"""
+
+try:
+    VERSION = __import__('pkg_resources') \
+        .get_distribution('gargoyle').version
+except Exception, e:
+    VERSION = 'unknown'
 
 from django.utils.importlib import import_module
 
