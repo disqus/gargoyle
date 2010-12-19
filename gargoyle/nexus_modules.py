@@ -56,7 +56,8 @@ def json(func):
     return wrapper
 
 class GargoyleModule(nexus.NexusModule):
-    home_url = 'gargoyle'
+    home_url = 'index'
+    name = 'gargoyle'
     
     def get_title(self):
         return 'Gargoyle'
@@ -68,15 +69,15 @@ class GargoyleModule(nexus.NexusModule):
             url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
                 'document_root': os.path.join(GARGOYLE_ROOT, 'media'),
                 'show_indexes': True,
-            }, name='gargoyle-media'),
+            }, name='media'),
 
-            url(r'^add/$', self.as_view(self.add), name='gargoyle-add'),
-            url(r'^update/$', self.as_view(self.update), name='gargoyle-update'),
-            url(r'^delete/$', self.as_view(self.delete), name='gargoyle-delete'),
-            url(r'^status/$', self.as_view(self.status), name='gargoyle-status'),
-            url(r'^conditions/add/$', self.as_view(self.add_condition), name='gargoyle-add-condition'),
-            url(r'^conditions/remove/$', self.as_view(self.remove_condition), name='gargoyle-remove-condition'),
-            url(r'^$', self.as_view(self.index), name='gargoyle'),
+            url(r'^add/$', self.as_view(self.add), name='add'),
+            url(r'^update/$', self.as_view(self.update), name='update'),
+            url(r'^delete/$', self.as_view(self.delete), name='delete'),
+            url(r'^status/$', self.as_view(self.status), name='status'),
+            url(r'^conditions/add/$', self.as_view(self.add_condition), name='add-condition'),
+            url(r'^conditions/remove/$', self.as_view(self.remove_condition), name='remove-condition'),
+            url(r'^$', self.as_view(self.index), name='index'),
         )
         
         return urlpatterns
