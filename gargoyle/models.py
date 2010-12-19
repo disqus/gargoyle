@@ -41,7 +41,7 @@ class Switch(models.Model):
 
     class Meta:
         permissions = (
-            ("can_view", _("can view")),
+            ("can_view", "Can view"),
         )
         verbose_name = _('switch')
         verbose_name_plural = _('switches')
