@@ -124,6 +124,15 @@
     margin-right: 2px;
 }
 
+#container table.switches td.name div.conditions div.group span.value a.delete-condition {
+    text-decoration: none;
+}
+
+#container table.switches td.name div.conditions div.group span.value a.delete-condition img {
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+
 #container table.switches td.status {
     width: 200px;
     text-align: center;

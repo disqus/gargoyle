@@ -14,6 +14,7 @@
             addCondition: "{% url nexus:gargoyle:add-condition %}",
             delCondition: "{% url nexus:gargoyle:remove-condition %}",
 
+            deleteImage:  "{% url nexus:gargoyle:media 'img/delete.png' %}",
             facebox: {
                 loadingImage: "{% url nexus:gargoyle:media 'img/facebox/loading.gif' %}",
                 closeImage:   "{% url nexus:gargoyle:media 'img/facebox/closelabel.png' %}"
@@ -53,7 +54,12 @@
                             <label>{{ group }}</label>
                             {% for field, value, display, is_exclude in conds %}
                                 <span data-field="{{ field }}" data-value="{{ value }}" class="value">
-                                    <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}</nobr></span>
+                                    <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}
+                                        <a href="#" class="delete-condition" title="Delete this condition">
+                                          <img src="{% url nexus:gargoyle:media 'img/delete.png' %}">
+                                        </a>
+                                    </nobr>
+                                </span>
                             {% endfor %}
                         </div>
                     {% endfor %}
@@ -147,7 +153,7 @@
             <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
                 <td class="name">
                     <h4>${label} <small class="command">(${key})</small></h4>
-                    <p>${description}</p>
+                    <p>${description}</p>               
                     
                     <div class="conditions">
                         {{ each(group, conds) conditions }}
@@ -155,7 +161,12 @@
                                 <label>${group}</label>
                                 {{ each(i, item) conds }}
                                     <span data-field="${item[0]}" data-value="${item[1]}" class="value">
-                                        <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}</nobr></span>
+                                        <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}
+                                          <a href="#" class="delete-condition" title="Delete this condition">
+                                            <img src="${GARGOYLE.deleteImage}">
+                                          </a>
+                                        </nobr>
+                                    </span>
                                 {{ /each }}
                             </div>
                         {{ /each }}

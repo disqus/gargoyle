@@ -131,6 +131,16 @@ $(document).ready(function () {
         });
     });
 
+    $("div.conditions span.value a.delete-condition").live("click", function (ev) {
+        ev.preventDefault();
+
+        var data = {
+            key:   $(this).parents("tr:first").attr("data-switch-key"),
+            id:    $(this).attr("data-switch"),
+            field: $(this).attr("data-field")
+        };
+    })
+
     $("#facebox .closeFacebox").live("click", function (ev) {
         ev.preventDefault();
         $.facebox.close();
