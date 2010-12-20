@@ -4,25 +4,25 @@
 
 {% block head %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% url nexus:gargoyle:media 'css/gargoyle.css' %}">
+    <link rel="stylesheet" href="{% url gargoyle:media 'css/gargoyle.css' %}">
     <script>
         var GARGOYLE = {
-            addSwitch:    "{% url nexus:gargoyle:add %}",
-            updateSwitch: "{% url nexus:gargoyle:update %}",
-            deleteSwitch: "{% url nexus:gargoyle:delete %}",
-            updateStatus: "{% url nexus:gargoyle:status %}",
-            addCondition: "{% url nexus:gargoyle:add-condition %}",
-            delCondition: "{% url nexus:gargoyle:remove-condition %}",
+            addSwitch:    "{% url gargoyle:add %}",
+            updateSwitch: "{% url gargoyle:update %}",
+            deleteSwitch: "{% url gargoyle:delete %}",
+            updateStatus: "{% url gargoyle:status %}",
+            addCondition: "{% url gargoyle:add-condition %}",
+            delCondition: "{% url gargoyle:remove-condition %}",
 
-            deleteImage:  "{% url nexus:gargoyle:media 'img/delete.png' %}",
+            deleteImage:  "{% url gargoyle:media 'img/delete.png' %}",
             facebox: {
-                loadingImage: "{% url nexus:gargoyle:media 'img/facebox/loading.gif' %}",
-                closeImage:   "{% url nexus:gargoyle:media 'img/facebox/closelabel.png' %}"
+                loadingImage: "{% url gargoyle:media 'img/facebox/loading.gif' %}",
+                closeImage:   "{% url gargoyle:media 'img/facebox/closelabel.png' %}"
             }
         };
     </script>
 
-    <script src="{% url nexus:gargoyle:media 'js/gargoyle.js' %}"></script>
+    <script src="{% url gargoyle:media 'js/gargoyle.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -56,7 +56,7 @@
                                 <span data-switch="{{ group.id }}" data-field="{{ field }}" data-value="{{ value }}" class="value">
                                     <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}
                                         <a href="#" class="delete-condition" title="Delete this condition">
-                                          <img src="{% url nexus:gargoyle:media 'img/delete.png' %}">
+                                          <img src="{% url gargoyle:media 'img/delete.png' %}">
                                         </a>
                                     </nobr>
                                 </span>
