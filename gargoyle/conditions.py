@@ -31,6 +31,7 @@ class Field(object):
         value = data.get(self.name)
         if value:
             value = self.clean(value)
+            assert isinstance(value, basestring), 'clean methods must return strings'
         return value
 
     def clean(self, value):
@@ -77,7 +78,7 @@ class Range(Field):
     def clean(self, value):
         if value:
             try:
-                map(int, value)
+                numeric = map(int, value)
             except (TypeError, ValueError):
                 raise ValidationError('You must enter valid integer values.')
         return '-'.join(value)
@@ -85,10 +86,11 @@ class Range(Field):
     def render(self, value):
         if not value:
             value = ['', '']
-        return mark_safe('<input type="text" value="%s" placeholder="from" name="%s[min]"/> - <input type="text" placeholder="to"  value="%s" name="%s[max]"/>' % \
+        return mark_safe('<input type="text" value="%s" placeholder="from" name="%s[min]"/> - <input type="text" placeholder="to" value="%s" name="%s[max]"/>' % \
                          (escape(value[0]), escape(self.name), escape(value[1]), escape(self.name)))
 
     def display(self, value):
+        value = value.split('-')
         return '%s: %s-%s' % (self.label, value[0], value[1])
 
 class Percent(Range):
@@ -100,15 +102,16 @@ class Percent(Range):
         return mod >= condition[0] and mod <= condition[1]
 
     def display(self, value):
+        value = value.split('-')
         return '%s: %s%% (%s-%s)' % (self.label, int(value[1]) - int(value[0]), value[0], value[1])
 
     def clean(self, value):
         value = super(Percent, self).clean(value)
         if value:
-            value = value.split('-')
-            if int(value[0]) < 0 or int(value[1]) > 100:
+            numeric = value.split('-')
+            if int(numeric[0]) < 0 or int(numeric[1]) > 100:
                 raise ValidationError('You must enter values between 0 and 100.')
-            if int(value[0]) > int(value[1]):
+            if int(numeric[0]) > int(numeric[1]):
                 raise ValidationError('Start value must be less than end value.')
         return value
 

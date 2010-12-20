@@ -49,11 +49,11 @@
                 <p>{{ switch.description }}</p>
 
                 <div class="conditions">
-                    {% for group, conds in switch.conditions.iteritems %}
+                    {% for group in switch.conditions %}
                         <div class="group">
-                            <label>{{ group }}</label>
-                            {% for field, value, display, is_exclude in conds %}
-                                <span data-field="{{ field }}" data-value="{{ value }}" class="value">
+                            <label>{{ group.label }}</label>
+                            {% for field, value, display, is_exclude in group.conditions %}
+                                <span data-switch="{{ group.id }}" data-field="{{ field }}" data-value="{{ value }}" class="value">
                                     <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}
                                         <a href="#" class="delete-condition" title="Delete this condition">
                                           <img src="{% url nexus:gargoyle:media 'img/delete.png' %}">
@@ -156,11 +156,11 @@
                     <p>${description}</p>               
                     
                     <div class="conditions">
-                        {{ each(group, conds) conditions }}
+                        {{ each(i, group) conditions }}
                             <div class="group">
-                                <label>${group}</label>
-                                {{ each(i, item) conds }}
-                                    <span data-field="${item[0]}" data-value="${item[1]}" class="value">
+                                <label>${group.label}</label>
+                                {{ each(i, item) group.conditions }}
+                                    <span data-switch="${group.id}" data-field="${item[0]}" data-value="${item[1]}" class="value">
                                         <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}
                                           <a href="#" class="delete-condition" title="Delete this condition">
                                             <img src="${GARGOYLE.deleteImage}">

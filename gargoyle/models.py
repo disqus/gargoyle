@@ -64,19 +64,31 @@ class Switch(models.Model):
             'status': self.status,
             'label': self.label,
             'description': self.description,
-            'conditions': {}
+            'conditions': [],
         }
 
-        for group, field, value, is_exclude in self.get_active_conditions():
-            if group not in data['conditions']:
-                data['conditions'][group] = [(field.name, value, field.display(value), is_exclude)]
-            else:
-                data['conditions'][group].append((field.name, value, field.display(value), is_exclude))
+        last = None
+        for condition_set_id, group, field, value, exclude in self.get_active_conditions():
+            if not last or last['id'] != condition_set_id:
+                if last:
+                    data['conditions'].append(last)
+
+                last = {
+                    'id': condition_set_id,
+                    'label': group,
+                    'conditions': []
+                }
+
+            last['conditions'].append((field.name, value, field.display(value), exclude))
+        if last:
+            data['conditions'].append(last)
 
         return data
 
     def add_condition(self, condition_set, field_name, condition, exclude=False, commit=True):
         condition_set = gargoyle.get_condition_set_by_id(condition_set)
+
+        assert isinstance(condition, basestring), 'conditions must be strings'
 
         namespace = condition_set.get_namespace()
 
@@ -128,12 +140,13 @@ class Switch(models.Model):
         "Returns groups of lists of active conditions"
         for condition_set in sorted(gargoyle.get_condition_sets(), key=lambda x: x.get_group_label()):
             ns = condition_set.get_namespace()
+            condition_set_id = condition_set.get_id()
             if ns in self.value:
                 group = condition_set.get_group_label()
                 for name, field in condition_set.fields.iteritems():
                     for value in self.value[ns].get(name, []):
                         try:
-                            yield group, field, value[1], value[0] == EXCLUDE
+                            yield condition_set_id, group, field, value[1], value[0] == EXCLUDE
                         except TypeError:
                             continue
 

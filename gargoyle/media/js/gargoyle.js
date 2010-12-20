@@ -134,11 +134,20 @@ $(document).ready(function () {
     $("div.conditions span.value a.delete-condition").live("click", function (ev) {
         ev.preventDefault();
 
+        var el = $(this).parents("span:first");
+
         var data = {
-            key:   $(this).parents("tr:first").attr("data-switch-key"),
-            id:    $(this).attr("data-switch"),
-            field: $(this).attr("data-field")
+            key:   el.parents("tr:first").attr("data-switch-key"),
+            id:    el.attr("data-switch"),
+            field: el.attr("data-field"),
+            value: el.attr("data-value")
         };
+        
+        api(GARGOYLE.delCondition, data, function (swtch) {
+            var result = $("#switchData").tmpl(swtch);
+            $("table.switches tr[data-switch-key="+ data.key + "]").replaceWith(result);
+        });
+        
     })
 
     $("#facebox .closeFacebox").live("click", function (ev) {
