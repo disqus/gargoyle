@@ -5,18 +5,37 @@ Install it::
 
 	pip install gargoyle
 	
+
 Enable it::
 
+If you dont have Nexus already enabled, you will need to do that first::
+
 	# settings.py
+
 	INSTALLED_APPS = (
 	    ...
-	    'gargoyle',
+	    'nexus',
 	)
 
 	# urls.py
 	
+	import nexus
+	
+	nexus.autodiscover()
+	
 	urlpatterns = patterns('',
-	    ('^gargoyle/', include('gargoyle.urls')),
+	    ('^nexus/', include(nexus.site.urls)),
+	)
+
+
+
+(Nexus is a replacement for your Django admin, that works with django.contrib.admin)
+
+	# settings.py
+	
+	INSTALLED_APPS = (
+	    ...
+	    'gargoyle',
 	)
 
 Use it::
