@@ -14,9 +14,10 @@ class GargoyleTest(TestCase):
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
+
     def test_builtin_discovery(self):
-        # TODO: this test should just ensure we've registered our builtins
-        self.assertEquals(len(gargoyle._registry), 2)
+        self.assertTrue('gargoyle.builtins.IPAddressConditionSet' in gargoyle._registry)
+        self.assertTrue('gargoyle.builtins.UserConditionSet(auth.user)' in gargoyle._registry)
 
     def test_user(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
@@ -39,6 +40,27 @@ class GargoyleTest(TestCase):
 
         user = User(pk=8771)
         self.assertFalse(gargoyle.is_active('test', user))
+        
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='is_staff',
+            condition='1',
+        )
+
+        user = User(pk=8771, is_staff=True)
+        self.assertTrue(gargoyle.is_active('test', user))
+
+        user = User(pk=8771, is_superuser=True)
+        self.assertFalse(gargoyle.is_active('test', user))
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='is_superuser',
+            condition='1',
+        )
+        
+        user = User(pk=8771, is_superuser=True)
+        self.assertTrue(gargoyle.is_active('test', user))
 
     def test_exclusions(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
