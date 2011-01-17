@@ -50,14 +50,6 @@ class Switch(models.Model):
     def __unicode__(self):
         return u"%s=%s" % (self.key, self.value)
     
-    def save(self, *args, **kwargs):
-        super(Switch, self).save(*args, **kwargs)
-        gargoyle._populate(reset=True)
-    
-    def delete(self, *args, **kwargs):
-        super(Switch, self).delete(*args, **kwargs)
-        gargoyle._populate(reset=True)
-    
     def to_dict(self):
         data = {
             'key': self.key,
@@ -86,6 +78,8 @@ class Switch(models.Model):
         return data
 
     def add_condition(self, condition_set, field_name, condition, exclude=False, commit=True):
+        from gargoyle import gargoyle
+        
         condition_set = gargoyle.get_condition_set_by_id(condition_set)
 
         assert isinstance(condition, basestring), 'conditions must be strings'
@@ -103,6 +97,8 @@ class Switch(models.Model):
             self.save()
     
     def remove_condition(self, condition_set, field_name, condition, commit=True):
+        from gargoyle import gargoyle
+
         condition_set = gargoyle.get_condition_set_by_id(condition_set)
 
         namespace = condition_set.get_namespace()
@@ -119,6 +115,8 @@ class Switch(models.Model):
             self.save()
 
     def clear_conditions(self, condition_set, field_name=None, commit=True):
+        from gargoyle import gargoyle
+
         condition_set = gargoyle.get_condition_set_by_id(condition_set)
 
         namespace = condition_set.get_namespace()
@@ -138,6 +136,8 @@ class Switch(models.Model):
 
     def get_active_conditions(self):
         "Returns groups of lists of active conditions"
+        from gargoyle import gargoyle
+
         for condition_set in sorted(gargoyle.get_condition_sets(), key=lambda x: x.get_group_label()):
             ns = condition_set.get_namespace()
             condition_set_id = condition_set.get_id()
@@ -218,4 +218,3 @@ class SwitchManager(ModelDict):
             group = unicode(condition_set.get_group_label())
             for field in condition_set.fields.itervalues():
                 yield group, condition_set.get_id(), field
-gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)

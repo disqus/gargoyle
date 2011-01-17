@@ -11,7 +11,7 @@ except Exception, e:
 
 from django.utils.importlib import import_module
 
-from models import gargoyle
+from models import SwitchManager, Switch
 from conditions import ConditionSet
 
 __all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
@@ -21,6 +21,8 @@ import imp
 # A flag to tell us if autodiscover is running.  autodiscover will set this to
 # True while running, and False when it finishes.
 LOADING = False
+
+gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
 
 def autodiscover():
     """
@@ -67,6 +69,7 @@ def autodiscover():
         # Step 3: import the app's admin file. If this has errors we want them
         # to bubble up.
         import_module("%s.gargoyle" % app)
+
     # load builtins
     from gargoyle.builtins import *
     

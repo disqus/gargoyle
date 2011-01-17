@@ -1,5 +1,5 @@
 from functools import wraps
-from gargoyle.models import gargoyle
+from gargoyle import gargoyle
 
 from django.http import Http404
 

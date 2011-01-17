@@ -3,14 +3,14 @@ from django.core.cache import cache
 from django.http import HttpRequest, Http404
 from django.test import TestCase
 
-from gargoyle.models import gargoyle, Switch, SELECTIVE, DISABLED, GLOBAL
+from gargoyle.models import Switch, SELECTIVE, DISABLED, GLOBAL
 from gargoyle.decorators import switch_is_active
-from gargoyle import autodiscover
+from gargoyle import autodiscover, gargoyle
 
 autodiscover()
 
 class GargoyleTest(TestCase):
-    urls = 'gargoyle.urls'
+    urls = 'gargoyle.tests.urls'
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
@@ -238,10 +238,13 @@ class GargoyleTest(TestCase):
         # in memory cache shouldnt have expired
         cache.delete(gargoyle.cache_key)
         self.assertFalse(gargoyle.is_active('test'))
+        switch.status, switch.value = SELECTIVE, {}
+        # Ensure post save gets sent
+        gargoyle._post_save(sender=None, instance=switch, created=False)
 
         # any request should expire the in memory cache
         self.client.get('/')
-
+        
         self.assertTrue(gargoyle.is_active('test'))
 
     def test_anonymous_user(self):

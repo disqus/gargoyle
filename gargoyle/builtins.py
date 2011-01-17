@@ -1,4 +1,4 @@
-from gargoyle.models import gargoyle
+from gargoyle import gargoyle
 from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent, String, Boolean
 
 from django.contrib.auth.models import AnonymousUser, User
