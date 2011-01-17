@@ -19,7 +19,7 @@ class mytest(test):
 
 setup(
     name='gargoyle',
-    version='0.1.0',
+    version='0.1.1',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
