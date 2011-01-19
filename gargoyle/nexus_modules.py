@@ -106,11 +106,19 @@ class GargoyleModule(nexus.NexusModule):
         if not key:
             raise GargoyleException("Key cannot be empty")
 
+        if len(key) > 32:
+            raise GargoyleException("Key must be less than or equal to 32 characters in length")
+
+        label = request.POST.get("name", "")
+
+        if len(label) > 32:
+            raise GargoyleException("Name must be less than or equal to 32 characters in length")
+
         switch, created = Switch.objects.get_or_create(
             key         = key,
             defaults    = dict(
-                label       = request.POST.get("name", ""),
-                description = request.POST.get("desc", "")
+                label       = label,
+                description = request.POST.get("desc")
             )
         )
 
@@ -123,11 +131,21 @@ class GargoyleModule(nexus.NexusModule):
     def update(self, request):
         switch = Switch.objects.get(key=request.POST.get("curkey"))
 
-        if switch.key != request.POST.get("key"):
-            switch.delete()
-            switch.key = request.POST.get("key")
+        key = request.POST.get("key")
 
-        switch.label = request.POST.get("name")
+        if len(key) > 32:
+            raise GargoyleException("Key must be less than or equal to 32 characters in length")
+
+        label = request.POST.get("name", "")
+
+        if len(label) > 32:
+            raise GargoyleException("Name must be less than or equal to 32 characters in length")
+
+        if switch.key != key:
+            switch.delete()
+            switch.key = key
+
+        switch.label = label
         switch.description = request.POST.get("desc")
         switch.save()
 
