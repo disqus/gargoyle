@@ -64,6 +64,8 @@ Condition Sets
 
 Gargoyle provides an easy way to hook in your own condition sets to allow additional filters. Simply place a ConditionSet class in ``myapp/gargoyle.py`` and it will automatically discover it::
 
+	from __future__ import absolute_import
+	import gargoyle
 	from gargoyle import conditions
 	from django.contrib.sites.models import Site
 	
