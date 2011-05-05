@@ -158,7 +158,7 @@
 
 #container table.switches td.actions button.edit span {
     display: block;
-    background: transparent url("../img/edit.png") no-repeat 35% left;
+    background: transparent url("../img/edit.png") no-repeat left 35%;
 }
 
 #container table.switches td.actions button.delete,
@@ -169,7 +169,7 @@
 
 #container table.switches td.actions button.delete span {
     display: block;
-    background: transparent url("../img/delete.png") no-repeat 35% left;
+    background: transparent url("../img/delete.png") no-repeat left 35%;
 }
 
 #container table.empty {
