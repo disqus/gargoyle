@@ -250,6 +250,17 @@ class GargoyleTest(TestCase):
 
         self.assertFalse(gargoyle.is_active('test', self.user))
 
+    def test_deletion(self):
+        switch = Switch.objects.create(key='test')
+        
+        switch = gargoyle['test']
+
+        self.assertTrue('test' in gargoyle)
+        
+        switch.delete()
+        
+        self.assertFalse('test' in gargoyle)
+
     def test_expiration(self):
         switch = Switch.objects.create(key='test')
         
