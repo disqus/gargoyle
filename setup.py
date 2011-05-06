@@ -27,11 +27,11 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=[
-        'django',
         'django-modeldict>=1.0.1',
         'nexus>=0.1.0',
         'django-jsonfield',
     ],
+    tests_require=['django'],
     test_suite = 'gargoyle.tests',
     include_package_data=True,
     cmdclass={"test": mytest},
