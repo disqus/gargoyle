@@ -206,6 +206,11 @@ class SwitchManager(ModelDict):
             condition_set = condition_set()
         self._registry[condition_set.get_id()] = condition_set
 
+    def unregister(self, condition_set):
+        if callable(condition_set):
+            condition_set = condition_set()
+        self._registry.pop(condition_set.get_id(), None)
+
     def get_condition_set_by_id(self, switch_id):
         return self._registry[switch_id]
 
