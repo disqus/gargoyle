@@ -179,7 +179,7 @@ class GargoyleModule(nexus.NexusModule):
         field = gargoyle.get_condition_set_by_id(condition_set_id).fields[field_name]
         value = field.validate(request.POST)
 
-        switch = Switch.objects.get(key=key)
+        switch = gargoyle[key]
         switch.add_condition(gargoyle, condition_set_id, field_name, value, exclude=exclude)
 
         return switch.to_dict()
@@ -194,7 +194,7 @@ class GargoyleModule(nexus.NexusModule):
         if not all([key, condition_set_id, field_name, value]):
             raise GargoyleException("Fields cannot be empty")
 
-        switch = Switch.objects.get(key=key)
+        switch = gargoyle[key]
         switch.remove_condition(gargoyle, condition_set_id, field_name, value)
 
         return switch.to_dict()

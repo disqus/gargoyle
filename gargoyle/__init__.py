@@ -22,7 +22,7 @@ __all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
 # True while running, and False when it finishes.
 LOADING = False
 
-gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
+gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
 
 def autodiscover():
     """
