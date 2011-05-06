@@ -2,20 +2,14 @@
 
 try:
     from setuptools import setup, find_packages
-    from setuptools.command.test import test
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
-    from setuptools.command.test import test
 
-
-class mytest(test):
-    def run(self, *args, **kwargs):
-        from runtests import runtests
-        runtests()
-        # Upgrade().run(dist=True)
-        # test.run(self, *args, **kwargs)
+tests_require = [
+    'South',
+]
 
 setup(
     name='gargoyle',
@@ -23,18 +17,19 @@ setup(
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
-    description = 'Switches',
-    packages=find_packages(),
+    description = 'Gargoyle is a platform built on top of Django which allows you to switch functionality of your application on and off based on conditions.',
+    packages=find_packages(exclude="example_project"),
     zip_safe=False,
     install_requires=[
+        'Django>=1.1',
         'django-modeldict>=1.0.1',
         'nexus>=0.1.7',
         'django-jsonfield',
     ],
-    tests_require=['Django'],
-    test_suite = 'gargoyle.tests',
+    tests_require=tests_require,
+    extras_require={'test': tests_require},
+    test_suite='runtests.runtests',
     include_package_data=True,
-    cmdclass={"test": mytest},
     classifiers=[
         'Framework :: Django',
         'Intended Audience :: Developers',

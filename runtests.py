@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import sys
 from os.path import dirname, abspath
 
@@ -7,8 +8,11 @@ from django.conf import settings
 if not settings.configured:
     settings.configure(
         DATABASE_ENGINE='sqlite3',
-        # HACK: this fixes our threaded runserver remote tests
-        # TEST_DATABASE_NAME='test_sentry',
+        DATABASES={
+            'default': {
+                'ENGINE': 'sqlite3',
+            },
+        },
         INSTALLED_APPS=[
             'django.contrib.auth',
             'django.contrib.admin',
@@ -18,14 +22,20 @@ if not settings.configured:
             # Included to fix Disqus' test Django which solves IntegrityMessage case
             'django.contrib.contenttypes',
             'gargoyle',
+            'south',
         ],
         ROOT_URLCONF='',
         DEBUG=False,
+        TEMPLATE_DEBUG=True,
     )
-
+    
 from django.test.simple import run_tests
 
 def runtests(*test_args):
+    if 'south' in settings.INSTALLED_APPS:
+        from south.management.commands import patch_for_test_db_setup
+        patch_for_test_db_setup()
+
     if not test_args:
         test_args = ['gargoyle']
     parent = dirname(abspath(__file__))
