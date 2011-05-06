@@ -19,7 +19,7 @@ class mytest(test):
 
 setup(
     name='gargoyle',
-    version='0.1.6',
+    version='0.1.7',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
@@ -28,7 +28,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'django-modeldict>=1.0.1',
-        'nexus>=0.1.6',
+        'nexus>=0.1.7',
         'django-jsonfield',
     ],
     tests_require=['Django'],

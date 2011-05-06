@@ -66,11 +66,6 @@ class GargoyleModule(nexus.NexusModule):
         from django.conf.urls.defaults import patterns, url
 
         urlpatterns = patterns('',
-            url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-                'document_root': os.path.join(GARGOYLE_ROOT, 'media'),
-                'show_indexes': True,
-            }, name='media'),
-
             url(r'^add/$', self.as_view(self.add), name='add'),
             url(r'^update/$', self.as_view(self.update), name='update'),
             url(r'^delete/$', self.as_view(self.delete), name='delete'),
