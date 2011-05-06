@@ -12,6 +12,8 @@ except Exception, e:
 from gargoyle.models import SwitchManager, Switch
 from gargoyle.conditions import ConditionSet
 
+import imp
+
 __all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
 
 # A flag to tell us if autodiscover is running.  autodiscover will set this to
@@ -26,8 +28,6 @@ def autodiscover():
     not present. This forces an import on them to register any api bits they
     may want.
     """
-    from django.utils.importlib import import_module
-    import imp
 
     # Bail out if autodiscover didn't finish loading from a previous call so
     # that we avoid running autodiscover again when the URLconf is loaded by
@@ -52,7 +52,7 @@ def autodiscover():
         # fails silently -- apps that do weird things with __path__ might
         # need to roll their own admin registration.
         try:
-            app_path = import_module(app).__path__
+            app_path = __import__(app, {}, {}, []).__path__
         except (AttributeError, ImportError):
             continue
 
@@ -64,10 +64,8 @@ def autodiscover():
             imp.find_module('gargoyle', app_path)
         except ImportError:
             continue
-
-        # Step 3: import the app's admin file. If this has errors we want them
-        # to bubble up.
-        import_module("%s.gargoyle" % app)
+        
+        __import__('%s.gargoyle' % (app,), {}, {}, ['gargoyle'])
 
     # load builtins
     import gargoyle.builtins
