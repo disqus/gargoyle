@@ -31,7 +31,7 @@ setup(
         'nexus>=0.1.0',
         'django-jsonfield',
     ],
-    tests_require=['django'],
+    tests_require=['Django'],
     test_suite = 'gargoyle.tests',
     include_package_data=True,
     cmdclass={"test": mytest},
