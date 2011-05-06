@@ -12,6 +12,8 @@ except Exception, e:
 from gargoyle.models import SwitchManager, Switch
 from gargoyle.conditions import ConditionSet
 
+from django.utils.importlib import import_module
+
 import imp
 
 __all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
@@ -52,7 +54,7 @@ def autodiscover():
         # fails silently -- apps that do weird things with __path__ might
         # need to roll their own admin registration.
         try:
-            app_path = __import__(app, {}, {}, []).__path__
+            app_path = import_module(app).__path__
         except (AttributeError, ImportError):
             continue
 
@@ -65,7 +67,7 @@ def autodiscover():
         except ImportError:
             continue
         
-        __import__('%s.gargoyle' % (app,), {}, {}, ['gargoyle'])
+        import_module("%s.gargoyle" % app)
 
     # load builtins
     import gargoyle.builtins
