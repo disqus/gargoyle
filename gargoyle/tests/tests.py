@@ -32,7 +32,6 @@ class GargoyleTest(TestCase):
         switch = self.gargoyle['test']
         
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='0-50',
@@ -45,7 +44,6 @@ class GargoyleTest(TestCase):
         self.assertFalse(self.gargoyle.is_active('test', user))
         
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='is_staff',
             condition='1',
@@ -58,7 +56,6 @@ class GargoyleTest(TestCase):
         self.assertFalse(self.gargoyle.is_active('test', user))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='is_superuser',
             condition='1',
@@ -77,14 +74,12 @@ class GargoyleTest(TestCase):
         switch = self.gargoyle['test']
         
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='0-50',
             exclude=True,
         )
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='username',
             condition='foo',
@@ -120,7 +115,6 @@ class GargoyleTest(TestCase):
         self.assertTrue(test(request))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='username',
             condition='foo',
@@ -150,16 +144,14 @@ class GargoyleTest(TestCase):
         switch.save()
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='ip_address',
             condition='192.168.1.1',
         )
-
+        
         self.assertTrue(test(request))
 
         switch.remove_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='ip_address',
             condition='192.168.1.1',
@@ -168,7 +160,6 @@ class GargoyleTest(TestCase):
         self.assertRaises(Http404, test, request)
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='ip_address',
             condition='192.168.1.1',
@@ -177,13 +168,11 @@ class GargoyleTest(TestCase):
         self.assertTrue(test(request))
 
         switch.clear_conditions(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='ip_address',
         )
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='50-100',
@@ -192,12 +181,10 @@ class GargoyleTest(TestCase):
         self.assertTrue(test(request))
 
         switch.clear_conditions(
-            manager=self.gargoyle,
             condition_set=condition_set,
         )
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='0-50',
@@ -318,7 +305,6 @@ class GargoyleTest(TestCase):
         self.assertTrue(self.gargoyle.is_active('test', user))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='1-10',
@@ -327,14 +313,12 @@ class GargoyleTest(TestCase):
         self.assertFalse(self.gargoyle.is_active('test', user))
 
         switch.clear_conditions(
-            manager=self.gargoyle,
             condition_set=condition_set,
         )
 
         self.assertTrue(self.gargoyle.is_active('test', user))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='is_anonymous',
             condition='1',
@@ -343,7 +327,6 @@ class GargoyleTest(TestCase):
         self.assertTrue(self.gargoyle.is_active('test', user))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='1-10',
@@ -367,7 +350,6 @@ class GargoyleTest(TestCase):
         self.assertTrue(self.gargoyle.is_active('test', request))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='ip_address',
             condition='192.168.1.1',
@@ -376,11 +358,9 @@ class GargoyleTest(TestCase):
         self.assertTrue(self.gargoyle.is_active('test', request))
 
         switch.clear_conditions(
-            manager=self.gargoyle,
             condition_set=condition_set,
         )
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='ip_address',
             condition='127.0.0.1',
@@ -389,14 +369,12 @@ class GargoyleTest(TestCase):
         self.assertFalse(self.gargoyle.is_active('test', request))
 
         switch.clear_conditions(
-            manager=self.gargoyle,
             condition_set=condition_set,
         )
 
         self.assertTrue(self.gargoyle.is_active('test', request))
 
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='50-100',
@@ -405,11 +383,9 @@ class GargoyleTest(TestCase):
         self.assertTrue(self.gargoyle.is_active('test', request))
         
         switch.clear_conditions(
-            manager=self.gargoyle,
             condition_set=condition_set,
         )
         switch.add_condition(
-            manager=self.gargoyle,
             condition_set=condition_set,
             field_name='percent',
             condition='0-50',

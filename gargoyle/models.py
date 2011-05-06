@@ -85,9 +85,9 @@ class Switch(models.Model):
         
         If ``commit`` is ``False``, the data will not be written to the database.
         
-        >>> switch = Switch.objects.get(key='my_switch') #doctest: +SKIP
+        >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
-        >>> switch.add_condition(gargoyle, condition_set_id, 'percent', [0, 50], exclude=False) #doctest: +SKIP
+        >>> switch.add_condition(condition_set_id, 'percent', [0, 50], exclude=False) #doctest: +SKIP
         """
         condition_set = manager.get_condition_set_by_id(condition_set)
 
@@ -111,9 +111,9 @@ class Switch(models.Model):
         
         If ``commit`` is ``False``, the data will not be written to the database.
         
-        >>> switch = Switch.objects.get(key='my_switch') #doctest: +SKIP
+        >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
-        >>> switch.remove_condition(gargoyle, condition_set_id, 'percent', [0, 50]) #doctest: +SKIP
+        >>> switch.remove_condition(condition_set_id, 'percent', [0, 50]) #doctest: +SKIP
         """
         condition_set = manager.get_condition_set_by_id(condition_set)
 
@@ -138,13 +138,15 @@ class Switch(models.Model):
         
         Clear all conditions given a ConditionSet, and a field name:
         
-        >>> switch = Switch.objects.get(key='my_switch') #doctest: +SKIP
+        >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
-        >>> switch.clear_conditions(gargoyle, condition_set_id, 'percent') #doctest: +SKIP
+        >>> switch.clear_conditions(condition_set_id, 'percent') #doctest: +SKIP
 
         You can also clear all conditions given a ConditionSet:
         
-        >>> switch.clear_conditions(gargoyle, condition_set_id) #doctest: +SKIP
+        >>> switch = gargoyle['my_switch'] #doctest: +SKIP
+        >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
+        >>> switch.clear_conditions(condition_set_id) #doctest: +SKIP
         """
         condition_set = manager.get_condition_set_by_id(condition_set)
 
@@ -182,8 +184,45 @@ class Switch(models.Model):
                         except TypeError:
                             continue
 
+class SwitchProxy(object):
+    def __init__(self, manager, switch):
+        self._switch = switch
+        self._manager = manager
+    
+    def __getattr__(self, attr):
+        if attr in self.__dict__:
+            return self.__dict__[attr]
+        else:
+            return getattr(self._switch, attr)
+
+    def __setattr__(self, attr, value):
+        if attr in ('_switch', '_manager'):
+            object.__setattr__(self, attr, value)
+        else:
+            setattr(self._switch, attr, value)
+    
+    def add_condition(self, *args, **kwargs):
+        return self._switch.add_condition(self._manager, *args, **kwargs)
+
+    def remove_condition(self, *args, **kwargs):
+        return self._switch.remove_condition(self._manager, *args, **kwargs)
+
+    def clear_conditions(self, *args, **kwargs):
+        return self._switch.clear_conditions(self._manager, *args, **kwargs)
+
+    def get_active_conditions(self, *args, **kwargs):
+        return self._switch.get_active_conditions(self._manager, *args, **kwargs)
+            
 class SwitchManager(ModelDict):
     _registry = {}
+    
+    def __getitem__(self, key):
+        """
+        Returns a SwitchProxy, rather than a Switch. It allows us to
+        easily extend the Switches method and automatically include our
+        manager instance.
+        """
+        return SwitchProxy(self, super(SwitchManager, self).__getitem__(key))
     
     def is_active(self, key, *instances):
         """
