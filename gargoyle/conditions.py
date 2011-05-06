@@ -148,16 +148,34 @@ class ConditionSet(object):
     def __repr__(self):
         return '<%s>' % (self.__class__.__name__,)
 
-    def can_execute(self, instance):
-        return True
-
     def get_id(self):
+        """
+        Returns a string representing a unique identifier for this ConditionSet
+        instance.
+        """
         return '%s.%s' % (self.__module__, self.__class__.__name__)
 
+    def can_execute(self, instance):
+        """
+        Given an instance, returns a boolean of whether this ConditionSet
+        can return a valid condition check.
+        """
+        return True
+
     def get_namespace(self):
+        """
+        Returns a string specifying a unique registration namespace for this ConditionSet
+        instance.
+        """
         return self.__class__.__name__
 
     def get_field_value(self, instance, field_name):
+        """
+        Given an instance, and the name of an attribute, returns the value
+        of that attribute on the instance.
+        
+        Default behavior will map the ``percent`` attribute to ``id``.
+        """
         # XXX: can we come up w/ a better API?
         # Ensure we map ``percent`` to the ``id`` column
         if field_name == 'percent':
@@ -169,8 +187,8 @@ class ConditionSet(object):
 
     def is_active(self, instance, conditions):
         """
-        conditions are the current value of the switch
-        instance is the instance of our type
+        Given an instance, and the conditions active for this switch, returns
+        a boolean representing if the feature is active.
         """
         return_value = None
         for name, field in self.fields.iteritems():
@@ -184,6 +202,13 @@ class ConditionSet(object):
                             return False
                         return_value = True
         return return_value
+    
+    def get_group_label(self):
+        """
+        Returns a string representing a human readable version
+        of this ConditionSet instance.
+        """
+        return self.__class__.__name__
 
 class ModelConditionSet(ConditionSet):
     def __init__(self, model):
@@ -200,9 +225,6 @@ class ModelConditionSet(ConditionSet):
 
     def get_namespace(self):
         return '%s.%s' % (self.model._meta.app_label, self.model._meta.module_name)
-    
-    def get_type(self):
-        return self.model
     
     def get_group_label(self):
         return self.model._meta.verbose_name.title()

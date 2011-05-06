@@ -217,7 +217,7 @@
         <div class="clearfix">
             <select name="condition">
                 <option></option>
-                {% for group, id, field in all_conditions %}
+                {% for id, group, field in all_conditions %}
                     {% ifchanged group %}
                         {% if not loop.first %}</optgroup>{% endif %}
                         <optgroup label="{{ group }}">
@@ -228,7 +228,7 @@
                 </optgroup>
             </select>
 
-            {% for group, id, field in all_conditions %}
+            {% for id, group, field in all_conditions %}
                 <div class="fields" data-path="{{ id }}.{{ field.name }}" style="display:none;">
                     <form action="" method="get" data-switch="{{ id }}" data-field="{{ field.name }}">
                         {{ field|render_field }}
