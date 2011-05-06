@@ -22,7 +22,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Django>=1.1',
-        'django-modeldict>=1.1.0',
+        'django-modeldict>=1.1.1',
         'nexus>=0.1.7',
         'django-jsonfield',
     ],

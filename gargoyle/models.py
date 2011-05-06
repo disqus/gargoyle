@@ -79,7 +79,7 @@ class Switch(models.Model):
 
         return data
 
-    def add_condition(self, condition_set, field_name, condition, exclude=False, commit=True):
+    def add_condition(self, manager, condition_set, field_name, condition, exclude=False, commit=True):
         """
         Adds a new condition and registers it in the global ``gargoyle`` switch manager.
         
@@ -87,11 +87,9 @@ class Switch(models.Model):
         
         >>> switch = Switch.objects.get(key='my_switch') #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
-        >>> switch.add_condition(condition_set_id, 'percent', [0, 50], exclude=False) #doctest: +SKIP
+        >>> switch.add_condition(gargoyle, condition_set_id, 'percent', [0, 50], exclude=False) #doctest: +SKIP
         """
-        from gargoyle import gargoyle
-        
-        condition_set = gargoyle.get_condition_set_by_id(condition_set)
+        condition_set = manager.get_condition_set_by_id(condition_set)
 
         assert isinstance(condition, basestring), 'conditions must be strings'
 
@@ -107,7 +105,7 @@ class Switch(models.Model):
         if commit:
             self.save()
     
-    def remove_condition(self, condition_set, field_name, condition, commit=True):
+    def remove_condition(self, manager, condition_set, field_name, condition, commit=True):
         """
         Removes a condition and updates the global ``gargoyle`` switch manager.
         
@@ -115,11 +113,9 @@ class Switch(models.Model):
         
         >>> switch = Switch.objects.get(key='my_switch') #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
-        >>> switch.remove_condition(condition_set_id, 'percent', [0, 50]) #doctest: +SKIP
+        >>> switch.remove_condition(gargoyle, condition_set_id, 'percent', [0, 50]) #doctest: +SKIP
         """
-        from gargoyle import gargoyle
-
-        condition_set = gargoyle.get_condition_set_by_id(condition_set)
+        condition_set = manager.get_condition_set_by_id(condition_set)
 
         namespace = condition_set.get_namespace()
 
@@ -134,7 +130,7 @@ class Switch(models.Model):
         if commit:
             self.save()
 
-    def clear_conditions(self, condition_set, field_name=None, commit=True):
+    def clear_conditions(self, manager, condition_set, field_name=None, commit=True):
         """
         Clears conditions given a set of parameters.
         
@@ -144,15 +140,13 @@ class Switch(models.Model):
         
         >>> switch = Switch.objects.get(key='my_switch') #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
-        >>> switch.clear_conditions(condition_set_id, 'percent') #doctest: +SKIP
+        >>> switch.clear_conditions(gargoyle, condition_set_id, 'percent') #doctest: +SKIP
 
         You can also clear all conditions given a ConditionSet:
         
-        >>> switch.clear_conditions(condition_set_id) #doctest: +SKIP
+        >>> switch.clear_conditions(gargoyle, condition_set_id) #doctest: +SKIP
         """
-        from gargoyle import gargoyle
-
-        condition_set = gargoyle.get_condition_set_by_id(condition_set)
+        condition_set = manager.get_condition_set_by_id(condition_set)
 
         namespace = condition_set.get_namespace()
 
@@ -169,16 +163,14 @@ class Switch(models.Model):
         if commit:
             self.save()
 
-    def get_active_conditions(self):
+    def get_active_conditions(self, manager):
         """
         Returns a generator which yields groups of lists of conditions.
         
         >>> for label, set_id, field, value, exclude in gargoyle.get_all_conditions(): #doctest: +SKIP
         >>>     print "%(label)s: %(field)s = %(value)s (exclude: %(exclude)s)" % (label, field.label, value, exclude) #doctest: +SKIP
         """
-        from gargoyle import gargoyle
-
-        for condition_set in sorted(gargoyle.get_condition_sets(), key=lambda x: x.get_group_label()):
+        for condition_set in sorted(manager.get_condition_sets(), key=lambda x: x.get_group_label()):
             ns = condition_set.get_namespace()
             condition_set_id = condition_set.get_id()
             if ns in self.value:

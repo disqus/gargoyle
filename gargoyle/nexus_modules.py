@@ -180,7 +180,7 @@ class GargoyleModule(nexus.NexusModule):
         value = field.validate(request.POST)
 
         switch = Switch.objects.get(key=key)
-        switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
+        switch.add_condition(gargoyle, condition_set_id, field_name, value, exclude=exclude)
 
         return switch.to_dict()
     add_condition = json(add_condition)
@@ -195,7 +195,7 @@ class GargoyleModule(nexus.NexusModule):
             raise GargoyleException("Fields cannot be empty")
 
         switch = Switch.objects.get(key=key)
-        switch.remove_condition(condition_set_id, field_name, value)
+        switch.remove_condition(gargoyle, condition_set_id, field_name, value)
 
         return switch.to_dict()
     remove_condition = json(remove_condition)
