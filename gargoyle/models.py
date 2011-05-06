@@ -193,19 +193,6 @@ class Switch(models.Model):
 class SwitchManager(ModelDict):
     _registry = {}
     
-    def _populate(self, *args, **kwargs):
-        def coerce_lists_to_sets(chunk):
-            if isinstance(chunk, dict):
-                for k, v in chunk.iteritems():
-                    yield k, coerce_lists_to_sets(v)
-            elif isinstance(chunk, (list, tuple)):
-                yield set(chunk)
-            else:
-                yield chunk
-        
-        cache = super(SwitchManager, self)._populate(*args, **kwargs)
-        return coerce_lists_to_sets(cache)
-    
     def is_active(self, key, *instances):
         """
         Returns ``True`` if any of ``instances`` match an active switch. Otherwise
