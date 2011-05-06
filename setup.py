@@ -8,6 +8,7 @@ except ImportError:
     from setuptools import setup, find_packages
 
 tests_require = [
+    'Django>=1.1',
     'South',
 ]
 
@@ -21,7 +22,6 @@ setup(
     packages=find_packages(exclude="example_project"),
     zip_safe=False,
     install_requires=[
-        'Django>=1.1',
         'django-modeldict>=1.1.2',
         'nexus>=0.1.7',
         'django-jsonfield',
