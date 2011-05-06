@@ -5,5 +5,5 @@ def foo(request):
     return HttpResponse()
 
 urlpatterns = patterns('',
-    ('', foo),
+    url('', foo, name='gargoyle_test_foo'),
 )

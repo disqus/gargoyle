@@ -32,6 +32,9 @@ Now you just need to add Gargoyle to your ``INSTALLED_APPS``::
 Usage
 =====
 
+@switch_is_active
+~~~~~~~~~~~~~~~~~
+
 Gargoyle is typically used in two fashions. The first and simplest, is as a decorator. The decorator will automatically integrate with filters registered to the ``User`` model, as well as IP address::
 
 	from gargoyle.decorators import switch_is_active
@@ -39,6 +42,18 @@ Gargoyle is typically used in two fashions. The first and simplest, is as a deco
 	@switch_is_active('my switch name')
 	def my_view(request):
 	    return 'foo'
+
+In the case of the switch being inactive and you are using the decorator, a 404 error is raised. You may also redirect
+the user to an absolute URL (relative to domain), or a named URL pattern::
+
+	# if redirect_to starts with a /, we assume it's a url path
+	@switch_is_active('my switch name', redirect_to='/my/url/path)
+
+	# alternatively use the url mapper
+	@switch_is_active('my switch name', redirect_to='access_denied')
+
+gargoyle.is_active
+~~~~~~~~~~~~~~~~~~
 
 The second use is with the ``is_active`` method. This allows you to perform validation on your own custom objects::
 

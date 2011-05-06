@@ -190,6 +190,36 @@ class GargoyleTest(TestCase):
 
         self.assertRaises(Http404, test, request)
 
+    def test_decorator_with_redirect(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+        
+        switch = Switch.objects.create(
+            key='test',
+            status=DISABLED,
+        )
+        switch = gargoyle['test']
+
+        request = HttpRequest()
+        request.user = self.user
+        
+        @switch_is_active('test', redirect_to='/foo')
+        def test(request):
+            return True
+
+        response = test(request)
+        self.assertTrue(response.status_code, 302)
+        self.assertTrue('Location' in response)
+        self.assertTrue(response['Location'], '/foo')
+
+        @switch_is_active('test', redirect_to='gargoyle_test_foo')
+        def test(request):
+            return True
+
+        response = test(request)
+        self.assertTrue(response.status_code, 302)
+        self.assertTrue('Location' in response)
+        self.assertTrue(response['Location'], '')
+
     def test_global(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
         
