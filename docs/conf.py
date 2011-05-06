@@ -51,7 +51,7 @@ copyright = u'2011, DISQUS'
 # built documents.
 #
 # The short X.Y version.
-version = __import__('gargoyle').VERSION
+version = __import__('pkg_resources').get_distribution('gargoyle').version
 # The full version, including alpha/beta/rc tags.
 release = version
 
