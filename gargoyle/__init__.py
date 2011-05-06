@@ -9,14 +9,10 @@ try:
 except Exception, e:
     VERSION = 'unknown'
 
-from django.utils.importlib import import_module
-
-from models import SwitchManager, Switch
-from conditions import ConditionSet
+from gargoyle.models import SwitchManager, Switch
+from gargoyle.conditions import ConditionSet
 
 __all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
-
-import imp
 
 # A flag to tell us if autodiscover is running.  autodiscover will set this to
 # True while running, and False when it finishes.
@@ -30,6 +26,9 @@ def autodiscover():
     not present. This forces an import on them to register any api bits they
     may want.
     """
+    from django.utils.importlib import import_module
+    import imp
+
     # Bail out if autodiscover didn't finish loading from a previous call so
     # that we avoid running autodiscover again when the URLconf is loaded by
     # the exception handler to resolve the handler500 view.  This prevents an
