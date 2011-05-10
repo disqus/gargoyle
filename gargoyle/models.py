@@ -216,6 +216,9 @@ class SwitchProxy(object):
 class SwitchManager(ModelDict):
     _registry = {}
     
+    def __repr__(self):
+        return "<%s: %s (%s)>" % (self.__class__.__name__, self.model, self._registry.values())
+    
     def __getitem__(self, key):
         """
         Returns a SwitchProxy, rather than a Switch. It allows us to
