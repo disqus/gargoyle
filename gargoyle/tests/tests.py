@@ -391,3 +391,52 @@ class GargoyleTest(TestCase):
             condition='0-50',
         )        
         self.assertFalse(self.gargoyle.is_active('test', request))
+
+    def test_to_dict(self):
+        condition_set = 'gargoyle.builtins.IPAddressConditionSet'
+        
+        switch = Switch.objects.create(
+            label='my switch',
+            description='foo bar baz',
+            key='test',
+            status=SELECTIVE,
+        )
+        
+        switch.add_condition(
+            manager=self.gargoyle,
+            condition_set=condition_set,
+            field_name='ip_address',
+            condition='192.168.1.1',
+        )
+        
+        result = switch.to_dict(self.gargoyle)
+        
+        self.assertTrue('label' in result)
+        self.assertEquals(result['label'], 'my switch')
+
+        self.assertTrue('status' in result)
+        self.assertEquals(result['status'], SELECTIVE)
+
+        self.assertTrue('description' in result)
+        self.assertEquals(result['description'], 'foo bar baz')
+        
+        self.assertTrue('key' in result)
+        self.assertEquals(result['key'], 'test')
+
+        self.assertTrue('conditions' in result)
+        self.assertEquals(len(result['conditions']), 1)
+
+        condition = result['conditions'][0]
+        self.assertTrue('id' in condition)
+        self.assertEquals(condition['id'], condition_set)
+        self.assertTrue('label' in condition)
+        self.assertEquals(condition['label'], 'IP Address')
+        self.assertTrue('conditions' in condition)
+        self.assertEquals(len(condition['conditions']), 1)
+        
+        inner_condition = condition['conditions'][0]
+        self.assertEquals(len(inner_condition), 4)
+        self.assertTrue(inner_condition[0], 'ip_address')
+        self.assertTrue(inner_condition[1], '192.168.1.1')
+        self.assertTrue(inner_condition[2], '192.168.1.1')
+        self.assertFalse(inner_condition[3])

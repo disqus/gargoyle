@@ -52,7 +52,7 @@ class Switch(models.Model):
     def __unicode__(self):
         return u"%s=%s" % (self.key, self.value)
     
-    def to_dict(self):
+    def to_dict(self, manager):
         data = {
             'key': self.key,
             'status': self.status,
@@ -62,7 +62,7 @@ class Switch(models.Model):
         }
 
         last = None
-        for condition_set_id, group, field, value, exclude in self.get_active_conditions():
+        for condition_set_id, group, field, value, exclude in self.get_active_conditions(manager):
             if not last or last['id'] != condition_set_id:
                 if last:
                     data['conditions'].append(last)
@@ -214,7 +214,9 @@ class SwitchProxy(object):
         return self._switch.get_active_conditions(self._manager, *args, **kwargs)
             
 class SwitchManager(ModelDict):
-    _registry = {}
+    def __init__(self, *args, **kwargs):
+        self._registry = {}
+        super(SwitchManager, self).__init__(*args, **kwargs)
     
     def __repr__(self):
         return "<%s: %s (%s)>" % (self.__class__.__name__, self.model, self._registry.values())

@@ -91,7 +91,7 @@ class GargoyleModule(nexus.NexusModule):
         switches = list(Switch.objects.all().order_by("date_created"))
 
         return self.render_to_response("gargoyle/index.html", {
-            "switches": [s.to_dict() for s in switches],
+            "switches": [s.to_dict(gargoyle) for s in switches],
             "all_conditions": list(gargoyle.get_all_conditions()),
         }, request)
     
@@ -120,7 +120,7 @@ class GargoyleModule(nexus.NexusModule):
         if not created:
             raise GargoyleException("Switch with key %s already exists" % key)
 
-        return switch.to_dict()
+        return switch.to_dict(gargoyle)
     add = json(add)
     
     def update(self, request):
@@ -144,7 +144,7 @@ class GargoyleModule(nexus.NexusModule):
         switch.description = request.POST.get("desc")
         switch.save()
 
-        return switch.to_dict()
+        return switch.to_dict(gargoyle)
     update = json(update)
     
     def status(self, request):
@@ -158,7 +158,7 @@ class GargoyleModule(nexus.NexusModule):
         switch.status = status
         switch.save()
 
-        return switch.to_dict()
+        return switch.to_dict(gargoyle)
     status = json(status)
     
     def delete(self, request):
@@ -182,7 +182,7 @@ class GargoyleModule(nexus.NexusModule):
         switch = gargoyle[key]
         switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
 
-        return switch.to_dict()
+        return switch.to_dict(gargoyle)
     add_condition = json(add_condition)
     
     def remove_condition(self, request):
@@ -197,7 +197,7 @@ class GargoyleModule(nexus.NexusModule):
         switch = gargoyle[key]
         switch.remove_condition(condition_set_id, field_name, value)
 
-        return switch.to_dict()
+        return switch.to_dict(gargoyle)
     remove_condition = json(remove_condition)
 
 nexus.site.register(GargoyleModule, 'gargoyle')
