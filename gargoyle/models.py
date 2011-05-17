@@ -214,6 +214,13 @@ class SwitchProxy(object):
         return self._switch.get_active_conditions(self._manager, *args, **kwargs)
             
 class SwitchManager(ModelDict):
+    DISABLED  = DISABLED
+    SELECTIVE = SELECTIVE
+    GLOBAL    = GLOBAL
+
+    INCLUDE   = INCLUDE
+    EXCLUDE   = EXCLUDE
+    
     def __init__(self, *args, **kwargs):
         self._registry = {}
         super(SwitchManager, self).__init__(*args, **kwargs)
