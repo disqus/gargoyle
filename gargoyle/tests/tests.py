@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.http import HttpRequest, Http404
 from django.test import TestCase
-from django.template import Context, Template
+from django.template import Context, Template, TemplateSyntaxError
 
 from gargoyle.builtins import IPAddressConditionSet, UserConditionSet
 from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL
@@ -513,3 +513,11 @@ class GargoyleTemplateTagTest(TestCase):
         
         self.assertFalse('foo bar baz' in rendered)
         self.assertTrue('hello world!' in rendered)
+
+    def test_missing_name(self):
+        template = self.assertRaises(TemplateSyntaxError, Template, """
+            {% load gargoyle_tags %}
+            {% ifswitch %}
+            hello world!
+            {% endifswitch %}
+        """)
