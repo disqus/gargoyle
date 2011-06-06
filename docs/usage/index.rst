@@ -47,3 +47,16 @@ to perform validation on your own custom objects::
 	        return 'foo'
 	    else:
 	        return 'bar'
+
+ifswitch
+~~~~~~~~
+
+If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`` to give you easy conditional blocks based on active switches (for the request)::
+
+	{% load gargoyle_tags %}
+	
+	{% ifswitch switch_name %}
+	    switch_name is active!
+	{% else %}
+	    switch_name is not active :(
+	{% endif %}
