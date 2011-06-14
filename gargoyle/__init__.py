@@ -9,8 +9,8 @@ try:
 except Exception, e:
     VERSION = 'unknown'
 
-from gargoyle.models import SwitchManager, Switch
 from gargoyle.conditions import ConditionSet
+from gargoyle.models import SwitchManager, Switch
 
 from django.utils.importlib import import_module
 

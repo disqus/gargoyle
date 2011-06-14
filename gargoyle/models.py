@@ -321,3 +321,8 @@ class SwitchManager(ModelDict):
             group = unicode(condition_set.get_group_label())
             for field in condition_set.fields.itervalues():
                 yield condition_set.get_id(), group, field
+
+    def as_request(self, user=None, ip_address=None):
+        from gargoyle.helpers import MockRequest
+
+        return MockRequest(user, ip_address)

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
-from django.http import HttpRequest, Http404
+from django.http import HttpRequest, Http404, HttpResponse
 from django.test import TestCase
 from django.template import Context, Template, TemplateSyntaxError
 
@@ -64,6 +64,9 @@ class GargoyleTest(TestCase):
         
         user = User(pk=8771, is_superuser=True)
         self.assertTrue(self.gargoyle.is_active('test', user))
+
+        # test with mock request
+        self.assertTrue(self.gargoyle.is_active('test', self.gargoyle.as_request(user=user)))
 
     def test_exclusions(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
@@ -194,20 +197,17 @@ class GargoyleTest(TestCase):
         self.assertRaises(Http404, test, request)
 
     def test_decorator_with_redirect(self):
-        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
-        
-        switch = Switch.objects.create(
+        Switch.objects.create(
             key='test',
             status=DISABLED,
         )
-        switch = self.gargoyle['test']
-
+        
         request = HttpRequest()
         request.user = self.user
         
         @switch_is_active('test', redirect_to='/foo')
         def test(request):
-            return True
+            return HttpResponse()
 
         response = test(request)
         self.assertTrue(response.status_code, 302)
@@ -216,7 +216,7 @@ class GargoyleTest(TestCase):
 
         @switch_is_active('test', redirect_to='gargoyle_test_foo')
         def test(request):
-            return True
+            return HttpResponse()
 
         response = test(request)
         self.assertTrue(response.status_code, 302)
@@ -224,8 +224,6 @@ class GargoyleTest(TestCase):
         self.assertTrue(response['Location'], '')
 
     def test_global(self):
-        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
-        
         switch = Switch.objects.create(
             key='test',
             status=SELECTIVE,
@@ -382,6 +380,9 @@ class GargoyleTest(TestCase):
         )
 
         self.assertTrue(self.gargoyle.is_active('test', request))
+
+        # test with mock request
+        self.assertTrue(self.gargoyle.is_active('test', self.gargoyle.as_request(ip_address='192.168.1.1')))
         
         switch.clear_conditions(
             condition_set=condition_set,
@@ -451,13 +452,10 @@ class GargoyleTemplateTagTest(TestCase):
         self.gargoyle.register(UserConditionSet(User))
         
     def test_simple(self):
-        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
-        
-        switch = Switch.objects.create(
+        Switch.objects.create(
             key='test',
             status=GLOBAL,
         )
-        switch = self.gargoyle['test']
 
         template = Template("""
             {% load gargoyle_tags %}
@@ -515,7 +513,7 @@ class GargoyleTemplateTagTest(TestCase):
         self.assertTrue('hello world!' in rendered)
 
     def test_missing_name(self):
-        template = self.assertRaises(TemplateSyntaxError, Template, """
+        self.assertRaises(TemplateSyntaxError, Template, """
             {% load gargoyle_tags %}
             {% ifswitch %}
             hello world!
