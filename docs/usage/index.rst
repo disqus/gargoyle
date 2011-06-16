@@ -60,3 +60,22 @@ If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`
 	{% else %}
 	    switch_name is not active :(
 	{% endif %}
+
+Default Switch States
+~~~~~~~~~~~~~~~~~~~~~
+
+The GARGOYLE_SWITCH_DEFAULTS setting allows engineers to set the default state of a switch before it's been added via the gargoyle admin interface. In your settings.py add something like::
+
+    GARGOYLE_SWITCH_DEFAULTS = {
+        'new_switch': {
+          'is_active': True,
+          'label': 'New Switch',
+          'description': 'When you want the newness',
+        },
+        'funky_switch': {
+          'is_active': False,
+          'label': 'Funky Switch',
+          'description': 'Controls the funkiness.',
+        },
+    }
+

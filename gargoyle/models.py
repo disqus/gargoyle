@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import ugettext_lazy as _
 
@@ -47,8 +48,29 @@ class Switch(models.Model):
         )
         verbose_name = _('switch')
         verbose_name_plural = _('switches')
-        
-    
+
+    def __init__(self, *args, **kwargs):
+        if (
+            kwargs and
+            hasattr(settings, 'GARGOYLE_SWITCH_DEFAULTS') and
+            'key' in kwargs and
+            'status' not in kwargs
+        ):
+            key = kwargs['key']
+            switch_default = settings.GARGOYLE_SWITCH_DEFAULTS.get(key)
+            if switch_default is not None:
+                is_active = switch_default.get('is_active')
+                if is_active is True:
+                    kwargs['status'] = GLOBAL
+                elif is_active is False:
+                    kwargs['status'] = DISABLED
+                if not kwargs.get('label'):
+                    kwargs['label'] = switch_default.get('label')
+                if not kwargs.get('description'):
+                    kwargs['description'] = switch_default.get('description')
+
+        return super(Switch, self).__init__(*args, **kwargs)
+
     def __unicode__(self):
         return u"%s=%s" % (self.key, self.value)
     
