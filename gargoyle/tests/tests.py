@@ -14,7 +14,7 @@ class GargoyleTest(TestCase):
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
-        self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
+        self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
         self.gargoyle.register(UserConditionSet(User))
         self.gargoyle.register(IPAddressConditionSet())
 
@@ -443,6 +443,28 @@ class GargoyleTest(TestCase):
         self.assertTrue(inner_condition[1], '192.168.1.1')
         self.assertTrue(inner_condition[2], '192.168.1.1')
         self.assertFalse(inner_condition[3])
+
+    def test_switch_defaults(self):
+        """Test that defaults pulled from GARGOYLE_SWITCH_DEFAULTS.
+
+        Requires SwitchManager to use auto_create.
+
+        """
+        self.assertTrue(self.gargoyle.is_active('active_by_default'))
+        self.assertFalse(self.gargoyle.is_active('inactive_by_default'))
+        self.assertEquals(
+            self.gargoyle['inactive_by_default'].label,
+            'Default Inactive',
+        )
+        self.assertEquals(
+            self.gargoyle['active_by_default'].label,
+            'Default Active',
+        )
+        active_by_default = self.gargoyle['active_by_default']
+        active_by_default.status = DISABLED
+        active_by_default.save()
+        self.assertFalse(self.gargoyle.is_active('active_by_default'))
+
 
 class GargoyleConstantTest(TestCase):
     def setUp(self):
