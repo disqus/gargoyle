@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+"""
+runtests
+~~~~~~~~
+
+:copyright: (c) 2010 DISQUS.
+:license: Apache License 2.0, see LICENSE for more details.
+"""
+
 import sys
 from os.path import dirname, abspath
 

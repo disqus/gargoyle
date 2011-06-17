@@ -1,3 +1,11 @@
+"""
+gargoyle.tests.tests
+~~~~~~~~~~~~~~~~~~~~
+
+:copyright: (c) 2010 DISQUS.
+:license: Apache License 2.0, see LICENSE for more details.
+"""
+
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.http import HttpRequest, Http404, HttpResponse

@@ -26,6 +26,7 @@ setup(
         'nexus>=0.1.7',
         'django-jsonfield',
     ],
+    license='Apache License 2.0',
     tests_require=tests_require,
     extras_require={'test': tests_require},
     test_suite='runtests.runtests',
