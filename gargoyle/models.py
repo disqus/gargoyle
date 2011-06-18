@@ -149,6 +149,12 @@ class Switch(models.Model):
 
         self.value[namespace][field_name] = [c for c in self.value[namespace][field_name] if c[1] != condition]
 
+        if not self.value[namespace][field_name]:
+            del self.value[namespace][field_name]
+
+            if not self.value[namespace]:
+                del self.value[namespace]
+
         if commit:
             self.save()
 
