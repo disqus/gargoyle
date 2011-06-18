@@ -35,6 +35,18 @@ if not settings.configured:
         ROOT_URLCONF='',
         DEBUG=False,
         TEMPLATE_DEBUG=True,
+        GARGOYLE_SWITCH_DEFAULTS = {
+            'active_by_default': {
+              'is_active': True,
+              'label': 'Default Active',
+              'description': 'When you want the newness',
+            },
+            'inactive_by_default': {
+              'is_active': False,
+              'label': 'Default Inactive',
+              'description': 'Controls the funkiness.',
+            },
+        },
     )
     
 from django.test.simple import run_tests

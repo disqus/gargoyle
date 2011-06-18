@@ -22,7 +22,7 @@ class GargoyleTest(TestCase):
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
-        self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
+        self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
         self.gargoyle.register(UserConditionSet(User))
         self.gargoyle.register(IPAddressConditionSet())
 
@@ -163,6 +163,14 @@ class GargoyleTest(TestCase):
         )
         
         self.assertTrue(test(request))
+
+        # add in a second condition, so that removing the first one won't kick
+        # in the "no conditions returns is_active True for selective switches"
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='ip_address',
+            condition='192.168.1.2',
+        )
 
         switch.remove_condition(
             condition_set=condition_set,
@@ -451,6 +459,64 @@ class GargoyleTest(TestCase):
         self.assertTrue(inner_condition[1], '192.168.1.1')
         self.assertTrue(inner_condition[2], '192.168.1.1')
         self.assertFalse(inner_condition[3])
+
+
+    def test_remove_condition(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = self.gargoyle['test']
+
+        user5 = User(pk=5, email='5@example.com')
+
+        # is_active if selective with no conditions
+        self.assertTrue(self.gargoyle.is_active('test', user5))
+
+        user8771 = User(pk=8771, email='8771@example.com', is_superuser=True)
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='is_superuser',
+            condition='1',
+        )
+        self.assertTrue(self.gargoyle.is_active('test', user8771))
+        # No longer is_active for user5 as we have other conditions
+        self.assertFalse(self.gargoyle.is_active('test', user5))
+
+        switch.remove_condition(
+            condition_set=condition_set,
+            field_name='is_superuser',
+            condition='1',
+        )
+
+        # back to is_active for everyone with no conditions
+        self.assertTrue(self.gargoyle.is_active('test', user5))
+        self.assertTrue(self.gargoyle.is_active('test', user8771))
+
+
+    def test_switch_defaults(self):
+        """Test that defaults pulled from GARGOYLE_SWITCH_DEFAULTS.
+
+        Requires SwitchManager to use auto_create.
+
+        """
+        self.assertTrue(self.gargoyle.is_active('active_by_default'))
+        self.assertFalse(self.gargoyle.is_active('inactive_by_default'))
+        self.assertEquals(
+            self.gargoyle['inactive_by_default'].label,
+            'Default Inactive',
+        )
+        self.assertEquals(
+            self.gargoyle['active_by_default'].label,
+            'Default Active',
+        )
+        active_by_default = self.gargoyle['active_by_default']
+        active_by_default.status = DISABLED
+        active_by_default.save()
+        self.assertFalse(self.gargoyle.is_active('active_by_default'))
+
 
 class GargoyleConstantTest(TestCase):
     def setUp(self):

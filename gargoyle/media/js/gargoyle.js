@@ -100,7 +100,7 @@ $(document).ready(function () {
                 if (swtch.status == status) {
                     row.find(".toggled").removeClass("toggled");
                     el.addClass("toggled");
-                    if (!swtch.conditions && swtch.status == 2) {
+                    if ($.isArray(swtch.conditions) && swtch.conditions.length < 1 && swtch.status == 2) {
                         swtch.status = 3;
                     }
                     row.find('.status p').text(labels[swtch.status]);

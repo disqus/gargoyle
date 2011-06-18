@@ -18,6 +18,8 @@ from django.utils import simplejson
 from gargoyle import gargoyle, autodiscover
 from gargoyle.models import Switch, DISABLED
 from gargoyle.conditions import ValidationError
+from gargoyle import signals
+
 
 GARGOYLE_ROOT = os.path.dirname(__file__)
 
@@ -128,6 +130,11 @@ class GargoyleModule(nexus.NexusModule):
         if not created:
             raise GargoyleException("Switch with key %s already exists" % key)
 
+        signals.switch_added.send(
+            sender=self,
+            request=request,
+        )
+
         return switch.to_dict(gargoyle)
     add = json(add)
     
@@ -152,6 +159,11 @@ class GargoyleModule(nexus.NexusModule):
         switch.description = request.POST.get("desc")
         switch.save()
 
+        signals.switch_updated.send(
+            sender=self,
+            request=request,
+        )
+
         return switch.to_dict(gargoyle)
     update = json(update)
     
@@ -166,12 +178,21 @@ class GargoyleModule(nexus.NexusModule):
         switch.status = status
         switch.save()
 
+        signals.switch_status_updated.send(
+            sender=self,
+            request=request,
+        )
+
         return switch.to_dict(gargoyle)
     status = json(status)
     
     def delete(self, request):
         switch = Switch.objects.get(key=request.POST.get("key"))
         switch.delete()
+        signals.switch_deleted.send(
+            sender=self,
+            request=request,
+        )
         return {}
     delete = json(delete)
 
@@ -189,6 +210,10 @@ class GargoyleModule(nexus.NexusModule):
 
         switch = gargoyle[key]
         switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
+        signals.switch_condition_added.send(
+            sender=self,
+            request=request,
+        )
 
         return switch.to_dict(gargoyle)
     add_condition = json(add_condition)
@@ -204,6 +229,10 @@ class GargoyleModule(nexus.NexusModule):
 
         switch = gargoyle[key]
         switch.remove_condition(condition_set_id, field_name, value)
+        signals.switch_condition_removed.send(
+            sender=self,
+            request=request,
+        )
 
         return switch.to_dict(gargoyle)
     remove_condition = json(remove_condition)
