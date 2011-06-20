@@ -59,7 +59,7 @@ If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`
 	    switch_name is active!
 	{% else %}
 	    switch_name is not active :(
-	{% endif %}
+	{% endifswitch %}
 
 Default Switch States
 ~~~~~~~~~~~~~~~~~~~~~
