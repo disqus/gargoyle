@@ -12,12 +12,14 @@ from django.http import HttpRequest, Http404, HttpResponse
 from django.test import TestCase
 from django.template import Context, Template, TemplateSyntaxError
 
-from gargoyle.builtins import IPAddressConditionSet, UserConditionSet
+from gargoyle.builtins import IPAddressConditionSet, UserConditionSet, HostConditionSet
 from gargoyle.decorators import switch_is_active
 from gargoyle.helpers import MockRequest
 from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL
 
-class GargoyleTest(TestCase):
+import socket
+
+class APITest(TestCase):
     urls = 'gargoyle.tests.urls'
     
     def setUp(self):
@@ -125,7 +127,7 @@ class GargoyleTest(TestCase):
         switch.status = SELECTIVE
         switch.save()
 
-        self.assertTrue(test(request))
+        self.assertRaises(Http404, test, request)
 
         switch.add_condition(
             condition_set=condition_set,
@@ -243,12 +245,12 @@ class GargoyleTest(TestCase):
     def test_global(self):
         switch = Switch.objects.create(
             key='test',
-            status=SELECTIVE,
+            status=DISABLED,
         )
         switch = self.gargoyle['test']
 
-        self.assertTrue(self.gargoyle.is_active('test'))
-        self.assertTrue(self.gargoyle.is_active('test', self.user))
+        self.assertFalse(self.gargoyle.is_active('test'))
+        self.assertFalse(self.gargoyle.is_active('test', self.user))
         
         switch.status = GLOBAL
         switch.save()
@@ -289,7 +291,7 @@ class GargoyleTest(TestCase):
 
         self.assertFalse(self.gargoyle.is_active('test'))
 
-        Switch.objects.filter(key='test').update(value={}, status=SELECTIVE)
+        Switch.objects.filter(key='test').update(value={}, status=GLOBAL)
 
         # cache shouldn't have expired
         self.assertFalse(self.gargoyle.is_active('test'))
@@ -297,7 +299,7 @@ class GargoyleTest(TestCase):
         # in memory cache shouldnt have expired
         cache.delete(self.gargoyle.cache_key)
         self.assertFalse(self.gargoyle.is_active('test'))
-        switch.status, switch.value = SELECTIVE, {}
+        switch.status, switch.value = GLOBAL, {}
         # Ensure post save gets sent
         self.gargoyle._post_save(sender=None, instance=switch, created=False)
 
@@ -318,7 +320,7 @@ class GargoyleTest(TestCase):
         
         user = AnonymousUser()
 
-        self.assertTrue(self.gargoyle.is_active('test', user))
+        self.assertFalse(self.gargoyle.is_active('test', user))
 
         switch.add_condition(
             condition_set=condition_set,
@@ -332,7 +334,7 @@ class GargoyleTest(TestCase):
             condition_set=condition_set,
         )
 
-        self.assertTrue(self.gargoyle.is_active('test', user))
+        self.assertFalse(self.gargoyle.is_active('test', user))
 
         switch.add_condition(
             condition_set=condition_set,
@@ -363,7 +365,7 @@ class GargoyleTest(TestCase):
         request = HttpRequest()
         request.META['REMOTE_ADDR'] = '192.168.1.1'
 
-        self.assertTrue(self.gargoyle.is_active('test', request))
+        self.assertFalse(self.gargoyle.is_active('test', request))
 
         switch.add_condition(
             condition_set=condition_set,
@@ -388,7 +390,7 @@ class GargoyleTest(TestCase):
             condition_set=condition_set,
         )
 
-        self.assertTrue(self.gargoyle.is_active('test', request))
+        self.assertFalse(self.gargoyle.is_active('test', request))
 
         switch.add_condition(
             condition_set=condition_set,
@@ -472,8 +474,8 @@ class GargoyleTest(TestCase):
 
         user5 = User(pk=5, email='5@example.com')
 
-        # is_active if selective with no conditions
-        self.assertTrue(self.gargoyle.is_active('test', user5))
+        # inactive if selective with no conditions
+        self.assertFalse(self.gargoyle.is_active('test', user5))
 
         user8771 = User(pk=8771, email='8771@example.com', is_superuser=True)
         switch.add_condition(
@@ -491,10 +493,9 @@ class GargoyleTest(TestCase):
             condition='1',
         )
 
-        # back to is_active for everyone with no conditions
-        self.assertTrue(self.gargoyle.is_active('test', user5))
-        self.assertTrue(self.gargoyle.is_active('test', user8771))
-
+        # back to inactive for everyone with no conditions
+        self.assertFalse(self.gargoyle.is_active('test', user5))
+        self.assertFalse(self.gargoyle.is_active('test', user8771))
 
     def test_switch_defaults(self):
         """Test that defaults pulled from GARGOYLE_SWITCH_DEFAULTS.
@@ -518,7 +519,7 @@ class GargoyleTest(TestCase):
         self.assertFalse(self.gargoyle.is_active('active_by_default'))
 
 
-class GargoyleConstantTest(TestCase):
+class ConstantTest(TestCase):
     def setUp(self):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
 
@@ -542,7 +543,7 @@ class GargoyleConstantTest(TestCase):
         self.assertTrue(hasattr(self.gargoyle, 'EXCLUDE'))
         self.assertEquals(self.gargoyle.EXCLUDE, 'e')
 
-class GargoyleMockRequestTest(TestCase):
+class MockRequestTest(TestCase):
     def setUp(self):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
     
@@ -570,7 +571,7 @@ class GargoyleMockRequestTest(TestCase):
         self.assertEquals(req.META['REMOTE_ADDR'], '127.0.0.1')
         self.assertEquals(req.user, user)
         
-class GargoyleTemplateTagTest(TestCase):
+class TemplateTagTest(TestCase):
     urls = 'gargoyle.tests.urls'
     
     def setUp(self):
@@ -646,3 +647,28 @@ class GargoyleTemplateTagTest(TestCase):
             hello world!
             {% endifswitch %}
         """)
+
+class HostConditionSetTest(TestCase):
+    def setUp(self):
+        self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
+        self.gargoyle.register(HostConditionSet())
+
+    def test_simple(self):
+        condition_set = 'gargoyle.builtins.HostConditionSet'
+        
+        # we need a better API for this (model dict isnt cutting it)
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = self.gargoyle['test']
+
+        self.assertFalse(self.gargoyle.is_active('test'))
+        
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='hostname',
+            condition=socket.gethostname(),
+        )
+
+        self.assertTrue(self.gargoyle.is_active('test'))

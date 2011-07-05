@@ -7,10 +7,13 @@ gargoyle.builtins
 """
 
 from gargoyle import gargoyle
-from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent, String, Boolean
+from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent, String, Boolean, \
+                                ConditionSet
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.validators import validate_ipv4_address
+
+import socket
 
 class UserConditionSet(ModelConditionSet):
     percent = Percent()
@@ -61,3 +64,16 @@ class IPAddressConditionSet(RequestConditionSet):
         return 'IP Address'
 
 gargoyle.register(IPAddressConditionSet())
+
+class HostConditionSet(ConditionSet):
+    hostname = String()
+
+    def get_namespace(self):
+        return 'host'
+    
+    def can_execute(self, instance):
+        return instance is None
+    
+    def get_field_value(self, instance, field_name):
+        if field_name == 'hostname':
+            return socket.gethostname()

@@ -1,0 +1,7 @@
+0.2.0
+
+- [Backwards Incompatible] SELECTIVE switches without conditions are now inactive
+- Added ConditionSet.has_active_condition, and support for default NoneType instances
+  for global / environment checks.
+- Added HostConditionSet which allows you to specify a switch for a single
+  server hostname

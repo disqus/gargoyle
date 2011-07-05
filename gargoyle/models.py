@@ -292,7 +292,7 @@ class SwitchManager(ModelDict):
 
         conditions = switch.value
         if not conditions:
-            return True
+            return False
 
         if instances:
             # HACK: support request.user by swapping in User instance
@@ -301,12 +301,10 @@ class SwitchManager(ModelDict):
                 if isinstance(v, HttpRequest) and hasattr(v, 'user'):
                     instances.append(v.user)
 
-            for instance in instances:
-                # check each switch to see if it can execute
-                for switch in self._registry.itervalues():
-                    if switch.can_execute(instance):
-                        if switch.is_active(instance, conditions):
-                            return True
+        # check each switch to see if it can execute
+        for switch in self._registry.itervalues():
+            if switch.has_active_condition(conditions, instances):
+                return True
 
         return False
     
