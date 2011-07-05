@@ -27,6 +27,9 @@
     border-collapse: collapse;
 }
 
+#container table.switches tr {
+}
+
 #container table.switches td {
     vertical-align: top;
     border-bottom: solid 1px #efefef;

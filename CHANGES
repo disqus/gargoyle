@@ -1,3 +1,7 @@
+0.2.1
+
+- UI tweaks
+
 0.2.0
 
 - [Backwards Incompatible] SELECTIVE switches without conditions are now inactive

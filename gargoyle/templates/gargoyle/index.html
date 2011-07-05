@@ -45,8 +45,10 @@
         {% for switch in switches %}
         <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
             <td class="name">
-                <h4>{{ switch.label }} <small class="command">({{ switch.key }})</small></h4>
-                <p>{{ switch.description }}</p>
+                <h4>{% if switch.label %}{{ switch.label }}{% else %}{{ switch.key|title }}{% endif %} <small class="command">({{ switch.key }})</small></h4>
+                {% if switch.description %}
+                    <p>{{ switch.description }}</p>
+                {% endif %}
 
                 <div class="conditions">
                     {% for group in switch.conditions %}
@@ -89,7 +91,7 @@
                         {% if switch.conditions %}
                             (Active for conditions)
                         {% else %}
-                            (Active for everyone)
+                            (Disabled for everyone)
                         {% endif %}
                     {% else %}
                             (Disabled for everyone)
@@ -196,7 +198,7 @@
                                 {{if conditions}}
                                     (Active for conditions)
                                 {{else}}
-                                    (Active for everyone)
+                                    (Disabled for everyone)
                                 {{/if}}
                             {{else}}
                                 (Disabled for everyone)
