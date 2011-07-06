@@ -20,7 +20,7 @@ from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL
 import socket
 
 class APITest(TestCase):
-    urls = 'gargoyle.tests.urls'
+    urls = 'tests.urls'
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
@@ -572,7 +572,7 @@ class MockRequestTest(TestCase):
         self.assertEquals(req.user, user)
         
 class TemplateTagTest(TestCase):
-    urls = 'gargoyle.tests.urls'
+    urls = 'tests.urls'
     
     def setUp(self):
         self.user = User.objects.create(username='foo', email='foo@example.com')
