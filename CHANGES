@@ -1,3 +1,7 @@
+0.2.3
+
+- Ensure HostConditionSet is registered
+
 0.2.2
 
 - Moved tests outside of gargoyle namespace
