@@ -596,6 +596,11 @@ class TemplateTagTest(TestCase):
         self.assertTrue('hello world!' in rendered)
     
     def test_else(self):
+        Switch.objects.create(
+            key='test',
+            status=DISABLED,
+        )        
+
         template = Template("""
             {% load gargoyle_tags %}
             {% ifswitch test %}
