@@ -78,4 +78,7 @@ class HostConditionSet(ConditionSet):
         if field_name == 'hostname':
             return socket.gethostname()
 
+    def get_group_label(self):
+        return 'Host'
+
 gargoyle.register(HostConditionSet())
