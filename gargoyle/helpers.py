@@ -17,6 +17,9 @@ class MockRequest(HttpRequest):
         from django.contrib.auth.models import AnonymousUser
 
         self.user = user or AnonymousUser()
+        self.GET = {}
+        self.POST = {}
+        self.COOKIES = {}
         self.META = {
             'REMOTE_ADDR': ip_address,
         }
