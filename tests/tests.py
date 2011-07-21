@@ -6,6 +6,8 @@ gargoyle.tests.tests
 :license: Apache License 2.0, see LICENSE for more details.
 """
 
+import datetime
+
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.http import HttpRequest, Http404, HttpResponse
@@ -78,6 +80,28 @@ class APITest(TestCase):
 
         # test with mock request
         self.assertTrue(self.gargoyle.is_active('test', self.gargoyle.as_request(user=user)))
+
+        # test date joined condition
+        user = User(pk=8771)
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='date_joined',
+            condition='2011-07-01',
+        )
+
+        user = User(pk=8771, date_joined=datetime.datetime(2011, 07, 02))
+        self.assertTrue(self.gargoyle.is_active('test', user))
+
+        user = User(pk=8771, date_joined=datetime.datetime(2012, 07, 02))
+        self.assertTrue(self.gargoyle.is_active('test', user))
+
+        user = User(pk=8771, date_joined=datetime.datetime(2011, 06, 02))
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
+        user = User(pk=8771, date_joined=datetime.datetime(2011, 07, 01))
+        self.assertTrue(self.gargoyle.is_active('test', user))
 
     def test_exclusions(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
