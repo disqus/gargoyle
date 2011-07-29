@@ -9,6 +9,8 @@ gargoyle.conditions
 # TODO: i18n
 # Credit to Haystack for abstraction concepts
 
+import datetime
+
 from django.http import HttpRequest
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -127,6 +129,51 @@ class Percent(Range):
 
 class String(Field):
     pass
+
+class AbstractDate(Field):
+    DATE_FORMAT = "%Y-%m-%d"
+    PRETTY_DATE_FORMAT = "%d %b %Y"
+
+    def str_to_date(self, value):
+        return datetime.datetime.strptime(value, self.DATE_FORMAT).date()
+
+    def display(self, value):
+        date = self.str_to_date(value)
+        return "%s: %s" % (self.label, date.strftime(self.PRETTY_DATE_FORMAT))
+
+    def clean(self, value):
+        try:
+            date = self.str_to_date(value)
+        except ValueError, e:
+            raise ValidationError("Date must be a valid date in the format YYYY-MM-DD.\n(%s)" % e.message)
+
+        return date.strftime(self.DATE_FORMAT)
+
+    def render(self, value):
+        if not value:
+            value = datetime.date.today().strftime(self.DATE_FORMAT)
+
+        return mark_safe('<input type="text" value="%s" name="%s"/>' % (escape(value), escape(self.name)))
+
+    def is_active(self, condition, value):
+        assert isinstance(value, datetime.date)
+        if isinstance(value, datetime.datetime):
+            # datetime.datetime cannot be compared to datetime.date with > and < operators
+            value = value.date()
+
+        condition_date = self.str_to_date(condition)
+        return self.date_is_active(condition_date, value)
+
+    def date_is_active(self, condition_date, value):
+        raise NotImplementedError
+
+class BeforeDate(AbstractDate):
+    def date_is_active(self, before_this_date, value):
+        return value < before_this_date
+
+class OnOrAfterDate(AbstractDate):
+    def date_is_active(self, after_this_date, value):
+        return value >= after_this_date
 
 class ConditionSetBase(type):
     def __new__(cls, name, bases, attrs):
