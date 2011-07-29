@@ -360,3 +360,5 @@ class SwitchManager(ModelDict):
         from gargoyle.helpers import MockRequest
 
         return MockRequest(user, ip_address)
+
+gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)

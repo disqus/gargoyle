@@ -12,8 +12,7 @@ try:
 except Exception, e:
     VERSION = 'unknown'
 
-from gargoyle.conditions import ConditionSet
-from gargoyle.models import SwitchManager, Switch
+from gargoyle.models import gargoyle
 
 from django.utils.importlib import import_module
 
@@ -24,8 +23,6 @@ __all__ = ('gargoyle', 'ConditionSet', 'autodiscover')
 # A flag to tell us if autodiscover is running.  autodiscover will set this to
 # True while running, and False when it finishes.
 LOADING = False
-
-gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
 
 def autodiscover():
     """
