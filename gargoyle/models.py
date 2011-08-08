@@ -361,4 +361,5 @@ class SwitchManager(ModelDict):
 
         return MockRequest(user, ip_address)
 
-gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
+gargoyle = SwitchManager(Switch, key='key', value='value', instances=True,
+    auto_create=getattr(settings, 'GARGOYLE_AUTO_CREATE', True))
