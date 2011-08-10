@@ -258,7 +258,6 @@ class SwitchManager(ModelDict):
     EXCLUDE   = EXCLUDE
     
     def __init__(self, *args, **kwargs):
-        print "init"
         self._registry = {}
         super(SwitchManager, self).__init__(*args, **kwargs)
     
