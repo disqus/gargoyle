@@ -14,7 +14,7 @@ tests_require = [
 
 setup(
     name='gargoyle',
-    version='0.2.3',
+    version='0.2.4',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
@@ -22,7 +22,7 @@ setup(
     packages=find_packages(exclude=["example_project", "tests"]),
     zip_safe=False,
     install_requires=[
-        'django-modeldict>=1.1.5',
+        'django-modeldict>=1.1.6',
         'nexus>=0.1.7',
         'django-jsonfield',
     ],

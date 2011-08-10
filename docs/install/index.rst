@@ -37,3 +37,11 @@ the module by hand:
 	>>> nexus.site.register(GargoyleModule, 'gargoyle')
 
 (Nexus is a replacement for your Django admin frontend, that works with django.contrib.admin)
+
+Disabling Auto Creation
+-----------------------
+
+Under some conditions you may not want Gargoyle to automatically create switches that don't currently exist. To disable this behavior,
+you may use the ``GARGOYLE_AUTO_CREATE`` setting your ``settings.py``::
+
+    GARGOYLE_AUTO_CREATE = False

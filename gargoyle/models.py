@@ -258,6 +258,7 @@ class SwitchManager(ModelDict):
     EXCLUDE   = EXCLUDE
     
     def __init__(self, *args, **kwargs):
+        print "init"
         self._registry = {}
         super(SwitchManager, self).__init__(*args, **kwargs)
     
@@ -360,6 +361,3 @@ class SwitchManager(ModelDict):
         from gargoyle.helpers import MockRequest
 
         return MockRequest(user, ip_address)
-
-gargoyle = SwitchManager(Switch, key='key', value='value', instances=True,
-    auto_create=getattr(settings, 'GARGOYLE_AUTO_CREATE', True))

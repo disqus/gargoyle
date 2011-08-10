@@ -1,3 +1,9 @@
+0.2.4
+
+- Updated autodiscovery code to resemble Django's newer example
+- Updated django-modeldict to 1.1.6 to solve a threading issue with registration
+- Added GARGOYLE_AUTO_CREATE setting to disable auto creation of new switches
+
 0.2.3
 
 - Ensure HostConditionSet is registered
