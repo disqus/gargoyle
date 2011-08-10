@@ -677,6 +677,39 @@ class TemplateTagTest(TestCase):
             {% endifswitch %}
         """)
 
+    def test_with_custom_objects(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = self.gargoyle['test']
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='0-50',
+        )
+
+        request = HttpRequest()
+        request.user = self.user
+
+        # Pass in request.user explicitly.
+        template = Template("""
+            {% load gargoyle_tags %}
+            {% ifswitch test request.user %}
+            hello world!
+            {% else %}
+            foo bar baz
+            {% endifswitch %}
+        """)
+        rendered = template.render(Context({'request': request}))
+
+        self.assertFalse('foo bar baz' in rendered)
+        self.assertTrue('hello world!' in rendered)
+
+
 class HostConditionSetTest(TestCase):
     def setUp(self):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)

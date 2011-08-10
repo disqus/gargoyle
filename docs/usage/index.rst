@@ -61,6 +61,12 @@ If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`
 	    switch_name is not active :(
 	{% endifswitch %}
 
+``ifswitch`` can also be used with custom objects, like the ``gargoyle.is_active`` method::
+
+	{% ifswitch "my switch name" user %}
+	    "my switch name" is active!
+	{% endifswitch %}
+
 Default Switch States
 ~~~~~~~~~~~~~~~~~~~~~
 
