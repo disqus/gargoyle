@@ -45,3 +45,22 @@ Under some conditions you may not want Gargoyle to automatically create switches
 you may use the ``GARGOYLE_AUTO_CREATE`` setting your ``settings.py``::
 
     GARGOYLE_AUTO_CREATE = False
+
+Default Switch States
+~~~~~~~~~~~~~~~~~~~~~
+
+The GARGOYLE_SWITCH_DEFAULTS setting allows engineers to set the default state of a switch before it's been added via the gargoyle admin interface. In your settings.py add something like::
+
+    GARGOYLE_SWITCH_DEFAULTS = {
+        'new_switch': {
+          'is_active': True,
+          'label': 'New Switch',
+          'description': 'When you want the newness',
+        },
+        'funky_switch': {
+          'is_active': False,
+          'label': 'Funky Switch',
+          'description': 'Controls the funkiness.',
+        },
+    }
+

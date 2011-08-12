@@ -18,6 +18,7 @@ from gargoyle.builtins import IPAddressConditionSet, UserConditionSet, HostCondi
 from gargoyle.decorators import switch_is_active
 from gargoyle.helpers import MockRequest
 from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL
+from gargoyle.testutils import with_switch, switches
 
 import socket
 
@@ -734,3 +735,43 @@ class HostConditionSetTest(TestCase):
         )
 
         self.assertTrue(self.gargoyle.is_active('test'))
+
+class TestUtilsTest(TestCase):
+    def setUp(self):
+        self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
+
+    def test_with_switch(self):
+        switch = self.gargoyle['test']
+        switch.status = DISABLED
+        
+        @with_switch(self.gargoyle, test=True)
+        def test():
+            return self.gargoyle.is_active('test')
+        
+        self.assertTrue(test())
+        self.assertEquals(self.gargoyle['test'].status, DISABLED)
+
+        switch.status = GLOBAL
+        
+        @with_switch(self.gargoyle, test=False)
+        def test():
+            return self.gargoyle.is_active('test')
+
+        self.assertFalse(test())
+        self.assertEquals(self.gargoyle['test'].status, GLOBAL)
+
+    def test_context_manager(self):
+        switch = self.gargoyle['test']
+        switch.status = DISABLED
+        
+        with switches(self.gargoyle, test=True):
+            self.assertTrue(self.gargoyle.is_active('test'))
+        
+        self.assertEquals(self.gargoyle['test'].status, DISABLED)
+
+        switch.status = GLOBAL
+        
+        with switches(self.gargoyle, test=False):
+            self.assertFalse(self.gargoyle.is_active('test'))
+        
+        self.assertEquals(self.gargoyle['test'].status, GLOBAL)

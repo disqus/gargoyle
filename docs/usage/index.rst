@@ -67,21 +67,36 @@ If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`
 	    "my switch name" is active!
 	{% endifswitch %}
 
-Default Switch States
-~~~~~~~~~~~~~~~~~~~~~
+Testing Switches
+~~~~~~~~~~~~~~~~
 
-The GARGOYLE_SWITCH_DEFAULTS setting allows engineers to set the default state of a switch before it's been added via the gargoyle admin interface. In your settings.py add something like::
+Several utilities are included for assisting with writing tests related to switches.
 
-    GARGOYLE_SWITCH_DEFAULTS = {
-        'new_switch': {
-          'is_active': True,
-          'label': 'New Switch',
-          'description': 'When you want the newness',
-        },
-        'funky_switch': {
-          'is_active': False,
-          'label': 'Funky Switch',
-          'description': 'Controls the funkiness.',
-        },
-    }
+gargoyle.testutils.with_switch
+------------------------------
 
+::
+
+    @with_switch(my_switch_name=True)
+    def foo():
+        print gargoyle.is_active('my_switch_name')
+
+    @with_switch(gargoyle, my_switch_name=True)
+    def foo():
+        print gargoyle.is_active('my_switch_name')
+
+gargoyle.testutils.SwitchContextManager
+---------------------------------------
+
+::
+
+    from gargoyle.testutils import switches
+    
+    def foo():
+        with switches(my_switch_name=True):
+            print gargoyle.is_active('my_switch_name')
+
+
+    def foo():
+        with switches(gargoyle, my_switch_name=True):
+            print gargoyle.is_active('my_switch_name')

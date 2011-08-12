@@ -1,3 +1,8 @@
+0.3.0
+
+- Added gargoyle.testutils.with_switches decorator
+- Added gargoyle.testutils.SwitchContextManager
+
 0.2.4
 
 - Updated autodiscovery code to resemble Django's newer example
