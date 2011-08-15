@@ -18,7 +18,7 @@ from gargoyle.builtins import IPAddressConditionSet, UserConditionSet, HostCondi
 from gargoyle.decorators import switch_is_active
 from gargoyle.helpers import MockRequest
 from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL
-from gargoyle.testutils import with_switch, switches
+from gargoyle.testutils import switches
 
 import socket
 
@@ -487,7 +487,6 @@ class APITest(TestCase):
         self.assertTrue(inner_condition[2], '192.168.1.1')
         self.assertFalse(inner_condition[3])
 
-
     def test_remove_condition(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
 
@@ -736,15 +735,15 @@ class HostConditionSetTest(TestCase):
 
         self.assertTrue(self.gargoyle.is_active('test'))
 
-class TestUtilsTest(TestCase):
+class SwitchContextManagerTest(TestCase):
     def setUp(self):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
 
-    def test_with_switch(self):
+    def test_as_decorator(self):
         switch = self.gargoyle['test']
         switch.status = DISABLED
         
-        @with_switch(self.gargoyle, test=True)
+        @switches(self.gargoyle, test=True)
         def test():
             return self.gargoyle.is_active('test')
         
@@ -753,7 +752,7 @@ class TestUtilsTest(TestCase):
 
         switch.status = GLOBAL
         
-        @with_switch(self.gargoyle, test=False)
+        @switches(self.gargoyle, test=False)
         def test():
             return self.gargoyle.is_active('test')
 

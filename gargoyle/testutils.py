@@ -2,57 +2,47 @@ from functools import wraps
 
 from gargoyle import gargoyle
 
-def with_switch(gargoyle=gargoyle, **keys):
+class SwitchContextManager(object):
     """
     Allows temporarily enabling or disabling a switch.
     
     Ideal for testing.
     
-    >>> @with_switch(my_switch_name=True)
+    >>> @switches(my_switch_name=True)
     >>> def foo():
     >>>     print gargoyle.is_active('my_switch_name')
 
-    >>> @with_switch(gargoyle, my_switch_name=True)
     >>> def foo():
-    >>>     print gargoyle.is_active('my_switch_name')
-    """
-    def _with_switch(func):
-        @wraps(func)
-        def inner(*args, **kwargs):
-            with SwitchContextManager(gargoyle, **keys):
-                return func(*args, **kwargs)
-        return inner
-    return _with_switch
-
-class SwitchContextManager(object):
-    """
-    While context is active all switches in ``keys``
-    are set to ``GLOBAL``. Ideal for testing.
-    
-    >>> def foo():
-    >>>     with SwitchContextManager(my_switch_name=True):
-    >>>         print gargoyle.is_active('my_switch_name')
-
-
-    >>> def foo():
-    >>>     with SwitchContextManager(gargoyle, my_switch_name=True):
+    >>>     with switches(my_switch_name=True):
     >>>         print gargoyle.is_active('my_switch_name')
     
-    """
-    values = {
-        True: gargoyle.GLOBAL,
-        False: gargoyle.DISABLED,
-    }
+    You may also optionally pass an instance of ``SwitchManager``
+    as the first argument.
     
+    >>> def foo():
+    >>>     with switches(gargoyle, my_switch_name=True):
+    >>>         print gargoyle.is_active('my_switch_name')
+    """
     def __init__(self, gargoyle=gargoyle, **keys):
         self.gargoyle = gargoyle
         self.keys = keys
         self._state = {}
+        self._values = {
+            True: gargoyle.GLOBAL,
+            False: gargoyle.DISABLED,
+        }
+
+    def __call__(self, func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            with self:
+                return func(*args, **kwargs)
+        return inner
 
     def __enter__(self):
         for key, value in self.keys.iteritems():
             self._state[key] = self.gargoyle[key].status
-            self.gargoyle[key].status = self.values[value]
+            self.gargoyle[key].status = self._values[value]
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         for key in self.keys:
