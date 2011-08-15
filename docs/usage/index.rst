@@ -70,8 +70,24 @@ If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`
 Testing Switches
 ~~~~~~~~~~~~~~~~
 
-Several a context manager, which may optionally be used as a decorator, to give temporary state
+Gargoyle includes a context manager, which may optionally be used as a decorator, to give temporary state
 to a switch on the currently executing thread.
 
-.. autoclass:: gargoyle.testutils.switches
-   :members:
+::
+
+    from gargoyle.testutils import switches
+
+    @switches(my_switch_name=True)
+    def foo():
+        print gargoyle.is_active('my_switch_name')
+
+    def foo():
+        with switches(my_switch_name=True):
+            print gargoyle.is_active('my_switch_name')
+
+You may also optionally pass an instance of ``SwitchManager``
+as the first argument::
+
+    def foo():
+        with switches(gargoyle, my_switch_name=True):
+            print gargoyle.is_active('my_switch_name')
