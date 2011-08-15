@@ -73,5 +73,5 @@ Testing Switches
 Several a context manager, which may optionally be used as a decorator, to give temporary state
 to a switch on the currently executing thread.
 
-.. autoclass:: gargoyle.testutils.SwitchContextManager
+.. autoclass:: gargoyle.testutils.switches
    :members:
