@@ -1,3 +1,7 @@
+0.4.0
+
+- The percent field is now available on all ModelConditionSet's by default.
+
 0.3.0
 
 - Added gargoyle.testutils.with_switches decorator

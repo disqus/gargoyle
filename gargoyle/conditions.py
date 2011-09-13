@@ -187,14 +187,14 @@ class ConditionSetBase(type):
             
             if fields:
                 attrs['fields'].update(fields)
-            
-        instance = super(ConditionSetBase, cls).__new__(cls, name, bases, attrs)
-    
+
         for field_name, obj in attrs.items():
             if isinstance(obj, Field):
                 field = attrs.pop(field_name)
                 field.set_values(field_name)
                 attrs['fields'][field_name] = field
+        
+        instance = super(ConditionSetBase, cls).__new__(cls, name, bases, attrs)
         
         return instance
     
@@ -281,6 +281,8 @@ class ConditionSet(object):
         return self.__class__.__name__
 
 class ModelConditionSet(ConditionSet):
+    percent = Percent()
+
     def __init__(self, model):
         self.model = model
 
