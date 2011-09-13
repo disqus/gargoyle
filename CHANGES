@@ -1,6 +1,7 @@
 0.4.0
 
 - The percent field is now available on all ModelConditionSet's by default.
+- Fixed a CSRF conflict issue with Nexus.
 
 0.3.0
 
