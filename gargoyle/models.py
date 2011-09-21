@@ -248,7 +248,7 @@ class SwitchProxy(object):
 
     def get_active_conditions(self, *args, **kwargs):
         return self._switch.get_active_conditions(self._manager, *args, **kwargs)
-            
+
 class SwitchManager(ModelDict):
     DISABLED  = DISABLED
     SELECTIVE = SELECTIVE
@@ -272,14 +272,13 @@ class SwitchManager(ModelDict):
         """
         return SwitchProxy(self, super(SwitchManager, self).__getitem__(key))
     
-    def is_active(self, key, *instances):
+    def is_active(self, key, *instances, **kwargs):
         """
         Returns ``True`` if any of ``instances`` match an active switch. Otherwise
         returns ``False``.
         
         >>> gargoyle.is_active('my_feature', request) #doctest: +SKIP
         """
-        
         try:
             switch = self[key]
         except KeyError:

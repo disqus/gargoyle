@@ -12,7 +12,7 @@ from gargoyle import gargoyle
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 
-def switch_is_active(key, redirect_to=None):
+def switch_is_active(key, redirect_to=None, gargoyle=gargoyle):
     def _switch_is_active(func):
         @wraps(func)
         def wrapped(request, *args, **kwargs):
