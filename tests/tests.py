@@ -104,6 +104,22 @@ class APITest(TestCase):
         user = User(pk=8771, date_joined=datetime.datetime(2011, 07, 01))
         self.assertTrue(self.gargoyle.is_active('test', user))
 
+        switch.clear_conditions(condition_set=condition_set)
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='email',
+            condition='bob@example.com',
+        )
+
+        user = User(pk=8771, email="bob@example.com")
+        self.assertTrue(self.gargoyle.is_active('test', user))
+
+        user = User(pk=8771, email="bob2@example.com")
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
+        user = User(pk=8771)
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
     def test_exclusions(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
         
