@@ -25,17 +25,17 @@ def titlize(s):
 
 class Field(object):
     default_help_text = None
-    
+
     def __init__(self, label=None, help_text=None):
         self.label = label
         self.help_text = help_text or self.default_help_text
         self.set_values(None)
-    
+
     def set_values(self, name):
         self.name = name
         if name and not self.label:
             self.label = titlize(name)
-    
+
     def is_active(self, condition, value):
         return condition == value
 
@@ -59,7 +59,7 @@ class Field(object):
 class Boolean(Field):
     def is_active(self, condition, value):
         return bool(value)
-    
+
     def render(self, value):
         return mark_safe('<input type="hidden" value="1" name="%s"/>' % (escape(self.name),))
 
@@ -73,7 +73,7 @@ class Choice(Field):
 
     def is_active(self, condition, value):
         return value in self.choices
-    
+
     def clean(self, value):
         if value not in self.choices:
             raise ValidationError
@@ -107,7 +107,7 @@ class Range(Field):
 
 class Percent(Range):
     default_help_text = 'Enter two ranges. e.g. 0-50 is lower 50%'
-    
+
     def is_active(self, condition, value):
         condition = map(int, condition.split('-'))
         mod = value % 100
@@ -178,13 +178,13 @@ class OnOrAfterDate(AbstractDate):
 class ConditionSetBase(type):
     def __new__(cls, name, bases, attrs):
         attrs['fields'] = {}
-        
+
         # Inherit any fields from parent(s).
         parents = [b for b in bases if isinstance(b, ConditionSetBase)]
-        
+
         for p in parents:
             fields = getattr(p, 'fields', None)
-            
+
             if fields:
                 attrs['fields'].update(fields)
 
@@ -193,11 +193,11 @@ class ConditionSetBase(type):
                 field = attrs.pop(field_name)
                 field.set_values(field_name)
                 attrs['fields'][field_name] = field
-        
+
         instance = super(ConditionSetBase, cls).__new__(cls, name, bases, attrs)
-        
+
         return instance
-    
+
 
 class ConditionSet(object):
     __metaclass__ = ConditionSetBase
@@ -230,7 +230,7 @@ class ConditionSet(object):
         """
         Given an instance, and the name of an attribute, returns the value
         of that attribute on the instance.
-        
+
         Default behavior will map the ``percent`` attribute to ``id``.
         """
         # XXX: can we come up w/ a better API?
@@ -272,7 +272,7 @@ class ConditionSet(object):
                             return False
                         return_value = True
         return return_value
-    
+
     def get_group_label(self):
         """
         Returns a string representing a human readable version
@@ -297,13 +297,13 @@ class ModelConditionSet(ConditionSet):
 
     def get_namespace(self):
         return '%s.%s' % (self.model._meta.app_label, self.model._meta.module_name)
-    
+
     def get_group_label(self):
         return self.model._meta.verbose_name.title()
 
 class RequestConditionSet(ConditionSet):
     def get_namespace(self):
         return 'request'
-    
+
     def can_execute(self, instance):
         return isinstance(instance, HttpRequest)
