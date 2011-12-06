@@ -68,10 +68,10 @@ def json(func):
 class GargoyleModule(nexus.NexusModule):
     home_url = 'index'
     name = 'gargoyle'
-    
+
     def get_title(self):
         return 'Gargoyle'
-    
+
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url
 
@@ -84,9 +84,9 @@ class GargoyleModule(nexus.NexusModule):
             url(r'^conditions/remove/$', self.as_view(self.remove_condition), name='remove-condition'),
             url(r'^$', self.as_view(self.index), name='index'),
         )
-        
+
         return urlpatterns
-    
+
     def render_on_dashboard(self, request):
         active_switches_count = Switch.objects.exclude(status=DISABLED).count()
 
@@ -96,7 +96,7 @@ class GargoyleModule(nexus.NexusModule):
             'switches': switches,
             'active_switches_count': active_switches_count,
         })
-    
+
     def index(self, request):
         switches = list(Switch.objects.all().order_by("date_created"))
 
@@ -104,7 +104,7 @@ class GargoyleModule(nexus.NexusModule):
             "switches": [s.to_dict(gargoyle) for s in switches],
             "all_conditions": list(gargoyle.get_all_conditions()),
         }, request)
-    
+
     def add(self, request):
         key = request.POST.get("key")
 
@@ -133,11 +133,13 @@ class GargoyleModule(nexus.NexusModule):
         signals.switch_added.send(
             sender=self,
             request=request,
+            switch=switch,
+            created=created,
         )
 
         return switch.to_dict(gargoyle)
     add = json(add)
-    
+
     def update(self, request):
         switch = Switch.objects.get(key=request.POST.get("curkey"))
 
@@ -162,11 +164,12 @@ class GargoyleModule(nexus.NexusModule):
         signals.switch_updated.send(
             sender=self,
             request=request,
+            switch=switch,
         )
 
         return switch.to_dict(gargoyle)
     update = json(update)
-    
+
     def status(self, request):
         switch = Switch.objects.get(key=request.POST.get("key"))
 
@@ -181,17 +184,20 @@ class GargoyleModule(nexus.NexusModule):
         signals.switch_status_updated.send(
             sender=self,
             request=request,
+            switch=switch,
+            status=status,
         )
 
         return switch.to_dict(gargoyle)
     status = json(status)
-    
+
     def delete(self, request):
         switch = Switch.objects.get(key=request.POST.get("key"))
         switch.delete()
         signals.switch_deleted.send(
             sender=self,
             request=request,
+            switch=switch,
         )
         return {}
     delete = json(delete)
@@ -213,11 +219,18 @@ class GargoyleModule(nexus.NexusModule):
         signals.switch_condition_added.send(
             sender=self,
             request=request,
+            switch=switch,
+            condition={
+                'condition_set_id': condition_set_id,
+                'field_name': field_name,
+                'value': value,
+                'exclude': exclude
+            },
         )
 
         return switch.to_dict(gargoyle)
     add_condition = json(add_condition)
-    
+
     def remove_condition(self, request):
         key = request.POST.get("key")
         condition_set_id = request.POST.get("id")
@@ -232,6 +245,11 @@ class GargoyleModule(nexus.NexusModule):
         signals.switch_condition_removed.send(
             sender=self,
             request=request,
+            condition={
+                'condition_set_id': condition_set_id,
+                'field_name': field_name,
+                'value': value,
+            },
         )
 
         return switch.to_dict(gargoyle)

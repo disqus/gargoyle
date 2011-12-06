@@ -1,3 +1,7 @@
+0.5.0
+
+- Updated signals to pass more useful information in each one (including the switch).
+
 0.4.0
 
 - The percent field is now available on all ModelConditionSet's by default.
