@@ -27,22 +27,22 @@ class Switch(models.Model):
     """
     Stores information on all switches. Generally handled through an instance of ``ModelDict``,
     which is registered under the global ``gargoyle`` namespace.
-    
+
     ``value`` is stored with by type label, and then by column:
-    
+
     >>> {
     >>>   namespace: {
     >>>       id: [[INCLUDE, 0, 50], [INCLUDE, 'string']] // 50% of users
     >>>   }
     >>> }
     """
-    
+
     STATUS_CHOICES = (
         (DISABLED, 'Disabled'),
         (SELECTIVE, 'Selective'),
         (GLOBAL, 'Global'),
     )
-    
+
     key = models.CharField(max_length=32, primary_key=True)
     value = JSONField(default="{}")
     label = models.CharField(max_length=32, null=True)
@@ -81,7 +81,7 @@ class Switch(models.Model):
 
     def __unicode__(self):
         return u"%s=%s" % (self.key, self.value)
-    
+
     def to_dict(self, manager):
         data = {
             'key': self.key,
@@ -112,9 +112,9 @@ class Switch(models.Model):
     def add_condition(self, manager, condition_set, field_name, condition, exclude=False, commit=True):
         """
         Adds a new condition and registers it in the global ``gargoyle`` switch manager.
-        
+
         If ``commit`` is ``False``, the data will not be written to the database.
-        
+
         >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
         >>> switch.add_condition(condition_set_id, 'percent', [0, 50], exclude=False) #doctest: +SKIP
@@ -134,13 +134,13 @@ class Switch(models.Model):
 
         if commit:
             self.save()
-    
+
     def remove_condition(self, manager, condition_set, field_name, condition, commit=True):
         """
         Removes a condition and updates the global ``gargoyle`` switch manager.
-        
+
         If ``commit`` is ``False``, the data will not be written to the database.
-        
+
         >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
         >>> switch.remove_condition(condition_set_id, 'percent', [0, 50]) #doctest: +SKIP
@@ -151,7 +151,7 @@ class Switch(models.Model):
 
         if namespace not in self.value:
             return
-            
+
         if field_name not in self.value[namespace]:
             return
 
@@ -169,17 +169,17 @@ class Switch(models.Model):
     def clear_conditions(self, manager, condition_set, field_name=None, commit=True):
         """
         Clears conditions given a set of parameters.
-        
+
         If ``commit`` is ``False``, the data will not be written to the database.
-        
+
         Clear all conditions given a ConditionSet, and a field name:
-        
+
         >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
         >>> switch.clear_conditions(condition_set_id, 'percent') #doctest: +SKIP
 
         You can also clear all conditions given a ConditionSet:
-        
+
         >>> switch = gargoyle['my_switch'] #doctest: +SKIP
         >>> condition_set_id = condition_set.get_id() #doctest: +SKIP
         >>> switch.clear_conditions(condition_set_id) #doctest: +SKIP
@@ -190,21 +190,21 @@ class Switch(models.Model):
 
         if namespace not in self.value:
             return
-        
+
         if not field_name:
             del self.value[namespace]
         elif field_name not in self.value[namespace]:
             return
         else:
             del self.value[namespace][field_name]
-        
+
         if commit:
             self.save()
 
     def get_active_conditions(self, manager):
         """
         Returns a generator which yields groups of lists of conditions.
-        
+
         >>> for label, set_id, field, value, exclude in gargoyle.get_all_conditions(): #doctest: +SKIP
         >>>     print "%(label)s: %(field)s = %(value)s (exclude: %(exclude)s)" % (label, field.label, value, exclude) #doctest: +SKIP
         """
@@ -224,7 +224,7 @@ class SwitchProxy(object):
     def __init__(self, manager, switch):
         self._switch = switch
         self._manager = manager
-    
+
     def __getattr__(self, attr):
         if attr in self.__dict__:
             return self.__dict__[attr]
@@ -236,7 +236,7 @@ class SwitchProxy(object):
             object.__setattr__(self, attr, value)
         else:
             setattr(self._switch, attr, value)
-    
+
     def add_condition(self, *args, **kwargs):
         return self._switch.add_condition(self._manager, *args, **kwargs)
 
@@ -256,14 +256,14 @@ class SwitchManager(ModelDict):
 
     INCLUDE   = INCLUDE
     EXCLUDE   = EXCLUDE
-    
+
     def __init__(self, *args, **kwargs):
         self._registry = {}
         super(SwitchManager, self).__init__(*args, **kwargs)
-    
+
     def __repr__(self):
         return "<%s: %s (%s)>" % (self.__class__.__name__, self.model, self._registry.values())
-    
+
     def __getitem__(self, key):
         """
         Returns a SwitchProxy, rather than a Switch. It allows us to
@@ -271,12 +271,12 @@ class SwitchManager(ModelDict):
         manager instance.
         """
         return SwitchProxy(self, super(SwitchManager, self).__getitem__(key))
-    
+
     def is_active(self, key, *instances, **kwargs):
         """
         Returns ``True`` if any of ``instances`` match an active switch. Otherwise
         returns ``False``.
-        
+
         >>> gargoyle.is_active('my_feature', request) #doctest: +SKIP
         """
         try:
@@ -306,15 +306,15 @@ class SwitchManager(ModelDict):
                 return True
 
         return False
-    
+
     def register(self, condition_set):
         """
         Registers a condition set with the manager.
-        
+
         >>> condition_set = MyConditionSet() #doctest: +SKIP
         >>> gargoyle.register(condition_set) #doctest: +SKIP
         """
-        
+
         if callable(condition_set):
             condition_set = condition_set()
         self._registry[condition_set.get_id()] = condition_set
@@ -322,7 +322,7 @@ class SwitchManager(ModelDict):
     def unregister(self, condition_set):
         """
         Unregisters a condition set with the manager.
-        
+
         >>> gargoyle.unregister(condition_set) #doctest: +SKIP
         """
         if callable(condition_set):
@@ -346,7 +346,7 @@ class SwitchManager(ModelDict):
     def get_all_conditions(self):
         """
         Returns a generator which yields groups of lists of conditions.
-        
+
         >>> for set_id, label, field in gargoyle.get_all_conditions(): #doctest: +SKIP
         >>>     print "%(label)s: %(field)s" % (label, field.label) #doctest: +SKIP
         """

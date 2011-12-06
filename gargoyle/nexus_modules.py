@@ -98,7 +98,7 @@ class GargoyleModule(nexus.NexusModule):
         })
 
     def index(self, request):
-        switches = list(Switch.objects.all().order_by("date_created"))
+        switches = list(Switch.objects.all().order_by('label'))
 
         return self.render_to_response("gargoyle/index.html", {
             "switches": [s.to_dict(gargoyle) for s in switches],
@@ -215,17 +215,6 @@ class GargoyleModule(nexus.NexusModule):
 
         switch = gargoyle[key]
         switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
-        signals.switch_condition_added.send(
-            sender=self,
-            request=request,
-            switch=switch,
-            condition={
-                'condition_set_id': condition_set_id,
-                'field_name': field_name,
-                'value': value,
-                'exclude': exclude
-            },
-        )
 
         return switch.to_dict(gargoyle)
     add_condition = json(add_condition)

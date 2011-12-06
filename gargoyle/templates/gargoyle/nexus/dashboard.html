@@ -5,13 +5,45 @@
         .switch-list {
             width: 100%;
         }
+        .switch-list .odd {
+            background: #f9f9f9;
+        }
+        .switch-list th {
+            text-align: left;
+        }
+        .switch-list .status-icon {
+            vertical-align: middle;
+        }
+        .switch-list .status-icon span {
+            width: 8px;
+            height: 8px;
+            text-indent: -10000em;
+            display: inline-block;
+            border-radius: 8px;
+            -moz-border-radius: 8px;
+            border: 1px solid black;
+        }
+        .switch-list .status-3 .status-icon span {
+            background: green;
+            border-color: green;
+        }
+        .switch-list .status-2 .status-icon span {
+            background: orange;
+            border-color: orange;
+        }
     </style>
     <p>There are {{ active_switches_count }} active switches.</p>
     <table class="switch-list">
+        <colgroup>
+            <col width="16"/>
+            <col/>
+            <col width="100"/>
+        </colgroup>
         {% for switch in switches %}
-            <tr>
-                <td>{{ switch.label }}</td>
-                <td>{{ switch.get_status_display }}</td>
+            <tr class="{% cycle odd,even %} status-{{ switch.status }}">
+                <td class="status-icon"><span>{{ switch.get_status_display }}</span></td>
+                <th>{% if switch.label %}{{ switch.label }}{% else %}{{ switch.key|title }}{% endif %} <small class="command">({{ switch.key }})</small></th>
+                <td class="status">{{ switch.get_status_display }}</td>
             </tr>
         {% endfor %}
     </table>
