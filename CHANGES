@@ -1,3 +1,7 @@
+0.5.1
+
+- Fixed switch_condition_removed signal to pass ``switch`` instance.
+
 0.5.0
 
 - Updated signals to pass more useful information in each one (including the switch).

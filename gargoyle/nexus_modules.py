@@ -244,6 +244,7 @@ class GargoyleModule(nexus.NexusModule):
         signals.switch_condition_removed.send(
             sender=self,
             request=request,
+            switch=switch,
             condition={
                 'condition_set_id': condition_set_id,
                 'field_name': field_name,
