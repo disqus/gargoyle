@@ -6,3 +6,5 @@ API Reference
 
    conditions
    manager
+   signals
+   testutils

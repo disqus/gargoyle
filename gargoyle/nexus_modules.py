@@ -134,7 +134,6 @@ class GargoyleModule(nexus.NexusModule):
             sender=self,
             request=request,
             switch=switch,
-            created=created,
         )
 
         return switch.to_dict(gargoyle)
