@@ -1,3 +1,7 @@
+0.5.2
+
+- Improved display of Gargoyle dashboard widget.
+
 0.5.1
 
 - Fixed switch_condition_removed signal to pass ``switch`` instance.

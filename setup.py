@@ -14,7 +14,7 @@ tests_require = [
 
 setup(
     name='gargoyle',
-    version='0.5.1',
+    version='0.5.2',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
