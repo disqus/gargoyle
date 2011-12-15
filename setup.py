@@ -10,6 +10,8 @@ except ImportError:
 tests_require = [
     'Django>=1.1',
     'South',
+    'nose',
+    'django-nose',
 ]
 
 setup(

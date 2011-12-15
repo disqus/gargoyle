@@ -17,10 +17,11 @@ from django.template import Context, Template, TemplateSyntaxError
 from gargoyle.builtins import IPAddressConditionSet, UserConditionSet, HostConditionSet
 from gargoyle.decorators import switch_is_active
 from gargoyle.helpers import MockRequest
-from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL
+from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL, INHERIT
 from gargoyle.testutils import switches
 
 import socket
+
 
 class APITest(TestCase):
     urls = 'tests.urls'
@@ -275,10 +276,10 @@ class APITest(TestCase):
         self.assertTrue(response['Location'], '/foo')
 
         @switch_is_active('test', redirect_to='gargoyle_test_foo')
-        def test(request):
+        def test2(request):
             return HttpResponse()
 
-        response = test(request)
+        response = test2(request)
         self.assertTrue(response.status_code, 302)
         self.assertTrue('Location' in response)
         self.assertTrue(response['Location'], '')
@@ -401,7 +402,6 @@ class APITest(TestCase):
             status=SELECTIVE,
         )
         switch = self.gargoyle['test']
-
 
         request = HttpRequest()
         request.META['REMOTE_ADDR'] = '192.168.1.1'
@@ -580,6 +580,53 @@ class APITest(TestCase):
         )
         self.assertFalse(self.gargoyle.is_active('test', user8771))
 
+    def test_inheritance(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        # we need a better API for this (model dict isnt cutting it)
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = self.gargoyle['test']
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='0-50',
+        )
+
+        switch = Switch.objects.create(
+            key='test:child',
+            status=INHERIT,
+        )
+        switch = self.gargoyle['test']
+
+        user = User(pk=5)
+        self.assertTrue(self.gargoyle.is_active('test:child', user))
+
+        user = User(pk=8771)
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        switch = self.gargoyle['test']
+        switch.status = DISABLED
+
+        user = User(pk=5)
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        user = User(pk=8771)
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        switch = self.gargoyle['test']
+        switch.status = GLOBAL
+
+        user = User(pk=5)
+        self.assertTrue(self.gargoyle.is_active('test:child', user))
+
+        user = User(pk=8771)
+        self.assertTrue(self.gargoyle.is_active('test:child', user))
+
+
 class ConstantTest(TestCase):
     def setUp(self):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True)
@@ -603,6 +650,7 @@ class ConstantTest(TestCase):
     def test_exclude(self):
         self.assertTrue(hasattr(self.gargoyle, 'EXCLUDE'))
         self.assertEquals(self.gargoyle.EXCLUDE, 'e')
+
 
 class MockRequestTest(TestCase):
     def setUp(self):
@@ -631,6 +679,7 @@ class MockRequestTest(TestCase):
 
         self.assertEquals(req.META['REMOTE_ADDR'], '127.0.0.1')
         self.assertEquals(req.user, user)
+
 
 class TemplateTagTest(TestCase):
     urls = 'tests.urls'
@@ -772,6 +821,7 @@ class HostConditionSetTest(TestCase):
 
         self.assertTrue(self.gargoyle.is_active('test'))
 
+
 class SwitchContextManagerTest(TestCase):
     def setUp(self):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
@@ -790,10 +840,10 @@ class SwitchContextManagerTest(TestCase):
         switch.status = GLOBAL
 
         @switches(self.gargoyle, test=False)
-        def test():
+        def test2():
             return self.gargoyle.is_active('test')
 
-        self.assertFalse(test())
+        self.assertFalse(test2())
         self.assertEquals(self.gargoyle['test'].status, GLOBAL)
 
     def test_context_manager(self):
