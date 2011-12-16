@@ -16,12 +16,14 @@ from django.utils.translation import ugettext_lazy as _
 from jsonfield import JSONField
 from modeldict import ModelDict
 
-DISABLED  = 1
+DISABLED = 1
 SELECTIVE = 2
-GLOBAL    = 3
+GLOBAL = 3
+INHERIT = 4
 
 INCLUDE = 'i'
 EXCLUDE = 'e'
+
 
 class Switch(models.Model):
     """
@@ -41,6 +43,7 @@ class Switch(models.Model):
         (DISABLED, 'Disabled'),
         (SELECTIVE, 'Selective'),
         (GLOBAL, 'Global'),
+        (INHERIT, 'Inherit'),
     )
 
     key = models.CharField(max_length=32, primary_key=True)
@@ -220,6 +223,7 @@ class Switch(models.Model):
                         except TypeError:
                             continue
 
+
 class SwitchProxy(object):
     def __init__(self, manager, switch):
         self._switch = switch
@@ -249,13 +253,15 @@ class SwitchProxy(object):
     def get_active_conditions(self, *args, **kwargs):
         return self._switch.get_active_conditions(self._manager, *args, **kwargs)
 
-class SwitchManager(ModelDict):
-    DISABLED  = DISABLED
-    SELECTIVE = SELECTIVE
-    GLOBAL    = GLOBAL
 
-    INCLUDE   = INCLUDE
-    EXCLUDE   = EXCLUDE
+class SwitchManager(ModelDict):
+    DISABLED = DISABLED
+    SELECTIVE = SELECTIVE
+    GLOBAL = GLOBAL
+    INHERIT = INHERIT
+
+    INCLUDE = INCLUDE
+    EXCLUDE = EXCLUDE
 
     def __init__(self, *args, **kwargs):
         self._registry = {}
@@ -279,19 +285,36 @@ class SwitchManager(ModelDict):
 
         >>> gargoyle.is_active('my_feature', request) #doctest: +SKIP
         """
+        default = kwargs.pop('default', False)
+
+        # Check all parents for a disabled state
+        parts = key.split(':')
+        if len(parts) > 1:
+            child_kwargs = kwargs.copy()
+            child_kwargs['default'] = None
+            result = self.is_active(':'.join(parts[:-1]), *instances, **child_kwargs)
+            if result is False:
+                return result
+            elif result is True:
+                default = result
+
         try:
             switch = self[key]
         except KeyError:
-            return False
+            # switch is not defined, defer to parent
+            return default
 
         if switch.status == GLOBAL:
             return True
         elif switch.status == DISABLED:
             return False
+        elif switch.status == INHERIT:
+            return default
 
         conditions = switch.value
+        # If no conditions are set, we inherit from parents
         if not conditions:
-            return False
+            return default
 
         if instances:
             # HACK: support request.user by swapping in User instance
@@ -305,6 +328,7 @@ class SwitchManager(ModelDict):
             if switch.has_active_condition(conditions, instances):
                 return True
 
+        # there were no matching conditions, so it must not be enabled
         return False
 
     def register(self, condition_set):

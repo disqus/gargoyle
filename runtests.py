@@ -9,9 +9,9 @@ runtests
 """
 
 import sys
-from os.path import dirname, abspath
 
 from django.conf import settings
+from optparse import OptionParser
 
 if not settings.configured:
     settings.configure(
@@ -37,7 +37,7 @@ if not settings.configured:
         ROOT_URLCONF='',
         DEBUG=False,
         TEMPLATE_DEBUG=True,
-        GARGOYLE_SWITCH_DEFAULTS = {
+        GARGOYLE_SWITCH_DEFAULTS={
             'active_by_default': {
               'is_active': True,
               'label': 'Default Active',
@@ -50,20 +50,27 @@ if not settings.configured:
             },
         },
     )
-    
-from django.test.simple import run_tests
 
-def runtests(*test_args):
+from django_nose import NoseTestSuiteRunner
+
+
+def runtests(*test_args, **kwargs):
     if 'south' in settings.INSTALLED_APPS:
         from south.management.commands import patch_for_test_db_setup
         patch_for_test_db_setup()
 
     if not test_args:
         test_args = ['tests']
-    parent = dirname(abspath(__file__))
-    sys.path.insert(0, parent)
-    failures = run_tests(test_args, verbosity=1, interactive=True)
+
+    test_runner = NoseTestSuiteRunner(**kwargs)
+
+    failures = test_runner.run_tests(test_args)
     sys.exit(failures)
 
 if __name__ == '__main__':
-    runtests(*sys.argv[1:])
+    parser = OptionParser()
+    parser.add_option('--verbosity', dest='verbosity', action='store', default=1, type=int)
+    parser.add_options(NoseTestSuiteRunner.options)
+    (options, args) = parser.parse_args()
+
+    runtests(*args, **options.__dict__)
