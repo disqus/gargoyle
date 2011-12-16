@@ -27,19 +27,26 @@
     border-collapse: collapse;
 }
 
-#container table.switches tr {
+#container table.switches tr:hover {
+    background: #f9f9f9;
+    cursor: pointer;
+}
+
+#container table.switches tr.collapsed .inner {
+    display: none;
 }
 
 #container table.switches td {
     vertical-align: top;
     border-bottom: solid 1px #efefef;
-    padding: 20px 0;
+    padding: 20px 10px;
 }
+
 
 #container table.switches td.name h4 {
     font-size: 100%;
     font-weight: bold;
-    margin: 0 0 15px 0;
+    margin: 0;
 }
 #container table.switches td.name h4 small {
     color: #999;
@@ -50,7 +57,7 @@
 
 #container table.switches td.name p {
     color: #666;
-    margin: 0;
+    margin: 10px 0 0 0;
 }
 
 #container table.switches td.name p.addCondition {

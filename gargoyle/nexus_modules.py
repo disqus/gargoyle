@@ -25,12 +25,14 @@ GARGOYLE_ROOT = os.path.dirname(__file__)
 
 autodiscover()
 
+
 class GargoyleException(Exception):
     def __init__(self, message):
         self.message = message
 
     def __str__(self):
         return self.message
+
 
 def json(func):
     "Decorator to make JSON views simpler"
@@ -64,6 +66,7 @@ def json(func):
         return HttpResponse(simplejson.dumps(response), mimetype="application/json")
     wrapper = wraps(func)(wrapper)
     return wrapper
+
 
 class GargoyleModule(nexus.NexusModule):
     home_url = 'index'
@@ -120,10 +123,10 @@ class GargoyleModule(nexus.NexusModule):
             raise GargoyleException("Name must be less than or equal to 32 characters in length")
 
         switch, created = Switch.objects.get_or_create(
-            key         = key,
-            defaults    = dict(
-                label       = label or None,
-                description = request.POST.get("desc")
+            key=key,
+            defaults=dict(
+                label=label or None,
+                description=request.POST.get("desc")
             )
         )
 
