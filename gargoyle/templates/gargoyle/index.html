@@ -158,27 +158,31 @@
             <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
                 <td class="name">
                     <h4>${label} <small class="command">(${key})</small></h4>
-                    <p>${description}</p>
+                    <div class="inner">
+                        {{if description}}
+                            <p>${description}</p>
+                        {{/if}}
 
-                    <div class="conditions">
-                        {{ each(i, group) conditions }}
-                            <div class="group">
-                                <label>${group.label}</label>
-                                {{ each(i, item) group.conditions }}
-                                    <span data-switch="${group.id}" data-field="${item[0]}" data-value="${item[1]}" class="value">
-                                        <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}
-                                          <a href="#" class="delete-condition" title="Delete this condition">
-                                            <img src="${GARGOYLE.deleteImage}">
-                                          </a>
-                                        </nobr>
-                                    </span>
-                                {{ /each }}
-                            </div>
-                        {{ /each }}
+                        <div class="conditions">
+                            {{ each(i, group) conditions }}
+                                <div class="group">
+                                    <label>${group.label}</label>
+                                    {{ each(i, item) group.conditions }}
+                                        <span data-switch="${group.id}" data-field="${item[0]}" data-value="${item[1]}" class="value">
+                                            <nobr>{{if item[3]}}<strong>not</strong> {{/if}}${item[2]}
+                                              <a href="#" class="delete-condition" title="Delete this condition">
+                                                <img src="${GARGOYLE.deleteImage}">
+                                              </a>
+                                            </nobr>
+                                        </span>
+                                    {{ /each }}
+                                </div>
+                            {{ /each }}
+                        </div>
+
+                        <p class="addCondition"><a href="#">Add a condition</a></p>
+                        <div class="conditionsForm"></div>
                     </div>
-
-                    <p class="addCondition"><a href="#">Add a condition</a></p>
-                    <div class="conditionsForm"></div>
                 </td>
 
                 <td class="status">
@@ -193,21 +197,23 @@
                     <button class="xtrasmall button {{if status == 1}}toggled{{/if}}" data-status="1">
                         Disabled
                     </button>
-                    <p>
-                        {{if status == 3}}
-                                (Active for everyone)
-                        {{else}}
-                            {{if status == 2}}
-                                {{if conditions}}
-                                    (Active for conditions)
+                    <div class="inner">
+                        <p>
+                            {{if status == 3}}
+                                    (Active for everyone)
+                            {{else}}
+                                {{if status == 2}}
+                                    {{if conditions}}
+                                        (Active for conditions)
+                                    {{else}}
+                                        (Disabled for everyone)
+                                    {{/if}}
                                 {{else}}
                                     (Disabled for everyone)
                                 {{/if}}
-                            {{else}}
-                                (Disabled for everyone)
                             {{/if}}
-                        {{/if}}
-                    </p>
+                        </p>
+                    </div>
                 </td>
 
                 <td class="actions">

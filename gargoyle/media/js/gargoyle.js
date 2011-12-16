@@ -36,6 +36,7 @@ $(document).ready(function () {
         var $this = $(this);
         $(".switches tr").each(function (_, el) {
             var $el = $(el);
+            console.log($el);
             if (el == $this.get(0)) {
                 $el.removeClass("collapsed");
             } else {
@@ -199,6 +200,8 @@ $(document).ready(function () {
                     $("table.switches tr[data-switch-key=" + curkey + "]").replaceWith(result);
                     $.facebox.close();
                 }
-            });
+                result.click();
+            }
+        );
     });
 });
