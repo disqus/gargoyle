@@ -46,6 +46,13 @@ class Switch(models.Model):
         (INHERIT, 'Inherit'),
     )
 
+    STATUS_LABELS = {
+        INHERIT: 'Inherit from parent',
+        GLOBAL: 'Active for everyone',
+        SELECTIVE: 'Active for conditions',
+        DISABLED: 'Disabled for everyone',
+    }
+
     key = models.CharField(max_length=32, primary_key=True)
     value = JSONField(default="{}")
     label = models.CharField(max_length=32, null=True)
@@ -89,6 +96,7 @@ class Switch(models.Model):
         data = {
             'key': self.key,
             'status': self.status,
+            'statusLabel': self.get_status_label(),
             'label': self.label or self.key.title(),
             'description': self.description,
             'conditions': [],
@@ -222,6 +230,14 @@ class Switch(models.Model):
                             yield condition_set_id, group, field, value[1], value[0] == EXCLUDE
                         except TypeError:
                             continue
+
+    def get_status_label(self):
+        if self.status == SELECTIVE and not self.value:
+            status = GLOBAL
+        else:
+            status = self.status
+
+        return self.STATUS_LABELS[status]
 
 
 class SwitchProxy(object):

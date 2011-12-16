@@ -10,6 +10,7 @@ from django import template
 
 register = template.Library()
 
+
 def raw(parser, token):
     # Whatever is between {% raw %} and {% endraw %} will be preserved as
     # raw, unrendered template code.
@@ -34,6 +35,7 @@ def raw(parser, token):
         text.append(u'%s%s%s' % (start, token.contents, end))
     parser.unclosed_block_tag(parse_until)
 raw = register.tag(raw)
+
 
 def render_field(field, value=None):
     return field.render(value)

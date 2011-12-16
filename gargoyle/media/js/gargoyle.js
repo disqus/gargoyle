@@ -74,6 +74,7 @@ $(document).ready(function () {
         var el = $(this);
         var status = el.attr("data-status");
         var labels = {
+            4: "(Inherit from parent)",
             3: "(Active for everyone)",
             2: "(Active for conditions)",
             1: "(Disabled for everyone)"

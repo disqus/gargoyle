@@ -12,13 +12,13 @@ from gargoyle import gargoyle
 
 register = template.Library()
 
+
 @register.tag
 def ifswitch(parser, token):
     bits = token.split_contents()
     if len(bits) < 2:
         raise template.TemplateSyntaxError("%r tag requires an argument" % token.contents.split()[0])
 
-    tag = bits[0]
     name = bits[1]
     instances = bits[2:]
 
@@ -32,6 +32,7 @@ def ifswitch(parser, token):
         nodelist_false = template.NodeList()
 
     return SwitchNode(nodelist_true, nodelist_false, name, instances)
+
 
 class SwitchNode(template.Node):
     def __init__(self, nodelist_true, nodelist_false, name, instances):

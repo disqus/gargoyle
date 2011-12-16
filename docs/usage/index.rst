@@ -11,7 +11,7 @@ The simplest way to use Gargoyle is as a decorator. The decorator will automatic
 filters registered to the ``User`` model, as well as IP address (using RequestConditionSet)::
 
 	from gargoyle.decorators import switch_is_active
-	
+
 	@switch_is_active('my switch name')
 	def my_view(request):
 	    return 'foo'
@@ -32,7 +32,7 @@ An alternative, more flexible use of Gargoyle is with the ``is_active`` method. 
 to perform validation on your own custom objects::
 
 	from gargoyle import gargoyle
-	
+
 	def my_function(request):
 	    if gargoyle.is_active('my switch name', request):
 	        return 'foo'
@@ -41,7 +41,7 @@ to perform validation on your own custom objects::
 
 	# with custom objects
 	from gargoyle import gargoyle
-	
+
 	def my_method(user):
 	    if gargoyle.is_active('my switch name', user):
 	        return 'foo'
@@ -54,7 +54,7 @@ ifswitch
 If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`` to give you easy conditional blocks based on active switches (for the request)::
 
 	{% load gargoyle_tags %}
-	
+
 	{% ifswitch switch_name %}
 	    switch_name is active!
 	{% else %}
@@ -66,6 +66,18 @@ If you prefer to use templatetags, Gargoyle provides a helper called ``ifswitch`
 	{% ifswitch "my switch name" user %}
 	    "my switch name" is active!
 	{% endifswitch %}
+
+Switch Inheritance
+~~~~~~~~~~~~~~~~~~
+
+Switches utilizing the named pattern of ``parent:child``` will automatically inherit state from their parents. For example,
+if your switch, ``parent:child`` is globally enabled, but ``parent`` is disabled, when ``is_active('parent:child')`` is called
+it will return ``False``.
+
+A parent switch that has it's status set to inherit will return the default value for a switch, which is ``False`` (the same as
+disabled).
+
+.. note:: Currently inheritance does not combine filters. If your child defines *any* filters, they will override all of the parents.
 
 Testing Switches
 ~~~~~~~~~~~~~~~~
