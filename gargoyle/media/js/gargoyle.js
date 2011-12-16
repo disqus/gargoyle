@@ -34,12 +34,14 @@ $(document).ready(function () {
             return;
         }
         var $this = $(this);
-        if (!$this.hasClass("collapsed")) {
-            // we're already open
-            return;
-        }
-        $(".switches tr").addClass("collapsed");
-        $this.removeClass("collapsed");
+        $(".switches tr").each(function (_, el) {
+            var $el = $(el);
+            if (el == $this.get(0)) {
+                $el.removeClass("collapsed");
+            } else {
+                $el.addClass("collapsed");
+            }
+        });
     });
 
     $(".switches .edit").live("click", function () {
