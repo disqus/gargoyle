@@ -204,4 +204,24 @@ $(document).ready(function () {
             }
         );
     });
+
+    $('.search input').keyup(function () {
+        var query = $(this).val();
+        $('.switches tr').removeClass('hidden');
+        if (!query) {
+            return;
+        }
+        $('.switches tr').each(function (_, el) {
+            var $el = $(el);
+            var score = 0;
+            score += $el.attr('data-switch-key').score(query);
+            score += $el.attr('data-switch-name').score(query);
+            if ($el.attr('data-switch-description')) {
+                score += $el.attr('data-switch-description').score(query);
+            }
+            if (score === 0) {
+                $el.addClass('hidden');
+            }
+        });
+    });
 });

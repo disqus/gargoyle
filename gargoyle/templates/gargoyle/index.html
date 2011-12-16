@@ -22,6 +22,7 @@
         };
     </script>
 
+    <script src="{% url nexus:media 'gargoyle' 'js/string_score.min.js' %}"></script>
     <script src="{% url nexus:media 'gargoyle' 'js/gargoyle.js' %}"></script>
 {% endblock %}
 
@@ -35,6 +36,9 @@
             <button class="button">Test Switch</button>
         </span>
         -->
+        <span class="search">
+            <input type="text" placeholder="search">
+        </span>
     </div>
 
     <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>

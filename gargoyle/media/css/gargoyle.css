@@ -22,6 +22,17 @@
     width: 200px;
 }
 
+#container div.toolbar span.search {
+    padding-top: 3px;
+    float: right;
+}
+
+#container div.toolbar span.search input {
+    width: 200px;
+    padding: 6px;
+    font-size: 13px;
+}
+
 #container table.switches {
     width: 100%;
     border-collapse: collapse;
@@ -30,6 +41,10 @@
 #container table.switches tr:hover {
     background: #f9f9f9;
     cursor: pointer;
+}
+
+#container table.switches tr.hidden {
+    display: none;
 }
 
 #container table.switches tr.collapsed .inner {
