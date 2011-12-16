@@ -36,7 +36,6 @@ $(document).ready(function () {
         var $this = $(this);
         $(".switches tr").each(function (_, el) {
             var $el = $(el);
-            console.log($el);
             if (el == $this.get(0)) {
                 $el.removeClass("collapsed");
             } else {
