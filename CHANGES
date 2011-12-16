@@ -1,3 +1,9 @@
+0.6.0
+
+- Added basic switch inheritance.
+- Added auto collapsing of switch details in interface.
+- Added simple search filtering of switches in interface.
+
 0.5.2
 
 - Improved display of Gargoyle dashboard widget.
