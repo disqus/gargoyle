@@ -8,7 +8,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (resp) {
                 $('#status').hide();
-            
+
                 if (resp.success) {
                     succ(resp.data);
                 } else {
@@ -29,6 +29,21 @@ $(document).ready(function () {
         $.facebox($("#switchForm").tmpl({ add: true }));
     });
 
+    $(".switches tr").live("click", function (ev) {
+        if (ev.target.tagName == 'A' || ev.target.tagName == 'INPUT' || ev.target.tagName == 'LABEL') {
+            return;
+        }
+        var $this = $(this);
+        $(".switches tr").each(function (_, el) {
+            var $el = $(el);
+            if (el == $this.get(0)) {
+                $el.removeClass("collapsed");
+            } else {
+                $el.addClass("collapsed");
+            }
+        });
+    });
+
     $(".switches .edit").live("click", function () {
         var row = $(this).parents("tr:first");
 
@@ -38,7 +53,7 @@ $(document).ready(function () {
             key:    row.attr("data-switch-key"),
             name:   row.attr("data-switch-name"),
             desc:   row.attr("data-switch-desc")
-        }))
+        }));
     });
 
     $(".switches .delete").live("click", function () {
@@ -93,7 +108,7 @@ $(document).ready(function () {
             form.removeClass('visible');
         }
     });
-    
+
     $("div.conditionsForm select").live("change", function () {
         var field = $(this).val().split(",");
         $(this).
@@ -113,7 +128,7 @@ $(document).ready(function () {
             id: $(this).attr("data-switch"),
             field: $(this).attr("data-field")
         };
-        
+
         $.each($(this).find("input"), function () {
             var val;
 
@@ -142,13 +157,13 @@ $(document).ready(function () {
             field: el.attr("data-field"),
             value: el.attr("data-value")
         };
-        
+
         api(GARGOYLE.delCondition, data, function (swtch) {
             var result = $("#switchData").tmpl(swtch);
             $("table.switches tr[data-switch-key="+ data.key + "]").replaceWith(result);
         });
-        
-    })
+
+    });
 
     $("#facebox .closeFacebox").live("click", function (ev) {
         ev.preventDefault();
@@ -171,7 +186,7 @@ $(document).ready(function () {
                 var result = $("#switchData").tmpl(swtch);
 
                 if (action == "add") {
-                    if ($("table.switches tr").length == 0) {
+                    if ($("table.switches tr").length === 0) {
                         $("table.switches").html(result);
                         $("table.switches").removeClass("empty");
                         $("div.noSwitches").hide();

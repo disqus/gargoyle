@@ -86,7 +86,7 @@ class Switch(models.Model):
         data = {
             'key': self.key,
             'status': self.status,
-            'label': self.label,
+            'label': self.label or self.key.title(),
             'description': self.description,
             'conditions': [],
         }

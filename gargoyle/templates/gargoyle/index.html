@@ -43,32 +43,33 @@
 
     <table class="switches {% if not switches %}empty{% endif %}">
         {% for switch in switches %}
-        <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}">
+        <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}" class="collapsed">
             <td class="name">
                 <h4>{% if switch.label %}{{ switch.label }}{% else %}{{ switch.key|title }}{% endif %} <small class="command">({{ switch.key }})</small></h4>
-                {% if switch.description %}
-                    <p>{{ switch.description }}</p>
-                {% endif %}
+                <div class="inner">
+                    {% if switch.description %}
+                        <p>{{ switch.description }}</p>
+                    {% endif %}
 
-                <div class="conditions">
-                    {% for group in switch.conditions %}
-                        <div class="group">
-                            <label>{{ group.label }}</label>
-                            {% for field, value, display, is_exclude in group.conditions %}
-                                <span data-switch="{{ group.id }}" data-field="{{ field }}" data-value="{{ value }}" class="value">
-                                    <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}
-                                        <a href="#" class="delete-condition" title="Delete this condition">
-                                          <img src="{% url nexus:media 'gargoyle' 'img/delete.png' %}">
-                                        </a>
-                                    </nobr>
-                                </span>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <p class="addCondition"><a href="#">Add a condition</a></p>
-                <div class="conditionsForm">
+                    <div class="conditions">
+                        {% for group in switch.conditions %}
+                            <div class="group">
+                                <label>{{ group.label }}</label>
+                                {% for field, value, display, is_exclude in group.conditions %}
+                                    <span data-switch="{{ group.id }}" data-field="{{ field }}" data-value="{{ value }}" class="value">
+                                        <nobr>{% if is_exclude %}<strong>not</strong> {% endif %}{{ display }}
+                                            <a href="#" class="delete-condition" title="Delete this condition">
+                                              <img src="{% url nexus:media 'gargoyle' 'img/delete.png' %}">
+                                            </a>
+                                        </nobr>
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <p class="addCondition"><a href="#">Add a condition</a></p>
+                    <div class="conditionsForm">
+                    </div>
                 </div>
             </td>
 
@@ -84,25 +85,27 @@
                 <button class="xtrasmall button {% if switch.status == 1 %}toggled{% endif %}" data-status="1">
                     Disabled
                 </button>
-                <p>
-                    {% if switch.status == 3 %}
-                            (Active for everyone)
-                    {% else %}{% if switch.status == 2 %}
-                        {% if switch.conditions %}
-                            (Active for conditions)
+                <div class="inner">
+                    <p>
+                        {% if switch.status == 3 %}
+                                (Active for everyone)
+                        {% else %}{% if switch.status == 2 %}
+                            {% if switch.conditions %}
+                                (Active for conditions)
+                            {% else %}
+                                (Disabled for everyone)
+                            {% endif %}
                         {% else %}
-                            (Disabled for everyone)
-                        {% endif %}
-                    {% else %}
-                            (Disabled for everyone)
-                    {% endif %}{% endif %}
-                </p>
+                                (Disabled for everyone)
+                        {% endif %}{% endif %}
+                    </p>
+                </div>
             </td>
 
             <td class="actions">
                 <button class="edit xtrasmall button"><span></span></button>
                 <button class="delete xtrasmall button"><span></span></button>
-            </td> 
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -155,8 +158,8 @@
             <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
                 <td class="name">
                     <h4>${label} <small class="command">(${key})</small></h4>
-                    <p>${description}</p>               
-                    
+                    <p>${description}</p>
+
                     <div class="conditions">
                         {{ each(i, group) conditions }}
                             <div class="group">
@@ -172,10 +175,10 @@
                                 {{ /each }}
                             </div>
                         {{ /each }}
-                    </div>                    
+                    </div>
 
                     <p class="addCondition"><a href="#">Add a condition</a></p>
-                    <div class="conditionsForm"></div>                    
+                    <div class="conditionsForm"></div>
                 </td>
 
                 <td class="status">
@@ -210,7 +213,7 @@
                 <td class="actions">
                     <button class="edit xtrasmall button"><span></span></button>
                     <button class="delete xtrasmall button"><span></span></button>
-                </td>                    
+                </td>
             </tr>
         </script>
     {% endraw %}
