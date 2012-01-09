@@ -1,13 +1,22 @@
+"""
+gargoyle.testutils
+~~~~~~~~~~~~~~~~~~
+
+:copyright: (c) 2010 DISQUS.
+:license: Apache License 2.0, see LICENSE for more details.
+"""
+
 from functools import wraps
 
 from gargoyle import gargoyle
 
+
 class SwitchContextManager(object):
     """
     Allows temporarily enabling or disabling a switch.
-    
+
     Ideal for testing.
-    
+
     >>> @switches(my_switch_name=True)
     >>> def foo():
     >>>     print gargoyle.is_active('my_switch_name')
@@ -15,10 +24,10 @@ class SwitchContextManager(object):
     >>> def foo():
     >>>     with switches(my_switch_name=True):
     >>>         print gargoyle.is_active('my_switch_name')
-    
+
     You may also optionally pass an instance of ``SwitchManager``
     as the first argument.
-    
+
     >>> def foo():
     >>>     with switches(gargoyle, my_switch_name=True):
     >>>         print gargoyle.is_active('my_switch_name')
