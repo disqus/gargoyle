@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="toolbar">
+    <div class="toolbar" data-sort="{{ sorted_by }}">
         <button class="button addSwitch">Add a Switch</button>
 
         <!--
@@ -39,6 +39,18 @@
         <span class="search">
             <input type="text" placeholder="search">
         </span>
+
+        <ul class="sort">
+            <li class="date_created">
+                <a href="?by={{'date_created'|sort_by_key:sorted_by}}">Date Created</a>
+            </li>
+            <li class="date_modified">
+                <a href="?by={{'date_modified'|sort_by_key:sorted_by}}">Date Modified</a>
+            </li>
+            <li class="label">
+                <a href="?by={{'label'|sort_by_key:sorted_by}}">Label</a>
+            </li>
+        </ul>
     </div>
 
     <div class="noSwitches" {% if switches %}style="display:none;"{% endif %}>
@@ -50,6 +62,13 @@
         <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}" class="collapsed">
             <td class="name">
                 <h4>{% if switch.label %}{{ switch.label }}{% else %}{{ switch.key|title }}{% endif %} <small class="command">({{ switch.key }})</small></h4>
+                <h5>
+                    {% if sorted_by|sort_field == 'date_created' %}
+                        Created {{ switch.date_created|timesince }} ago
+                    {% else %}
+                        Last modified {{ switch.date_created|timesince }} ago
+                    {% endif %}
+                </h5>
                 <div class="inner">
                     {% if switch.description %}
                         <p>{{ switch.description }}</p>
