@@ -1,3 +1,7 @@
+0.7.0
+- Added confirmation message for enabling switches globally.
+- Added date modified and sorts for switches on index view.
+
 0.6.1
 
 - Require Nexus >= 0.2.0
