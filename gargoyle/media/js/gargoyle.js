@@ -80,6 +80,12 @@ $(document).ready(function () {
             1: "(Disabled for everyone)"
         };
 
+        if (status == 3) {
+            if (!confirm('Are you SURE you want to enable this switch globally?')) {
+                return;
+            }
+        }
+
         api(GARGOYLE.updateStatus,
             {
                 key:    row.attr("data-switch-key"),
