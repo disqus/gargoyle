@@ -34,6 +34,7 @@ class SwitchContextManager(object):
     """
     def __init__(self, gargoyle=gargoyle, **keys):
         self.gargoyle = gargoyle
+        self.is_active_func = gargoyle.is_active
         self.keys = keys
         self._state = {}
         self._values = {
@@ -49,12 +50,24 @@ class SwitchContextManager(object):
         return inner
 
     def __enter__(self):
-        for key, value in self.keys.iteritems():
-            self._state[key] = self.gargoyle[key].status
-            self.gargoyle[key].status = self._values[value]
+        self.patch()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for key in self.keys:
-            self.gargoyle[key].status = self._state[key]
+        self.unpatch()
+
+    def patch(self):
+        def is_active(gargoyle):
+            is_active_func = gargoyle.is_active
+
+            def wrapped(key, *args, **kwargs):
+                if key in self.keys:
+                    return self.keys[key]
+                return is_active_func(key, *args, **kwargs)
+            return wrapped
+
+        self.gargoyle.is_active = is_active(self.gargoyle)
+
+    def unpatch(self):
+        self.gargoyle.is_active = self.is_active_func
 
 switches = SwitchContextManager
