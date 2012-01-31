@@ -1,4 +1,11 @@
+0.7.1
+
+- Changed the behavior of gargoyle.testutils.switches to monkey patch
+  the is_active method which should solve scenarios where switches
+  are reloaded during the context.
+
 0.7.0
+
 - Added confirmation message for enabling switches globally.
 - Added date modified and sorts for switches on index view.
 
