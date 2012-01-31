@@ -57,6 +57,7 @@ class Switch(models.Model):
     value = JSONField(default="{}")
     label = models.CharField(max_length=32, null=True)
     date_created = models.DateTimeField(default=datetime.datetime.now)
+    date_modified = models.DateTimeField(default=datetime.datetime.now)
     description = models.TextField(null=True)
     status = models.PositiveSmallIntegerField(default=DISABLED, choices=STATUS_CHOICES)
 
@@ -99,6 +100,8 @@ class Switch(models.Model):
             'statusLabel': self.get_status_label(),
             'label': self.label or self.key.title(),
             'description': self.description,
+            'date_modified': self.date_modified,
+            'date_created': self.date_created,
             'conditions': [],
         }
 

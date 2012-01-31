@@ -12,7 +12,7 @@ import os.path
 from functools import wraps
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import simplejson
 
 from gargoyle import gargoyle, autodiscover
@@ -101,11 +101,17 @@ class GargoyleModule(nexus.NexusModule):
         })
 
     def index(self, request):
-        switches = list(Switch.objects.all().order_by('label'))
+        sort_by = request.GET.get('by', '-date_modified')
+
+        if sort_by not in self.valid_sort_orders:
+            return HttpResponseNotFound('Invalid sort order.')
+
+        switches = list(Switch.objects.all().order_by(sort_by))
 
         return self.render_to_response("gargoyle/index.html", {
             "switches": [s.to_dict(gargoyle) for s in switches],
             "all_conditions": list(gargoyle.get_all_conditions()),
+            "sorted_by": sort_by
         }, request)
 
     def add(self, request):
@@ -246,5 +252,10 @@ class GargoyleModule(nexus.NexusModule):
 
         return switch.to_dict(gargoyle)
     remove_condition = json(remove_condition)
+
+    @property
+    def valid_sort_orders(self):
+        fields = ['label', 'date_created', 'date_modified']
+        return fields + ['-' + f for f in fields]
 
 nexus.site.register(GargoyleModule, 'gargoyle')

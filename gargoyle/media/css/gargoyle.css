@@ -27,6 +27,52 @@
     float: right;
 }
 
+#container div.toolbar ul.sort {
+    float: right;
+    list-style: none;
+    padding: 10px 20px 10px 0;
+    margin: 0 20px 0 0;
+    border-right: 1px solid #EAEAEA;
+}
+
+#container div.toolbar ul.sort li {
+    display: inline-block;
+}
+
+#container div.toolbar ul.sort li a {
+    color: #999;
+    display: block;
+}
+
+#container div.toolbar ul.sort li + li {
+    margin-left: 10px;
+}
+
+#container div.toolbar[data-sort=-label] ul.sort li.label a,
+#container div.toolbar[data-sort=-date_created] ul.sort li.date_created a,
+#container div.toolbar[data-sort=-date_modified] ul.sort li.date_modified a,
+#container div.toolbar[data-sort=label] ul.sort li.label a,
+#container div.toolbar[data-sort=date_created] ul.sort li.date_created a,
+#container div.toolbar[data-sort=date_modified] ul.sort li.date_modified a,
+#container div.toolbar[data-sort=""] ul.sort li.date_modified a {
+    color: #000;
+    font-weight: bold;
+}
+
+#container div.toolbar[data-sort=-label] ul.sort li.label a:after,
+#container div.toolbar[data-sort=-date_created] ul.sort li.date_created a:after,
+#container div.toolbar[data-sort=-date_modified] ul.sort li.date_modified a:after {
+    content: " ▴";
+}
+
+#container div.toolbar[data-sort=label] ul.sort li.label a:after,
+#container div.toolbar[data-sort=date_created] ul.sort li.date_created a:after,
+#container div.toolbar[data-sort=date_modified] ul.sort li.date_modified a:after,
+#container div.toolbar[data-sort=""] ul.sort li.date_modified a:after {
+    content: " ▾";
+}
+
+
 #container div.toolbar span.search input {
     width: 200px;
     padding: 6px;
@@ -68,6 +114,13 @@
     font-weight: normal;
     margin-left: 8px;
     font-family: "Inconsolata", arial;
+}
+
+#container table.switches td.name h5 {
+    color: #777;
+    font-size: 50%;
+    font-weight: normal;
+    margin: 0.5em 0 0 0;
 }
 
 #container table.switches td.name p {
