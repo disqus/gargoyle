@@ -13,9 +13,9 @@ from functools import wraps
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
-from django.utils import simplejson
 
 from gargoyle import gargoyle, autodiscover
+from gargoyle.helpers import dumps
 from gargoyle.models import Switch, DISABLED
 from gargoyle.conditions import ValidationError
 from gargoyle import signals
@@ -63,7 +63,7 @@ def json(func):
                 import traceback
                 traceback.print_exc()
             raise
-        return HttpResponse(simplejson.dumps(response), mimetype="application/json")
+        return HttpResponse(dumps(response), mimetype="application/json")
     wrapper = wraps(func)(wrapper)
     return wrapper
 

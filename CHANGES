@@ -1,3 +1,7 @@
+0.7.2
+
+- Correct issue with trying to serialize datetime objects.
+
 0.7.1
 
 - Changed the behavior of gargoyle.testutils.switches to monkey patch
