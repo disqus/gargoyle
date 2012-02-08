@@ -19,6 +19,18 @@ class Switch(object):
         SELECTIVE = 2
         GLOBAL = 3
 
-    def __init__(self, name, state=states.DISABLED):
+    def __init__(self, name, state=states.DISABLED, compounded=False):
         self.name = str(name)
         self.state = state
+        self.conditions = []
+        self.compounded = compounded
+
+    def enabled_for(self, argument):
+        func = self.__enabled_func()
+        return func(cond.applies_to(argument) for cond in self.conditions)
+
+    def __enabled_func(self):
+        if self.compounded:
+            return all
+        else:
+            return any
