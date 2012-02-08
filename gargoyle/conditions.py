@@ -33,7 +33,7 @@ class Enum(object):
 
 class Between(object):
 
-    label = 'range'
+    label = 'between'
     description = 'Applies if argument is between the upper and lower bounds'
 
     def __init__(self, lower, higher):
