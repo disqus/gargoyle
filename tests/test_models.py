@@ -61,7 +61,7 @@ class TestCondition(unittest.TestCase):
 
     def test_returns_results_from_calling_operator_with_argument_value(self):
         """
-        This is verifying that when a condition is called with an instance of
+        This test verifies that when a condition is called with an instance of
         an Input as the argument, the vaue that the condition's operator is
         asked if it applies to is calculated by calling the condition's own
         argument function as bound to the instance of the Input originally
@@ -88,7 +88,7 @@ class SwitchWithConditions(object):
     @property
     def pessamistic_condition(self):
         mck = mock.MagicMock()
-        mck.applies_to.return_value = False
+        mck.return_value = False
         return mck
 
     def test_condtions_can_be_added_and_removed(self):
@@ -106,7 +106,7 @@ class DefaultConditionsTest(SwitchWithConditions, unittest.TestCase):
 
     def test_enabled_for_is_true_if_any_conditions_are_true(self):
         ok_(self.switch.enabled_for('input') is False)
-        self.switch.conditions[0].applies_to.return_value = True
+        self.switch.conditions[0].return_value = True
         ok_(self.switch.enabled_for('input') is True)
 
 
@@ -118,9 +118,9 @@ class CompoundedConditionsTest(SwitchWithConditions, unittest.TestCase):
 
     def test_enabled_if_all_conditions_are_true(self):
         ok_(self.switch.enabled_for('input') is False)
-        self.switch.conditions[0].applies_to.return_value = True
+        self.switch.conditions[0].return_value = True
         ok_(self.switch.enabled_for('input') is False)
-        self.switch.conditions[1].applies_to.return_value = True
+        self.switch.conditions[1].return_value = True
         ok_(self.switch.enabled_for('input') is True)
 
 
@@ -156,15 +156,19 @@ class ManagerTest(unittest.TestCase):
 
 class ManagerActiveTest(unittest.TestCase):
 
-    input1 = object()
-    input2 = object()
+    def build_and_register_switch(self, name, enabled_for=False):
+        switch = Switch(name)
+        switch.enabled_for = mock.Mock(return_value=enabled_for)
+        self.manager.register(switch)
+        return switch
 
     def setUp(self):
         self.manager = Manager(storage=MemoryDict())
-        self.manager.input(self.input1, self.input2)
+        self.manager.input('input 1', 'input 2')
 
-    # @mock.patch('input1.arguments')
-    # def test_active_returns_value_of_the_switches_enabled_for(self):
-    #     switch.enabled_for = mock.Mock(return_value=False)
-    #     self.manager.register(switch)
-    #     eq_(self.manager.active(switch.name), False)
+    def test_returns_false_if_named_switch_is_enabled_for_any_input(self):
+        self.build_and_register_switch('disabled', enabled_for=False)
+        eq_(self.manager.active('disabled'), False)
+
+        self.build_and_register_switch('enabled', enabled_for=True)
+        eq_(self.manager.active('disabled'), False)
