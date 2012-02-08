@@ -1,6 +1,6 @@
 import unittest
 from nose.tools import *
-from gargoyle.models import Switch, Manager
+from gargoyle.models import Switch, Manager, Condition
 from modeldict.dict import MemoryDict
 import mock
 
@@ -44,7 +44,41 @@ class TestSwitch(unittest.TestCase):
         eq_(Switch('foo').conditions, [])
 
 
-class ConditionsTest(object):
+class TestCondition(unittest.TestCase):
+
+    class ReflectiveInput(object):
+
+        def foo(self):
+            return (42, self)
+
+    def setUp(self):
+        self.operator = mock.Mock(name='operator')
+        self.operator.applies_to.return_value = True
+        self.condition = Condition(self.ReflectiveInput.foo, self.operator)
+
+    def test_returns_false_if_input_is_not_same_class_as_argument_class(self):
+        eq_(self.condition(object()), False)
+
+    def test_returns_results_from_calling_operator_with_argument_value(self):
+        """
+        This is verifying that when a condition is called with an instance of
+        an Input as the argument, the vaue that the condition's operator is
+        asked if it applies to is calculated by calling the condition's own
+        argument function as bound to the instance of the Input originally
+        passed in to the condition.
+
+        By using the ReflectiveInput class, we can verify that it was called
+        with expected arguments, which are returned in a tuple with an extra
+        value (42), and that that tuple is passed to the operator's applied_to
+        method.
+        """
+
+        input_instance = self.ReflectiveInput()
+        self.condition(input_instance)
+        self.operator.applies_to.assert_called_once_with((42, input_instance))
+
+
+class SwitchWithConditions(object):
 
     def setUp(self):
         self.switch = Switch('with conditions')
@@ -68,26 +102,26 @@ class ConditionsTest(object):
         ok_(condition not in self.switch.conditions)
 
 
-class DefaultConditionsTest(ConditionsTest, unittest.TestCase):
+class DefaultConditionsTest(SwitchWithConditions, unittest.TestCase):
 
     def test_enabled_for_is_true_if_any_conditions_are_true(self):
-        ok_(self.switch.enabled_for('a val') is False)
+        ok_(self.switch.enabled_for('input') is False)
         self.switch.conditions[0].applies_to.return_value = True
-        ok_(self.switch.enabled_for('a val') is True)
+        ok_(self.switch.enabled_for('input') is True)
 
 
-class CompoundedConditionsTest(ConditionsTest, unittest.TestCase):
+class CompoundedConditionsTest(SwitchWithConditions, unittest.TestCase):
 
     def setUp(self):
         super(CompoundedConditionsTest, self).setUp()
         self.switch.compounded = True
 
     def test_enabled_if_all_conditions_are_true(self):
-        ok_(self.switch.enabled_for('a val') is False)
+        ok_(self.switch.enabled_for('input') is False)
         self.switch.conditions[0].applies_to.return_value = True
-        ok_(self.switch.enabled_for('a val') is False)
+        ok_(self.switch.enabled_for('input') is False)
         self.switch.conditions[1].applies_to.return_value = True
-        ok_(self.switch.enabled_for('a val') is True)
+        ok_(self.switch.enabled_for('input') is True)
 
 
 class ManagerTest(unittest.TestCase):
@@ -129,8 +163,8 @@ class ManagerActiveTest(unittest.TestCase):
         self.manager = Manager(storage=MemoryDict())
         self.manager.input(self.input1, self.input2)
 
-    @mock.patch('input1.arguments')
-    def test_active_returns_value_of_the_switches_enabled_for(self):
-        switch.enabled_for = mock.Mock(return_value=False)
-        self.manager.register(switch)
-        eq_(self.manager.active(switch.name), False)
+    # @mock.patch('input1.arguments')
+    # def test_active_returns_value_of_the_switches_enabled_for(self):
+    #     switch.enabled_for = mock.Mock(return_value=False)
+    #     self.manager.register(switch)
+    #     eq_(self.manager.active(switch.name), False)
