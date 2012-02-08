@@ -1,6 +1,6 @@
 class Base(object):
     """
-    An input is the object(s) understand the business objects in your system
+    An input is an object which understands the business objects in your system
     (users, requests, etc) and knows how to validate and transform them into
     arguments for conditions.  For instance, you may have a User object that
     has properties like ``.is_admin``, ``date_joined``, etc.  You would create
