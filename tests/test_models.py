@@ -1,7 +1,11 @@
 import unittest
 from nose.tools import *
-from gargoyle.models import Switch
+from gargoyle.models import Switch, Manager
+from modeldict.dict import MemoryDict
 import mock
+
+
+switch = Switch('test')
 
 
 class TestSwitch(unittest.TestCase):
@@ -71,6 +75,7 @@ class DefaultConditionsTest(ConditionsTest, unittest.TestCase):
         self.switch.conditions[0].applies_to.return_value = True
         ok_(self.switch.enabled_for('a val') is True)
 
+
 class CompoundedConditionsTest(ConditionsTest, unittest.TestCase):
 
     def setUp(self):
@@ -83,3 +88,49 @@ class CompoundedConditionsTest(ConditionsTest, unittest.TestCase):
         ok_(self.switch.enabled_for('a val') is False)
         self.switch.conditions[1].applies_to.return_value = True
         ok_(self.switch.enabled_for('a val') is True)
+
+
+class ManagerTest(unittest.TestCase):
+
+    def setUp(self):
+        self.manager = Manager(storage=MemoryDict())
+
+    def test_input_accepts_variable_input_args(self):
+        eq_(self.manager.inputs, [])
+        self.manager.input('input1', 'input2')
+        eq_(self.manager.inputs, ['input1', 'input2'])
+
+    def test_flush_clears_all_inputs(self):
+        self.manager.input('input1', 'input2')
+        ok_(len(self.manager.inputs) is 2)
+        self.manager.flush()
+        ok_(len(self.manager.inputs) is 0)
+
+    def test_register_adds_switch_to_storge_keyed_by_its_name(self):
+        mockstorage = mock.MagicMock(MemoryDict())
+        Manager(storage=mockstorage).register(switch)
+        mockstorage.__setitem__.assert_called_once_with(switch.name, switch)
+
+    def test_switches_list_registed_switches(self):
+        eq_(self.manager.switches, [])
+        self.manager.register(switch)
+        eq_(self.manager.switches, [switch])
+
+    def test_active_raises_exception_if_no_switch_found_with_name(self):
+        assert_raises(ValueError, self.manager.active, 'junk')
+
+
+class ManagerActiveTest(unittest.TestCase):
+
+    input1 = object()
+    input2 = object()
+
+    def setUp(self):
+        self.manager = Manager(storage=MemoryDict())
+        self.manager.input(self.input1, self.input2)
+
+    @mock.patch('input1.arguments')
+    def test_active_returns_value_of_the_switches_enabled_for(self):
+        switch.enabled_for = mock.Mock(return_value=False)
+        self.manager.register(switch)
+        eq_(self.manager.active(switch.name), False)

@@ -6,6 +6,8 @@ gargoyle.models
 :license: Apache License 2.0, see LICENSE for more details.
 """
 
+import modeldict.dict
+
 
 class Switch(object):
     """
@@ -34,3 +36,29 @@ class Switch(object):
             return all
         else:
             return any
+
+
+class Manager(object):
+
+    def __init__(self, storage=modeldict.dict.RedisDict):
+        self.__switches = storage
+        self.inputs = []
+
+    @property
+    def switches(self):
+        return self.__switches.values()
+
+    def register(self, switch):
+        self.__switches[switch.name] = switch
+
+    def input(self, *inputs):
+        self.inputs = list(inputs)
+
+    def flush(self):
+        self.inputs = []
+
+    def active(self, name):
+        try:
+            switch = self.__switches[name].enabled_for()
+        except KeyError:
+            raise ValueError("No switch named '%s' registered" % name)
