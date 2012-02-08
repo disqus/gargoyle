@@ -6,9 +6,6 @@ class Base(object):
     INVALID_COMPARISON = (False, False)
     VALID_COMPARISON = lambda self, x: (True, x)
 
-    def validate(self, comparison):
-        return True
-
     def __make_value_comparison_func(method):
         def func(self, comparison):
             validation = self.validate(comparison)
@@ -35,6 +32,15 @@ class Base(object):
     __ge__ = __make_value_comparison_func('__ge__')
     __cmp__ = __make_value_comparison_func('__cmp__')
     __hash__ = __make_value_comparison_func('__hash__')
+
+
+class Value(Base):
+
+    def __init__(self, value):
+        self.value = value
+
+    def validate(self, comaparison):
+        return self.VALID_COMPARISON(comaparison)
 
 
 class Date(Base):
