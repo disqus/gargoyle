@@ -84,13 +84,25 @@ class Condition(object):
     def __init__(self, argument, operator):
         self.argument = argument
         self.operator = operator
+        self.negative = False
 
     def __call__(self, inpt):
-        if inpt.__class__ is not self.argument.im_class:
+        if not self.__is_same_class_as_argument(inpt):
             return False
 
+        application = self.__apply(inpt)
+
+        if self.negative:
+            application = not application
+
+        return application
+
+    def __apply(self, inpt):
         value = self.argument(inpt)
         return self.operator.applies_to(value)
+
+    def __is_same_class_as_argument(self, inpt):
+        return inpt.__class__ is self.argument.im_class
 
 
 class Manager(object):

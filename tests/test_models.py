@@ -77,6 +77,11 @@ class TestCondition(unittest.TestCase):
         self.condition(input_instance)
         self.operator.applies_to.assert_called_once_with((42, input_instance))
 
+    def test_condition_can_be_negated(self):
+        eq_(self.condition(self.ReflectiveInput()), True)
+        self.condition.negative = True
+        eq_(self.condition(self.ReflectiveInput()), False)
+
 
 class SwitchWithConditions(object):
 
