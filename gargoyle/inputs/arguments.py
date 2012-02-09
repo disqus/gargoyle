@@ -1,3 +1,5 @@
+import random
+
 class Base(object):
 
     def __proxy_to_value_method(method):
@@ -25,3 +27,14 @@ class Value(Base):
 
     def __init__(self, value):
         self.value = value
+
+
+class Boolean(Base):
+
+    def __init__(self, value, hash_value=None):
+        self.value = value
+        self.hash_value = hash_value or random.getrandbits(128)
+
+    def __hash__(self, *args, **kwargs):
+        print self.hash_value
+        return hash(self.hash_value)

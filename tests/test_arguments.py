@@ -44,3 +44,29 @@ class ValueTest(BaseArgument, DelegateToValue, unittest.TestCase):
     @property
     def valid_comparison_value(self):
         return 'marv'
+
+
+class BooleanTest(BaseArgument, DelegateToValue, unittest.TestCase):
+
+    klass = Boolean
+
+    @property
+    def valid_comparison_value(self):
+        return True
+
+    @property
+    def interface_functions(self):
+        return ['__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__',
+                     '__cmp__', '__nonzero__']
+
+    def test_hashes_its_hash_value_instead_of_value(self):
+        boolean = Boolean(True, hash_value='another value')
+        assert_not_equals(hash(True), hash(boolean))
+        assert_equals(hash('another value'), hash(boolean))
+
+    def test_creates_random_hash_value_if_not_provided(self):
+        boolean = Boolean(True)
+        assert_not_equals(hash(True), hash(boolean))
+        assert_not_equals(hash(None), hash(boolean))
+
+        assert_not_equals(hash(boolean), hash(Boolean(True)))
