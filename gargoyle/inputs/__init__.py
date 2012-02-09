@@ -2,15 +2,25 @@ class Base(object):
     """
     An input is an object which understands the business objects in your system
     (users, requests, etc) and knows how to validate and transform them into
-    arguments for conditions.  For instance, you may have a User object that
-    has properties like ``.is_admin``, ``date_joined``, etc.  You would create
-    an UserInput object, which wraps a User instance, and provides the right API
-    methods to create Arguments for Conditions.
+    arguments for operators.  For instance, you may have a User object that
+    has properties like ``is_admin``, ``date_joined``, etc.  You would create
+    an UserInput object, which wraps a User instance, and provides API methods,
+    which return Argument objects.
 
-    An Input also knows how to transform the value the argument is compared to
-    inside the condition.  For example, if your ``UserInput`` had an argument
-    called ``join_date`` and was being used in a ``LessThan`` conditional, the
-    argument would be expected to implement the ``__lt__`` method in order to be
-    accurately compared insude the ``LessThan`` conditional.
+    By default, any callable public attribute of a decendant of Base is
+    considered an argument and returned from the ``arguments`` property.
+    Subclasses that which to change that behavior can implement their own
+    implementation of ``arguments``.
     """
-    pass
+
+    @property
+    def arguments(self):
+        print dir()
+        return [getattr(self.__class__, attr) for attr
+                in self.callable_attributes()]
+
+    def callable_attributes(self):
+        return (
+            key for key, value in self.__class__.__dict__.items()
+            if callable(value) and not key.startswith('_')
+        )
