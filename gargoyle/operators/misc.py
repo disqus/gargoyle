@@ -7,4 +7,7 @@ class Percent(object):
         self.percentage = float(percentage)
 
     def applies_to(self, argument):
-        return hash(argument) % 100 <= self.percentage
+        if not argument:
+            return False
+        else:
+            return hash(argument) % 100 <= self.percentage

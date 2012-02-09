@@ -135,6 +135,11 @@ class TestMoreThanCondition(BaseCondition, unittest.TestCase):
 
 class TestPercentCondition(BaseCondition, unittest.TestCase):
 
+    class FalseyObject(object):
+
+        def __nonzero__(self):
+            return False
+
     @property
     def condition(self):
         return Percent(50)
@@ -143,3 +148,7 @@ class TestPercentCondition(BaseCondition, unittest.TestCase):
         runs = map(self.condition.applies_to, range(1000))
         successful_runs = filter(bool, runs)
         self.assertAlmostEqual(len(successful_runs), 500, delta=50)
+
+    def test_returns_false_if_argument_is_falsey(self):
+        eq_(self.condition.applies_to(False), False)
+        eq_(self.condition.applies_to(self.FalseyObject()), False)
