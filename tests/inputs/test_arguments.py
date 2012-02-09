@@ -1,5 +1,4 @@
 import unittest
-import datetime
 from mock import MagicMock, Mock
 from nose.tools import *
 from gargoyle.inputs.arguments import *

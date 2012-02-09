@@ -1,6 +1,3 @@
-import datetime
-
-
 class Base(object):
 
     def __make_value_comparison_func(method):
