@@ -37,7 +37,8 @@ class Switch(object):
     def enabled_for(self, inpt):
         """
         Checks to see if this switch is enabled for the provided input, which is
-        an instance of the ``Input`` class.
+        an instance of the ``Input`` class.  The switch is enabled if any of its
+        conditions are met by the input.
         """
         func = self.__enabled_func()
         return func(cond(inpt) for cond in self.conditions)
@@ -52,11 +53,11 @@ class Switch(object):
 class Condition(object):
     """
     A Condition is the configuration of an argument and an operator, and tells
-    you if the operator applies to the argument bound to the input instance
-    passed in.  The previous sentence probably doesn't make any sense, so read
-    on!
+    you if the operator applies to the argument as it exists in the input
+    instance passed in.  The previous sentence probably doesn't make any sense,
+    so read on!
 
-    An argument defines what this condition is checking.  Perhaps it's the
+    The argument defines what this condition is checking.  Perhaps it's the
     request's IP address or the user's name.  Literally, an argumenet is an
     unbound function attached to an available Input class.  For example, for the
     request IP address, you would define an ``ip`` function inside the
@@ -100,18 +101,13 @@ class Manager(object):
     active, given its conditions and current inputs.
     """
 
-    def __init__(self, storage=modeldict.dict.RedisDict):
+    def __init__(self, storage):
         self.__switches = storage
         self.inputs = []
 
     @property
     def switches(self):
         return self.__switches.values()
-
-    def arguments_for(self, condition):
-        for i in self.inputs:
-            for arg in i.arguments:
-                yield argument
 
     def register(self, switch):
         self.__switches[switch.name] = switch

@@ -153,6 +153,10 @@ class ManagerTest(unittest.TestCase):
     def test_active_raises_exception_if_no_switch_found_with_name(self):
         assert_raises(ValueError, self.manager.active, 'junk')
 
+    def test_uses_switches_from_storage_on_itialization(self):
+        m = Manager(storage=dict(existing='switch', another='valuable switch'))
+        self.assertItemsEqual(m.switches, ['switch', 'valuable switch'])
+
 
 class ManagerActiveTest(unittest.TestCase):
 
@@ -166,7 +170,7 @@ class ManagerActiveTest(unittest.TestCase):
         self.manager = Manager(storage=MemoryDict())
         self.manager.input('input 1', 'input 2')
 
-    def test_returns_false_if_named_switch_is_enabled_for_any_input(self):
+    def test_returns_boolean_if_named_switch_is_enabled_for_any_input(self):
         self.build_and_register_switch('disabled', enabled_for=False)
         eq_(self.manager.active('disabled'), False)
 
