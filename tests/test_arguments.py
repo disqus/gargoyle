@@ -30,9 +30,11 @@ class DelegateToValue(object):
         argument = self.klass(value_passed_in)
 
         for function in self.interface_functions:
-            value_function = getattr(value_passed_in, function)
-            getattr(argument, function)(self.valid_comparison_value)
-            value_function.assert_called_once_with(self.valid_comparison_value)
+            values_function = getattr(value_passed_in, function)
+            arguments_function = getattr(argument, function)
+
+            arguments_function(self.valid_comparison_value)
+            values_function.assert_called_once_with(self.valid_comparison_value)
 
 
 class ValueTest(BaseArgument, DelegateToValue, unittest.TestCase):
