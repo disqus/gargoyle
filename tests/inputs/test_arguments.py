@@ -43,16 +43,3 @@ class ValueTest(BaseArgument, DelegateToValue, unittest.TestCase):
     @property
     def valid_comparison_value(self):
         return 'marv'
-
-class TestDateArgument(BaseArgument, DelegateToValue, unittest.TestCase):
-
-    klass = Date
-
-    @property
-    def valid_comparison_value(self):
-        return datetime.date.today()
-
-    def test_returns_false_unless_date_is_in_correct_format(self):
-        for method in self.interface_methods:
-            eq_(method('junk'), False)
-            eq_(method('January 1st, 2020'), False)

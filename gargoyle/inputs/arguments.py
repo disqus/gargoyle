@@ -3,22 +3,11 @@ import datetime
 
 class Base(object):
 
-    INVALID_COMPARISON = (False, False)
-    VALID_COMPARISON = lambda self, x: (True, x)
-
     def __make_value_comparison_func(method):
         def func(self, comparison):
-            validation = self.validate(comparison)
-
-            if validation is self.INVALID_COMPARISON:
-                # TODO: Make this configurable.  Maybe we want to raise an
-                # exception instead of just returning false?
-                return False
-
-            _, transformed_comparison = validation
 
             if hasattr(self, 'value'):
-                return getattr(self.value, method)(transformed_comparison)
+                return getattr(self.value, method)(comparison)
             else:
                 raise NotImplementedError
 
@@ -38,24 +27,3 @@ class Value(Base):
 
     def __init__(self, value):
         self.value = value
-
-    def validate(self, comaparison):
-        return self.VALID_COMPARISON(comaparison)
-
-
-class Date(Base):
-
-    ISO_8601 = "%Y-%m-%d"
-
-    def __init__(self, value):
-        self.value = value
-
-    def validate(self, comparison):
-        try:
-            if not hasattr(comparison, 'isoformat'):
-                parsed = datetime.datetime.strptime(comparison, self.ISO_8601)
-                comparison = parsed.date()
-
-            return self.VALID_COMPARISON(comparison)
-        except ValueError:
-            return self.INVALID_COMPARISON
