@@ -1,12 +1,3 @@
-class Truthy(object):
-
-    label = 'truthy'
-    description = 'Applies if the argument is truthy.'
-
-    def applies_to(self, argument):
-        return bool(argument)
-
-
 class Equals(object):
 
     label = 'equals'
@@ -17,18 +8,6 @@ class Equals(object):
 
     def applies_to(self, argument):
         return self.value == argument
-
-
-class Enum(object):
-
-    label = 'enum'
-    description = 'Appies if argument is included in the specified values'
-
-    def __init__(self, *possibilities):
-        self.possibilities = possibilities
-
-    def applies_to(self, argument):
-        return argument in self.possibilities
 
 
 class Between(object):
@@ -66,15 +45,3 @@ class MoreThan(object):
 
     def applies_to(self, argument):
         return argument > self.lower_limit
-
-
-class Percent(object):
-
-    label = 'percent'
-    description = 'Applies if argument hashes to <= percent value'
-
-    def __init__(self, percentage):
-        self.percentage = float(percentage)
-
-    def applies_to(self, argument):
-        return hash(argument) % 100 <= self.percentage

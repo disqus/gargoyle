@@ -1,6 +1,8 @@
 import unittest
 from nose.tools import *
-from gargoyle.operators import *
+from gargoyle.operators.comparable import *
+from gargoyle.operators.identity import *
+from gargoyle.operators.misc import *
 
 
 class BaseCondition(object):
