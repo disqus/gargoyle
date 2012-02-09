@@ -15,7 +15,6 @@ class Base(object):
 
     @property
     def arguments(self):
-        print dir()
         return [getattr(self.__class__, attr) for attr
                 in self.callable_attributes()]
 
