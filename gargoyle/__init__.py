@@ -9,9 +9,6 @@ gargoyle
 __all__ = ('gargoyle', 'ConditionSet', 'autodiscover', 'VERSION')
 
 try:
-    VERSION = __import__('pkg_resources') \
-        .get_distribution('gargoyle').version
+    VERSION = __import__('pkg_resources').get_distribution('gargoyle').version
 except Exception, e:
     VERSION = 'unknown'
-
-from gargoyle.manager import gargoyle
