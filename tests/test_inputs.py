@@ -29,3 +29,15 @@ class TestBaseInput(unittest.TestCase):
     def test_arguments_returns_all_public_callable_attributes(self):
         expected = [DumbInput.arg1, DumbInput.arg2]
         self.assertItemsEqual(DumbInput().arguments, expected)
+
+    def test_provides_supports_method(self):
+        ok_(DumbInput.supports)
+
+    def test_supports_returns_true_for_everything_by_default(self):
+        instance = DumbInput()
+        ok_(DumbInput.supports(instance.arg1, 'operator'))
+        ok_(DumbInput.supports(instance.arg2, 'operator'))
+
+    def test_supports_raises_exception_if_passed_non_input(self):
+        assert_raises_regexp(ValueError, 'not valid Input Argument',
+                             DumbInput.supports, 'junk', 'operator')

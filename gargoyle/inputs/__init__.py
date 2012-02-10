@@ -23,3 +23,14 @@ class Base(object):
             key for key, value in self.__class__.__dict__.items()
             if callable(value) and not key.startswith('_')
         )
+
+    @classmethod
+    def supports(klass, argument, operator):
+        """
+        Lets input classes return if its argument suports the operator.
+        """
+
+        if not callable(argument) or argument.im_class is not klass:
+            raise ValueError("'%s' not valid Input Argument" % argument)
+
+        return True
