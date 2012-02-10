@@ -36,5 +36,4 @@ class Boolean(Base):
         self.hash_value = hash_value or random.getrandbits(128)
 
     def __hash__(self, *args, **kwargs):
-        print self.hash_value
         return hash(self.hash_value)
