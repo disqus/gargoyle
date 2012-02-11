@@ -11,8 +11,7 @@ class BaseArgument(object):
 
     @property
     def interface_functions(self):
-        return ['__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__',
-                     '__cmp__', '__hash__', '__nonzero__']
+        return ['__cmp__', '__hash__', '__nonzero__']
 
     @property
     def interface_methods(self):
@@ -56,8 +55,7 @@ class BooleanTest(BaseArgument, DelegateToValue, unittest.TestCase):
 
     @property
     def interface_functions(self):
-        return ['__lt__', '__le__', '__eq__', '__ne__', '__gt__', '__ge__',
-                     '__cmp__', '__nonzero__']
+        return ['__cmp__', '__nonzero__']
 
     def test_hashes_its_hash_value_instead_of_value(self):
         boolean = Boolean(True, hash_value='another value')
