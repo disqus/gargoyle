@@ -1,5 +1,6 @@
 import random
 
+
 class Base(object):
 
     def __proxy_to_value_method(method):

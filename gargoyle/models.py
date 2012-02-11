@@ -6,8 +6,6 @@ gargoyle.models
 :license: Apache License 2.0, see LICENSE for more details.
 """
 
-import modeldict.dict
-
 
 class Switch(object):
     """
