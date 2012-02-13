@@ -68,3 +68,26 @@ class BooleanTest(BaseArgument, DelegateToValue, unittest.TestCase):
         assert_not_equals(hash(None), hash(boolean))
 
         assert_not_equals(hash(boolean), hash(Boolean(True)))
+
+
+class StringTest(BaseArgument, DelegateToValue, unittest.TestCase):
+
+    klass = String
+
+    @property
+    def valid_comparison_value(self):
+        return 'foobazzle'
+
+    @property
+    def interface_functions(self):
+        return ['__hash__']
+
+    def test_cmp_compares_with_other_value(self):
+        eq_(self.argument.__cmp__('zebra'), -1)
+        eq_(self.argument.__cmp__('aardvark'), 1)
+        eq_(self.argument.__cmp__('foobazzle'), 0)
+
+    def test_nonzero_returns_if_truthy(self):
+        ok_(String('hello').__nonzero__() is True)
+        ok_(String('').__nonzero__() is False)
+        ok_(String('0').__nonzero__() is True)

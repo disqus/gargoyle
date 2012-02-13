@@ -3,6 +3,9 @@ import random
 
 class Base(object):
 
+    def __init__(self, value):
+        self.value = value
+
     def __proxy_to_value_method(method):
         def func(self, *args, **kwargs):
 
@@ -19,16 +22,23 @@ class Base(object):
 
 
 class Value(Base):
-
-    def __init__(self, value):
-        self.value = value
+    pass
 
 
 class Boolean(Base):
 
     def __init__(self, value, hash_value=None):
-        self.value = value
+        super(Boolean, self).__init__(value)
         self.hash_value = hash_value or random.getrandbits(128)
 
     def __hash__(self, *args, **kwargs):
         return hash(self.hash_value)
+
+
+class String(Base):
+
+    def __cmp__(self, other):
+        return cmp(self.value, other)
+
+    def __nonzero__(self, *args, **kwargs):
+        return bool(self.value)
