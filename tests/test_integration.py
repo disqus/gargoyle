@@ -33,11 +33,16 @@ class TestIntegration(unittest.TestCase):
 
     def setUp(self):
         self.manager = Manager(storage=dict())
+        self.setup_inputs()
+        self.setup_conditions()
+        self.setup_switches()
 
+    def setup_inputs(self):
         self.jeff = User('jeff', 21)
         self.frank = User('frank', 10, location="Seattle")
         self.larry = User('bill', 70, location="Yakima", married=True)
 
+    def setup_conditions(self):
         self.age_over_65 = Condition(User.age, MoreThan(65))
         self.age_under_18 = Condition(User.age, LessThan(18))
         self.age_not_under_18 = Condition(User.age, LessThan(18))
@@ -53,6 +58,7 @@ class TestIntegration(unittest.TestCase):
         self.three_quarters_married = Condition(User.married, Percent(75))
         self.ten_percent = Condition(User.name, Percent(10))
 
+    def setup_switches(self):
         self.add_switch('can drink', condition=self.age_over_20)
         self.add_switch('retired', condition=self.age_over_65)
         self.add_switch('can vote', condition=self.age_not_under_18)
