@@ -82,6 +82,12 @@ class TestCondition(unittest.TestCase):
         self.condition.negative = True
         eq_(self.condition(self.ReflectiveInput()), False)
 
+    def test_can_be_negated_via_init_argument(self):
+        condition = Condition(self.ReflectiveInput.foo, self.operator)
+        eq_(condition(self.ReflectiveInput()), True)
+        condition = Condition(self.ReflectiveInput.foo, self.operator, negative=True)
+        eq_(condition(self.ReflectiveInput()), False)
+
 
 class SwitchWithConditions(object):
 

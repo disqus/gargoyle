@@ -45,8 +45,7 @@ class TestIntegration(unittest.TestCase):
     def setup_conditions(self):
         self.age_over_65 = Condition(User.age, MoreThan(65))
         self.age_under_18 = Condition(User.age, LessThan(18))
-        self.age_not_under_18 = Condition(User.age, LessThan(18))
-        self.age_not_under_18.negative = True  # TODO Make negative part of constructor
+        self.age_not_under_18 = Condition(User.age, LessThan(18), negative = True)
         self.age_over_20 = Condition(User.age, MoreThan(20))
         self.age_between_13_and_18 = Condition(User.age, Between(13, 18))
 

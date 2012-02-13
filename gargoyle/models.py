@@ -79,10 +79,10 @@ class Condition(object):
            class wraps is between 15 and 30.
     """
 
-    def __init__(self, argument, operator):
+    def __init__(self, argument, operator, negative=False):
         self.argument = argument
         self.operator = operator
-        self.negative = False
+        self.negative = negative
 
     def __call__(self, inpt):
         if not self.__is_same_class_as_argument(inpt):
