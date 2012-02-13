@@ -7,7 +7,7 @@ class Equals(object):
         self.value = value
 
     def applies_to(self, argument):
-        return self.value == argument
+        return argument == self.value
 
 
 class Between(object):
