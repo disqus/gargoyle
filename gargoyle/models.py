@@ -343,12 +343,17 @@ class SwitchManager(ModelDict):
                     instances.append(v.user)
 
         # check each switch to see if it can execute
+        return_value = default
+
         for switch in self._registry.itervalues():
-            if switch.has_active_condition(conditions, instances):
-                return True
+            result = switch.has_active_condition(conditions, instances)
+            if result is False:
+                return False
+            elif result is True:
+                return_value = True
 
         # there were no matching conditions, so it must not be enabled
-        return False
+        return return_value
 
     def register(self, condition_set):
         """

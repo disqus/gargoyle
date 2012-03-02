@@ -132,21 +132,32 @@ class APITest(TestCase):
 
         switch.add_condition(
             condition_set=condition_set,
-            field_name='percent',
-            condition='0-50',
-            exclude=True,
+            field_name='is_staff',
+            condition='1',
         )
         switch.add_condition(
             condition_set=condition_set,
             field_name='username',
             condition='foo',
         )
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='bar',
+            exclude=True
+        )
 
-        user = User(pk=5, username='foo')
+        user = User(pk=0, username='foo', is_staff=False)
+        self.assertTrue(self.gargoyle.is_active('test', user))
+
+        user = User(pk=0, username='foo', is_staff=True)
+        self.assertTrue(self.gargoyle.is_active('test', user))
+
+        user = User(pk=0, username='bar', is_staff=False)
         self.assertFalse(self.gargoyle.is_active('test', user))
 
-        user = User(pk=8771, username='foo')
-        self.assertTrue(self.gargoyle.is_active('test', user))
+        user = User(pk=0, username='bar', is_staff=True)
+        self.assertFalse(self.gargoyle.is_active('test', user))
 
     def test_decorator_for_user(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'

@@ -15,6 +15,7 @@ from django.core.validators import validate_ipv4_address
 
 import socket
 
+
 class UserConditionSet(ModelConditionSet):
     username = String()
     email = String()
@@ -33,17 +34,21 @@ class UserConditionSet(ModelConditionSet):
         """
         if isinstance(instance, User):
             return super(UserConditionSet, self).is_active(instance, conditions)
-        
+
         # HACK: allow is_authenticated to work on AnonymousUser
         condition = conditions.get(self.get_namespace(), {}).get('is_anonymous')
-        return bool(condition)
+        if condition is not None:
+            return bool(condition)
+        return None
 
 gargoyle.register(UserConditionSet(User))
+
 
 class IPAddress(String):
     def clean(self, value):
         validate_ipv4_address(value)
         return value
+
 
 class IPAddressConditionSet(RequestConditionSet):
     percent = Percent()
@@ -66,15 +71,16 @@ class IPAddressConditionSet(RequestConditionSet):
 
 gargoyle.register(IPAddressConditionSet())
 
+
 class HostConditionSet(ConditionSet):
     hostname = String()
 
     def get_namespace(self):
         return 'host'
-    
+
     def can_execute(self, instance):
         return instance is None
-    
+
     def get_field_value(self, instance, field_name):
         if field_name == 'hostname':
             return socket.gethostname()

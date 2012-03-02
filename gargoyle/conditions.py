@@ -248,12 +248,16 @@ class ConditionSet(object):
         this switch, returns a boolean reprsenting if any
         conditional is met, including a non-instance default.
         """
+        return_value = None
         for instance in itertools.chain(instances, [None]):
             if not self.can_execute(instance):
                 continue
-            if self.is_active(instance, conditions):
-                return True
-        return False
+            result = self.is_active(instance, conditions)
+            if result is False:
+                return False
+            elif result is True:
+                return_value = True
+        return return_value
 
     def is_active(self, instance, conditions):
         """
@@ -280,6 +284,7 @@ class ConditionSet(object):
         """
         return self.__class__.__name__
 
+
 class ModelConditionSet(ConditionSet):
     percent = Percent()
 
@@ -300,6 +305,7 @@ class ModelConditionSet(ConditionSet):
 
     def get_group_label(self):
         return self.model._meta.verbose_name.title()
+
 
 class RequestConditionSet(ConditionSet):
     def get_namespace(self):
