@@ -20,6 +20,7 @@ class UserConditionSet(ModelConditionSet):
     username = String()
     email = String()
     is_anonymous = Boolean(label='Anonymous')
+    is_active = Boolean(label='Active')
     is_staff = Boolean(label='Staff')
     is_superuser = Boolean(label='Superuser')
     date_joined = OnOrAfterDate(label='Joined on or after')
