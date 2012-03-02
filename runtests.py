@@ -49,6 +49,7 @@ if not settings.configured:
               'description': 'Controls the funkiness.',
             },
         },
+        SITE_ID=1,
     )
 
 from django_nose import NoseTestSuiteRunner
