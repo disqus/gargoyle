@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
+from setuptools import setup, find_packages
 
 tests_require = [
     'Django>=1.1',
@@ -16,7 +11,7 @@ tests_require = [
 
 setup(
     name='gargoyle',
-    version='0.7.2',
+    version='0.7.3',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
@@ -24,7 +19,7 @@ setup(
     packages=find_packages(exclude=["example_project", "tests"]),
     zip_safe=False,
     install_requires=[
-        'django-modeldict>=1.1.6',
+        'django-modeldict>=1.2.0',
         'nexus>=0.2.3',
         'django-jsonfield==0.6',
     ],
