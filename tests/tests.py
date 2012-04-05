@@ -159,6 +159,34 @@ class APITest(TestCase):
         user = User(pk=0, username='bar', is_staff=True)
         self.assertFalse(self.gargoyle.is_active('test', user))
 
+    def test_only_exclusions(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        switch = Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = self.gargoyle['test']
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='bar',
+            exclude=True
+        )
+
+        user = User(pk=0, username='foo', is_staff=False)
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
+        user = User(pk=0, username='foo', is_staff=True)
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
+        user = User(pk=0, username='bar', is_staff=False)
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
+        user = User(pk=0, username='bar', is_staff=True)
+        self.assertFalse(self.gargoyle.is_active('test', user))
+
     def test_decorator_for_user(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
 
