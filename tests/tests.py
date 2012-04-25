@@ -176,10 +176,10 @@ class APITest(TestCase):
         )
 
         user = User(pk=0, username='foo', is_staff=False)
-        self.assertTrue(self.gargoyle.is_active('test', user))
+        self.assertFalse(self.gargoyle.is_active('test', user))
 
         user = User(pk=0, username='foo', is_staff=True)
-        self.assertTrue(self.gargoyle.is_active('test', user))
+        self.assertFalse(self.gargoyle.is_active('test', user))
 
         user = User(pk=0, username='bar', is_staff=False)
         self.assertFalse(self.gargoyle.is_active('test', user))
