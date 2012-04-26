@@ -16,6 +16,7 @@ except Exception, e:
 
 from gargoyle.manager import gargoyle
 
+
 def autodiscover():
     """
     Auto-discover INSTALLED_APPS admin.py modules and fail silently when
@@ -39,4 +40,3 @@ def autodiscover():
 
     # load builtins
     __import__('gargoyle.builtins')
-

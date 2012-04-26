@@ -20,8 +20,10 @@ from gargoyle.models import EXCLUDE
 
 import itertools
 
+
 def titlize(s):
     return s.title().replace('_', ' ')
+
 
 class Field(object):
     default_help_text = None
@@ -56,6 +58,7 @@ class Field(object):
         return value
         # return '%s: %s' % (self.label, value) - For Cramer to not to forget how to use his own code
 
+
 class Boolean(Field):
     def is_active(self, condition, value):
         return bool(value)
@@ -65,6 +68,7 @@ class Boolean(Field):
 
     def display(self, value):
         return self.label
+
 
 class Choice(Field):
     def __init__(self, choices, **kwargs):
@@ -78,6 +82,7 @@ class Choice(Field):
         if value not in self.choices:
             raise ValidationError
         return value
+
 
 class Range(Field):
     def is_active(self, condition, value):
@@ -105,6 +110,7 @@ class Range(Field):
         value = value.split('-')
         return '%s: %s-%s' % (self.label, value[0], value[1])
 
+
 class Percent(Range):
     default_help_text = 'Enter two ranges. e.g. 0-50 is lower 50%'
 
@@ -127,8 +133,10 @@ class Percent(Range):
                 raise ValidationError('Start value must be less than end value.')
         return value
 
+
 class String(Field):
     pass
+
 
 class AbstractDate(Field):
     DATE_FORMAT = "%Y-%m-%d"
@@ -167,13 +175,16 @@ class AbstractDate(Field):
     def date_is_active(self, condition_date, value):
         raise NotImplementedError
 
+
 class BeforeDate(AbstractDate):
     def date_is_active(self, before_this_date, value):
         return value < before_this_date
 
+
 class OnOrAfterDate(AbstractDate):
     def date_is_active(self, after_this_date, value):
         return value >= after_this_date
+
 
 class ConditionSetBase(type):
     def __new__(cls, name, bases, attrs):

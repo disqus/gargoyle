@@ -239,4 +239,3 @@ class Switch(models.Model):
             status = self.status
 
         return self.STATUS_LABELS[status]
-

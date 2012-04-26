@@ -55,6 +55,7 @@ def sort_by_key(field, currently):
 
 sort_by_key = register.filter(sort_by_key)
 
+
 def sort_field(sort_string):
     return sort_string.lstrip('-')
 
