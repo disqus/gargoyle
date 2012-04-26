@@ -25,6 +25,13 @@ The best place to do this is within your ``urls.py`` file.
 	>>> import gargoyle
 	>>> gargoyle.autodiscover()
 
+If you do use ``gargoyle.py`` files and the autodiscovery code, you'll need to ensure your imports are not relative::
+
+  from __future__ import absolute_import
+
+  from gargoyle.conditions import ConditionSet
+  # ...
+
 Nexus Frontend
 --------------
 
