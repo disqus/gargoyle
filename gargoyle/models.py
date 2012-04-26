@@ -13,6 +13,8 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import ugettext_lazy as _
 
+from gargoyle.proxy import SwitchProxy
+
 from jsonfield import JSONField
 from modeldict import ModelDict
 
@@ -241,36 +243,6 @@ class Switch(models.Model):
             status = self.status
 
         return self.STATUS_LABELS[status]
-
-
-class SwitchProxy(object):
-    def __init__(self, manager, switch):
-        self._switch = switch
-        self._manager = manager
-
-    def __getattr__(self, attr):
-        if attr in self.__dict__:
-            return self.__dict__[attr]
-        else:
-            return getattr(self._switch, attr)
-
-    def __setattr__(self, attr, value):
-        if attr in ('_switch', '_manager'):
-            object.__setattr__(self, attr, value)
-        else:
-            setattr(self._switch, attr, value)
-
-    def add_condition(self, *args, **kwargs):
-        return self._switch.add_condition(self._manager, *args, **kwargs)
-
-    def remove_condition(self, *args, **kwargs):
-        return self._switch.remove_condition(self._manager, *args, **kwargs)
-
-    def clear_conditions(self, *args, **kwargs):
-        return self._switch.clear_conditions(self._manager, *args, **kwargs)
-
-    def get_active_conditions(self, *args, **kwargs):
-        return self._switch.get_active_conditions(self._manager, *args, **kwargs)
 
 
 class SwitchManager(ModelDict):
