@@ -17,7 +17,8 @@ from django.template import Context, Template, TemplateSyntaxError
 from gargoyle.builtins import IPAddressConditionSet, UserConditionSet, HostConditionSet
 from gargoyle.decorators import switch_is_active
 from gargoyle.helpers import MockRequest
-from gargoyle.models import Switch, SwitchManager, SELECTIVE, DISABLED, GLOBAL, INHERIT
+from gargoyle.models import Switch, SELECTIVE, DISABLED, GLOBAL, INHERIT
+from gargoyle.manager import SwitchManager
 from gargoyle.testutils import switches
 
 import socket
