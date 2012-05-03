@@ -33,7 +33,7 @@ switch_deleted = django.dispatch.Signal(providing_args=["request", "switch"])
 #:
 #:      from gargoyle.signals import switch_updated
 #:      switch_updated.connect(switch_updated_callback)
-switch_updated = django.dispatch.Signal(providing_args=["request", "switch"])
+switch_updated = django.dispatch.Signal(providing_args=["request", "switch", "changes"])
 
 #: This signal is sent when a condition is removed from a switch.
 #:
@@ -44,7 +44,7 @@ switch_updated = django.dispatch.Signal(providing_args=["request", "switch"])
 #:
 #:      from gargoyle.signals import switch_status_updated
 #:      switch_status_updated.connect(switch_status_updated_callback)
-switch_status_updated = django.dispatch.Signal(providing_args=["request", "switch", "status"])
+switch_status_updated = django.dispatch.Signal(providing_args=["request", "switch", "status", "old_status"])
 
 #: This signal is sent when a condition is added to a switch.
 #:

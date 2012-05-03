@@ -6,6 +6,7 @@ gargoyle.nexus_modules
 :license: Apache License 2.0, see LICENSE for more details.
 """
 
+import logging
 import nexus
 import os.path
 
@@ -24,6 +25,8 @@ from gargoyle import signals
 GARGOYLE_ROOT = os.path.dirname(__file__)
 
 autodiscover()
+
+logger = logging.getLogger('gargoyle.switches')
 
 
 class GargoyleException(Exception):
@@ -139,6 +142,9 @@ class GargoyleModule(nexus.NexusModule):
         if not created:
             raise GargoyleException("Switch with key %s already exists" % key)
 
+        logger.info('Switch %r added (%%s)' % switch.key,
+            ', '.join('%s=%r' % (k, getattr(switch, k)) for k, v in sorted('key', 'label', 'description')))
+
         signals.switch_added.send(
             sender=self,
             request=request,
@@ -161,19 +167,36 @@ class GargoyleModule(nexus.NexusModule):
         if len(label) > 32:
             raise GargoyleException("Name must be less than or equal to 32 characters in length")
 
-        if switch.key != key:
-            switch.delete()
-            switch.key = key
-
-        switch.label = label
-        switch.description = request.POST.get("desc")
-        switch.save()
-
-        signals.switch_updated.send(
-            sender=self,
-            request=request,
-            switch=switch,
+        values = dict(
+            label=label,
+            key=key,
+            description=request.POST.get("desc"),
         )
+
+        changes = {}
+        for key, value in values.iteritems():
+            new_value = getattr(switch, key)
+            if new_value != value:
+                changes[key] = (value, new_value)
+
+        if changes:
+            if switch.key != key:
+                switch.delete()
+                switch.key = key
+
+            switch.label = label
+            switch.description = request.POST.get("desc")
+            switch.save()
+
+            logger.info('Switch %r updated %%s' % switch.key,
+                ', '.join('%s=%r->%r' % (k, v[0], v[1]) for k, v in sorted(changes.iteritems())))
+
+            signals.switch_updated.send(
+                sender=self,
+                request=request,
+                switch=switch,
+                changes=changes,
+            )
 
         return switch.to_dict(gargoyle)
     update = json(update)
@@ -186,15 +209,23 @@ class GargoyleModule(nexus.NexusModule):
         except ValueError:
             raise GargoyleException("Status must be integer")
 
-        switch.status = status
-        switch.save()
+        old_status = switch.status
+        old_status_label = switch.get_status_display()
 
-        signals.switch_status_updated.send(
-            sender=self,
-            request=request,
-            switch=switch,
-            status=status,
-        )
+        if switch.status != status:
+            switch.status = status
+            switch.save()
+
+            logger.info('Switch %r updated (status=%%s->%%s)' % switch.key,
+                old_status_label, switch.get_status_display())
+
+            signals.switch_status_updated.send(
+                sender=self,
+                request=request,
+                switch=switch,
+                old_status=old_status,
+                status=status,
+            )
 
         return switch.to_dict(gargoyle)
     status = json(status)
@@ -202,11 +233,15 @@ class GargoyleModule(nexus.NexusModule):
     def delete(self, request):
         switch = Switch.objects.get(key=request.POST.get("key"))
         switch.delete()
+
+        logger.info('Switch %r removed' % switch.key)
+
         signals.switch_deleted.send(
             sender=self,
             request=request,
             switch=switch,
         )
+
         return {}
     delete = json(delete)
 
@@ -225,6 +260,20 @@ class GargoyleModule(nexus.NexusModule):
         switch = gargoyle[key]
         switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
 
+        logger.info('Condition added to %r (%r, %%s=%%r, exclude=%r)' % switch.key,
+            condition_set_id, field_name, value, bool(exclude))
+
+        signals.switch_condition_added.send(
+            sender=self,
+            request=request,
+            switch=switch,
+            condition={
+                'condition_set_id': condition_set_id,
+                'field_name': field_name,
+                'value': value,
+            },
+        )
+
         return switch.to_dict(gargoyle)
     add_condition = json(add_condition)
 
@@ -239,6 +288,10 @@ class GargoyleModule(nexus.NexusModule):
 
         switch = gargoyle[key]
         switch.remove_condition(condition_set_id, field_name, value)
+
+        logger.info('Condition added to %r (%r, %%s=%%r, exclude=%r)' % switch.key,
+            condition_set_id, field_name, value)
+
         signals.switch_condition_removed.send(
             sender=self,
             request=request,
