@@ -21,7 +21,7 @@ setup(
     install_requires=[
         'django-modeldict>=1.2.0',
         'nexus>=0.2.3',
-        'django-jsonfield==0.6',
+        'django-jsonfield>=0.8.0',
     ],
     license='Apache License 2.0',
     tests_require=tests_require,
