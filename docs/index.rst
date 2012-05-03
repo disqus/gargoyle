@@ -8,6 +8,8 @@ Gargoyle
 
 Gargoyle is a platform built on top of Django which allows you to switch functionality of your application on and off based on conditions.
 
+.. note:: Gargoyle works with Django 1.2, 1.3, or 1.4.
+
 .. toctree::
    :maxdepth: 2
 

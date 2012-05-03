@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 tests_require = [
-    'Django>=1.1',
+    'Django>=1.2,<1.5',
     'South',
     'nose',
     'django-nose',
