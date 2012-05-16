@@ -143,7 +143,7 @@ class GargoyleModule(nexus.NexusModule):
             raise GargoyleException("Switch with key %s already exists" % key)
 
         logger.info('Switch %r added (%%s)' % switch.key,
-            ', '.join('%s=%r' % (k, getattr(switch, k)) for k, v in sorted('key', 'label', 'description')))
+            ', '.join('%s=%r' % (k, getattr(switch, k)) for k in sorted(('key', 'label', 'description', ))))
 
         signals.switch_added.send(
             sender=self,
