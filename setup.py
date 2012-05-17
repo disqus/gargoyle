@@ -4,10 +4,23 @@ from setuptools import setup, find_packages
 
 tests_require = [
     'Django>=1.2,<1.5',
-    'South',
-    'nose',
     'django-nose',
+    'nose',
+    'pyflakes',
+    'pep8',
+    'South',
 ]
+
+install_requires = [
+    'django-modeldict>=1.2.0',
+    'nexus>=0.2.3',
+    'django-jsonfield>=0.8.0',
+]
+
+dependency_links = [
+    'https://github.com/dcramer/pyflakes/tarball/master#egg=pyflakes',
+]
+
 
 setup(
     name='gargoyle',
@@ -18,14 +31,11 @@ setup(
     description = 'Gargoyle is a platform built on top of Django which allows you to switch functionality of your application on and off based on conditions.',
     packages=find_packages(exclude=["example_project", "tests"]),
     zip_safe=False,
-    install_requires=[
-        'django-modeldict>=1.2.0',
-        'nexus>=0.2.3',
-        'django-jsonfield>=0.8.0',
-    ],
+    install_requires=install_requires,
     license='Apache License 2.0',
     tests_require=tests_require,
     extras_require={'test': tests_require},
+    dependency_links=dependency_links,
     test_suite='runtests.runtests',
     include_package_data=True,
     classifiers=[

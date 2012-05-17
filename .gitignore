@@ -1,7 +1,9 @@
 *.pyc
-*.egg-info/
+*.egg-info
+*.egg
 .DS_Store
-dist/
-build/
-*.egg/
 .arcconfig
+.coverage
+/dist
+/build
+/cover
