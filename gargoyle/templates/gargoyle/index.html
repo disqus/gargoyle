@@ -59,7 +59,7 @@
 
     <table class="switches {% if not switches %}empty{% endif %}">
         {% for switch in switches %}
-        <tr data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}" class="collapsed">
+        <tr id="id_{{ switch.key }}" data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}" class="collapsed">
             <td class="name">
                 <h4>{% if switch.label %}{{ switch.label }}{% else %}{{ switch.key|title }}{% endif %} <small class="command">({{ switch.key }})</small></h4>
                 <h5>
@@ -172,7 +172,7 @@
         </script>
 
         <script type="text/x-jquery-tmpl" id="switchData">
-            <tr data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
+            <tr id="id_${key}" data-switch-key="${key}" data-switch-name="${label}" data-switch-desc="${description}">
                 <td class="name">
                     <h4>${label} <small class="command">(${key})</small></h4>
                     <div class="inner">
