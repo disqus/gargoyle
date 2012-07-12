@@ -260,8 +260,8 @@ class GargoyleModule(nexus.NexusModule):
         switch = gargoyle[key]
         switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
 
-        logger.info('Condition added to %r (%r, %%s=%%r, exclude=%r)' % switch.key,
-            condition_set_id, field_name, value, bool(exclude))
+        logger.info('Condition added to %r (%r, %s=%r, exclude=%r)' % (switch.key,
+            condition_set_id, field_name, value, bool(exclude)))
 
         signals.switch_condition_added.send(
             sender=self,
@@ -289,8 +289,8 @@ class GargoyleModule(nexus.NexusModule):
         switch = gargoyle[key]
         switch.remove_condition(condition_set_id, field_name, value)
 
-        logger.info('Condition added to %r (%r, %%s=%%r, exclude=%r)' % switch.key,
-            condition_set_id, field_name, value)
+        logger.info('Condition removed from %r (%r, %s=%r)' % (switch.key,
+            condition_set_id, field_name, value))
 
         signals.switch_condition_removed.send(
             sender=self,
