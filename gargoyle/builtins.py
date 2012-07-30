@@ -8,7 +8,7 @@ gargoyle.builtins
 
 from gargoyle import gargoyle
 from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent, String, Boolean, \
-                                ConditionSet, OnOrAfterDate
+    ConditionSet, OnOrAfterDate
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.validators import validate_ipv4_address

@@ -82,14 +82,14 @@ class GargoyleModule(nexus.NexusModule):
         from django.conf.urls.defaults import patterns, url
 
         urlpatterns = patterns('',
-            url(r'^add/$', self.as_view(self.add), name='add'),
-            url(r'^update/$', self.as_view(self.update), name='update'),
-            url(r'^delete/$', self.as_view(self.delete), name='delete'),
-            url(r'^status/$', self.as_view(self.status), name='status'),
-            url(r'^conditions/add/$', self.as_view(self.add_condition), name='add-condition'),
-            url(r'^conditions/remove/$', self.as_view(self.remove_condition), name='remove-condition'),
-            url(r'^$', self.as_view(self.index), name='index'),
-        )
+                               url(r'^add/$', self.as_view(self.add), name='add'),
+                               url(r'^update/$', self.as_view(self.update), name='update'),
+                               url(r'^delete/$', self.as_view(self.delete), name='delete'),
+                               url(r'^status/$', self.as_view(self.status), name='status'),
+                               url(r'^conditions/add/$', self.as_view(self.add_condition), name='add-condition'),
+                               url(r'^conditions/remove/$', self.as_view(self.remove_condition), name='remove-condition'),
+                               url(r'^$', self.as_view(self.index), name='index'),
+                               )
 
         return urlpatterns
 
@@ -143,7 +143,7 @@ class GargoyleModule(nexus.NexusModule):
             raise GargoyleException("Switch with key %s already exists" % key)
 
         logger.info('Switch %r added (%%s)' % switch.key,
-            ', '.join('%s=%r' % (k, getattr(switch, k)) for k in sorted(('key', 'label', 'description', ))))
+                    ', '.join('%s=%r' % (k, getattr(switch, k)) for k in sorted(('key', 'label', 'description', ))))
 
         signals.switch_added.send(
             sender=self,
@@ -189,7 +189,7 @@ class GargoyleModule(nexus.NexusModule):
             switch.save()
 
             logger.info('Switch %r updated %%s' % switch.key,
-                ', '.join('%s=%r->%r' % (k, v[0], v[1]) for k, v in sorted(changes.iteritems())))
+                        ', '.join('%s=%r->%r' % (k, v[0], v[1]) for k, v in sorted(changes.iteritems())))
 
             signals.switch_updated.send(
                 sender=self,
@@ -217,7 +217,7 @@ class GargoyleModule(nexus.NexusModule):
             switch.save()
 
             logger.info('Switch %r updated (status=%%s->%%s)' % switch.key,
-                old_status_label, switch.get_status_display())
+                        old_status_label, switch.get_status_display())
 
             signals.switch_status_updated.send(
                 sender=self,
@@ -261,7 +261,7 @@ class GargoyleModule(nexus.NexusModule):
         switch.add_condition(condition_set_id, field_name, value, exclude=exclude)
 
         logger.info('Condition added to %r (%r, %s=%r, exclude=%r)' % (switch.key,
-            condition_set_id, field_name, value, bool(exclude)))
+                    condition_set_id, field_name, value, bool(exclude)))
 
         signals.switch_condition_added.send(
             sender=self,
@@ -290,7 +290,7 @@ class GargoyleModule(nexus.NexusModule):
         switch.remove_condition(condition_set_id, field_name, value)
 
         logger.info('Condition removed from %r (%r, %s=%r)' % (switch.key,
-            condition_set_id, field_name, value))
+                    condition_set_id, field_name, value))
 
         signals.switch_condition_removed.send(
             sender=self,
