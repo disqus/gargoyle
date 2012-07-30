@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import HttpRequest
 
 from gargoyle.models import Switch, DISABLED, SELECTIVE, GLOBAL, INHERIT, \
-  INCLUDE, EXCLUDE
+    INCLUDE, EXCLUDE
 from gargoyle.proxy import SwitchProxy
 
 from modeldict import ModelDict
@@ -145,4 +145,4 @@ class SwitchManager(ModelDict):
 
 
 gargoyle = SwitchManager(Switch, key='key', value='value', instances=True,
-    auto_create=getattr(settings, 'GARGOYLE_AUTO_CREATE', True))
+                         auto_create=getattr(settings, 'GARGOYLE_AUTO_CREATE', True))
