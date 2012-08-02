@@ -718,7 +718,7 @@ class APITest(TestCase):
 
         self.assertFalse(self.gargoyle.is_active('test:child'))
 
-    def test_child_and_parent_conditions_used(self):
+    def test_child_condition_differing_than_parent_loses(self):
         condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
 
         Switch.objects.create(
@@ -748,10 +748,55 @@ class APITest(TestCase):
         )
 
         user = User(username='bob')
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        user = User(username='joe')
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        user = User(username='john')
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        self.assertFalse(self.gargoyle.is_active('test:child'))
+
+    def test_child_condition_including_parent_wins(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+
+        parent = self.gargoyle['test']
+
+        parent.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='bob',
+        )
+
+        Switch.objects.create(
+            key='test:child',
+            status=SELECTIVE,
+        )
+
+        child = self.gargoyle['test:child']
+
+        child.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='bob',
+        )
+        child.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='joe',
+        )
+
+        user = User(username='bob')
         self.assertTrue(self.gargoyle.is_active('test:child', user))
 
         user = User(username='joe')
-        self.assertTrue(self.gargoyle.is_active('test:child', user))
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
 
         user = User(username='john')
         self.assertFalse(self.gargoyle.is_active('test:child', user))

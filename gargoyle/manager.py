@@ -47,6 +47,7 @@ class SwitchManager(ModelDict):
             child_kwargs = kwargs.copy()
             child_kwargs['default'] = None
             result = self.is_active(':'.join(parts[:-1]), *instances, **child_kwargs)
+
             if result is False:
                 return result
             elif result is True:
@@ -78,7 +79,7 @@ class SwitchManager(ModelDict):
                     instances.append(v.user)
 
         # check each switch to see if it can execute
-        return_value = default
+        return_value = False
 
         for switch in self._registry.itervalues():
             result = switch.has_active_condition(conditions, instances)
