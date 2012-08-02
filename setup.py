@@ -29,7 +29,7 @@ dependency_links = [
 
 setup(
     name='gargoyle',
-    version='0.9.1',
+    version='0.10.0',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
