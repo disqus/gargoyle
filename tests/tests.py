@@ -663,6 +663,101 @@ class APITest(TestCase):
         user = User(pk=8771)
         self.assertTrue(self.gargoyle.is_active('test:child', user))
 
+    def test_parent_override_child_state(self):
+        Switch.objects.create(
+            key='test',
+            status=DISABLED,
+        )
+
+        Switch.objects.create(
+            key='test:child',
+            status=GLOBAL,
+        )
+
+        self.assertFalse(self.gargoyle.is_active('test:child'))
+
+    def test_child_state_is_used(self):
+        Switch.objects.create(
+            key='test',
+            status=GLOBAL,
+        )
+
+        Switch.objects.create(
+            key='test:child',
+            status=DISABLED,
+        )
+
+        self.assertFalse(self.gargoyle.is_active('test:child'))
+
+    def test_parent_override_child_condition(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+
+        parent = self.gargoyle['test']
+
+        parent.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='bob',
+        )
+
+        Switch.objects.create(
+            key='test:child',
+            status=GLOBAL,
+        )
+
+        user = User(username='bob')
+        self.assertTrue(self.gargoyle.is_active('test:child', user))
+
+        user = User(username='joe')
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        self.assertFalse(self.gargoyle.is_active('test:child'))
+
+    def test_child_and_parent_conditions_used(self):
+        condition_set = 'gargoyle.builtins.UserConditionSet(auth.user)'
+
+        Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+
+        parent = self.gargoyle['test']
+
+        parent.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='bob',
+        )
+
+        Switch.objects.create(
+            key='test:child',
+            status=SELECTIVE,
+        )
+
+        child = self.gargoyle['test:child']
+
+        child.add_condition(
+            condition_set=condition_set,
+            field_name='username',
+            condition='joe',
+        )
+
+        user = User(username='bob')
+        self.assertTrue(self.gargoyle.is_active('test:child', user))
+
+        user = User(username='joe')
+        self.assertTrue(self.gargoyle.is_active('test:child', user))
+
+        user = User(username='john')
+        self.assertFalse(self.gargoyle.is_active('test:child', user))
+
+        self.assertFalse(self.gargoyle.is_active('test:child'))
+
 
 class ConstantTest(TestCase):
     def setUp(self):
