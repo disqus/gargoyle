@@ -59,7 +59,7 @@
 
     <table class="switches {% if not switches %}empty{% endif %}">
         {% for switch in switches %}
-        <tr id="id_{{ switch.key }}" data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}" class="collapsed">
+        <tr id="id_{{ switch.key }}" data-switch-key="{{ switch.key }}" data-switch-name="{{ switch.label }}" data-switch-desc="{{ switch.description }}" data-switch-status="{{ switch.status }}">
             <td class="name">
                 <h4>{% if switch.label %}{{ switch.label }}{% else %}{{ switch.key|title }}{% endif %} <small class="command">({{ switch.key }})</small></h4>
                 <h5>
