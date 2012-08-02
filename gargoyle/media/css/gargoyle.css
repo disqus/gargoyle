@@ -250,6 +250,13 @@
     background: transparent url("../img/delete.png") no-repeat left 35%;
 }
 
+#container table.switches td.status button.button.toggled[data-status="1"] {
+    border-color: #636363;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#A8A8A8', endColorstr='#7E7E7E'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#A8A8A8), to(#7E7E7E)); /* for webkit browsers */
+    background: -moz-linear-gradient(top, #7E7E7E, #A8A8A8); /* for firefox 3.6+ */        
+}
+
 #container table.empty {
     display: none;
 }
