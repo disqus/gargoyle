@@ -10,6 +10,7 @@ from gargoyle import gargoyle
 from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent, String, Boolean, \
     ConditionSet, OnOrAfterDate
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.validators import validate_ipv4_address
 
@@ -54,6 +55,7 @@ class IPAddress(String):
 class IPAddressConditionSet(RequestConditionSet):
     percent = Percent()
     ip_address = IPAddress(label='IP Address')
+    internal_ip = Boolean(label='Internal IPs')
 
     def get_namespace(self):
         return 'ip'
@@ -65,6 +67,8 @@ class IPAddressConditionSet(RequestConditionSet):
             return sum([int(x) for x in instance.META['REMOTE_ADDR'].split('.')])
         elif field_name == 'ip_address':
             return instance.META['REMOTE_ADDR']
+        elif field_name == 'internal_ip':
+            return instance.META['REMOTE_ADDR'] in settings.INTERNAL_IPS
         return super(IPAddressConditionSet, self).get_field_value(instance, field_name)
 
     def get_group_label(self):

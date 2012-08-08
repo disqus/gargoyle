@@ -5,6 +5,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.http import HttpRequest, Http404, HttpResponse
@@ -29,6 +30,10 @@ class APITest(TestCase):
         self.gargoyle = SwitchManager(Switch, key='key', value='value', instances=True, auto_create=True)
         self.gargoyle.register(UserConditionSet(User))
         self.gargoyle.register(IPAddressConditionSet())
+        self.internal_ips = settings.INTERNAL_IPS
+
+    def tearDown(self):
+        settings.INTERNAL_IPS = self.internal_ips
 
     def test_builtin_registration(self):
         self.assertTrue('gargoyle.builtins.UserConditionSet(auth.user)' in self.gargoyle._registry)
@@ -430,6 +435,34 @@ class APITest(TestCase):
         )
 
         self.assertTrue(self.gargoyle.is_active('test', user))
+
+    def test_ip_address_internal_ips(self):
+        condition_set = 'gargoyle.builtins.IPAddressConditionSet'
+
+        Switch.objects.create(
+            key='test',
+            status=SELECTIVE,
+        )
+        switch = self.gargoyle['test']
+
+        request = HttpRequest()
+        request.META['REMOTE_ADDR'] = '192.168.1.1'
+
+        self.assertFalse(self.gargoyle.is_active('test', request))
+
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='internal_ip',
+            condition='1',
+        )
+
+        settings.INTERNAL_IPS = ['192.168.1.1']
+
+        self.assertTrue(self.gargoyle.is_active('test', request))
+
+        settings.INTERNAL_IPS = []
+
+        self.assertFalse(self.gargoyle.is_active('test', request))
 
     def test_ip_address(self):
         condition_set = 'gargoyle.builtins.IPAddressConditionSet'
