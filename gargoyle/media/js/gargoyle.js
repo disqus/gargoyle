@@ -60,6 +60,10 @@ $(document).ready(function () {
         var row = $(this).parents("tr:first");
         var table = row.parents("table:first");
 
+        if (!confirm('Are you SURE you want to remove this switch?')) {
+            return;
+        }
+
         api(GARGOYLE.deleteSwitch, { key: row.attr("data-switch-key") },
             function () {
                 row.remove();
