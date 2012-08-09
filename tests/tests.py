@@ -1048,6 +1048,7 @@ class SwitchContextManagerTest(TestCase):
         self.assertEquals(self.gargoyle['test'].status, DISABLED)
 
         switch.status = GLOBAL
+        switch.save()
 
         @switches(self.gargoyle, test=False)
         def test2():
@@ -1066,6 +1067,7 @@ class SwitchContextManagerTest(TestCase):
         self.assertEquals(self.gargoyle['test'].status, DISABLED)
 
         switch.status = GLOBAL
+        switch.save()
 
         with switches(self.gargoyle, test=False):
             self.assertFalse(self.gargoyle.is_active('test'))

@@ -11,25 +11,19 @@ tests_require = [
     'Django>=1.2,<1.5',
     'django-nose',
     'nose',
-    'pyflakes',
-    'pep8',
     'South',
 ]
 
 install_requires = [
-    'django-modeldict>=1.3.2',
+    'django-modeldict>=1.3.3',
     'nexus>=0.2.3',
     'django-jsonfield>=0.8.0',
-]
-
-dependency_links = [
-    'https://github.com/dcramer/pyflakes/tarball/master#egg=pyflakes',
 ]
 
 
 setup(
     name='gargoyle',
-    version='0.10.1',
+    version='0.10.2',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
@@ -40,7 +34,6 @@ setup(
     license='Apache License 2.0',
     tests_require=tests_require,
     extras_require={'test': tests_require},
-    dependency_links=dependency_links,
     test_suite='runtests.runtests',
     include_package_data=True,
     classifiers=[
