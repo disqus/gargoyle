@@ -6,11 +6,13 @@ gargoyle.models
 :license: Apache License 2.0, see LICENSE for more details.
 """
 
-import datetime
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+try:
+    from django.utils.timezone import now
+except ImportError:
+    from datetime.datetime import now
 
 from jsonfield import JSONField
 
@@ -54,8 +56,8 @@ class Switch(models.Model):
     key = models.CharField(max_length=32, primary_key=True)
     value = JSONField(default="{}")
     label = models.CharField(max_length=32, null=True)
-    date_created = models.DateTimeField(default=datetime.datetime.now)
-    date_modified = models.DateTimeField(default=datetime.datetime.now)
+    date_created = models.DateTimeField(default=now)
+    date_modified = models.DateTimeField(default=now)
     description = models.TextField(null=True)
     status = models.PositiveSmallIntegerField(default=DISABLED, choices=STATUS_CHOICES)
 
