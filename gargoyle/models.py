@@ -12,7 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 try:
     from django.utils.timezone import now
 except ImportError:
-    from datetime.datetime import now
+    import datetime
+    now = datetime.datetime.now
 
 from jsonfield import JSONField
 
