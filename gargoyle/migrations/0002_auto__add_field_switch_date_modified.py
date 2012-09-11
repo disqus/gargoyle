@@ -4,16 +4,22 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+try:
+    from django.utils.timezone import now as timezone_aware_now
+except ImportError:
+    from datetime import datetime
+    timezone_aware_now = datetime.now
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding field 'Switch.date_modified'
-        db.add_column('gargoyle_switch', 'date_modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now), keep_default=False)
+        db.add_column('gargoyle_switch', 'date_modified', self.gf('django.db.models.fields.DateTimeField')(default=timezone_aware_now), keep_default=False)
 
 
     def backwards(self, orm):
-        
+
         # Deleting field 'Switch.date_modified'
         db.delete_column('gargoyle_switch', 'date_modified')
 
