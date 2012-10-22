@@ -1,19 +1,24 @@
 # encoding: utf-8
-import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+try:
+    from django.utils.timezone import now as timezone_aware_now
+except ImportError:
+    from datetime import datetime
+    timezone_aware_now = datetime.now
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'Switch'
         db.create_table('gargoyle_switch', (
             ('key', self.gf('django.db.models.fields.CharField')(max_length=32, primary_key=True)),
             ('value', self.gf('jsonfield.fields.JSONField')(default='{}')),
             ('label', self.gf('django.db.models.fields.CharField')(max_length=32, null=True)),
-            ('date_created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('date_created', self.gf('django.db.models.fields.DateTimeField')(default=timezone_aware_now)),
             ('description', self.gf('django.db.models.fields.TextField')(null=True)),
             ('status', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=1)),
         ))
@@ -21,7 +26,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'Switch'
         db.delete_table('gargoyle_switch')
 
