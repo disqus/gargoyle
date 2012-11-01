@@ -171,6 +171,8 @@ class APITest(TestCase):
         )
         switch = self.gargoyle['test']
 
+        # Intent is that this condition is True for all users *except* if the
+        # username == bar
         switch.add_condition(
             condition_set=condition_set,
             field_name='username',
@@ -178,15 +180,19 @@ class APITest(TestCase):
             exclude=True
         )
 
+        # username=='foo', so should be active
         user = User(pk=0, username='foo', is_staff=False)
-        self.assertFalse(self.gargoyle.is_active('test', user))
+        self.assertTrue(self.gargoyle.is_active('test', user))
 
+        # username=='foo', so should be active
         user = User(pk=0, username='foo', is_staff=True)
-        self.assertFalse(self.gargoyle.is_active('test', user))
+        self.assertTrue(self.gargoyle.is_active('test', user))
 
+        # username=='bar', so should not be active
         user = User(pk=0, username='bar', is_staff=False)
         self.assertFalse(self.gargoyle.is_active('test', user))
 
+        # username=='bar', so should not be active
         user = User(pk=0, username='bar', is_staff=True)
         self.assertFalse(self.gargoyle.is_active('test', user))
 
