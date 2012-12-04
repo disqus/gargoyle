@@ -54,9 +54,9 @@ class Switch(models.Model):
         DISABLED: 'Disabled for everyone',
     }
 
-    key = models.CharField(max_length=32, primary_key=True)
+    key = models.CharField(max_length=64, primary_key=True)
     value = JSONField(default="{}")
-    label = models.CharField(max_length=32, null=True)
+    label = models.CharField(max_length=64, null=True)
     date_created = models.DateTimeField(default=now)
     date_modified = models.DateTimeField(default=now)
     description = models.TextField(null=True)
