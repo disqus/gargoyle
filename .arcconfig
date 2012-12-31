@@ -1,0 +1,15 @@
+{
+  "project_id": "gargoyle",
+  "conduit_uri" : "http://phabricator.local.disqus.net/",
+  "arcanist_configuration": "DisqusConfiguration",
+  "copyright_holder": "Disqus, Inc.",
+  "immutable_history": false,
+  "differential.field-selector": "DisqusDifferentialFieldSelector",
+  "phutil_libraries": {
+      "disqus": "/usr/local/include/php/libdisqus/src"
+  },
+  "lint_engine": "ComprehensiveLintEngine",
+  "lint.pep8.options": "--ignore=W391,W292,W293,E501,E225",
+  "lint.jshint.prefix": "node_modules/jshint/bin",
+  "lint.jshint.bin": "hint"
+}

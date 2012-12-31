@@ -381,7 +381,7 @@ class APITest(TestCase):
         self.assertFalse(self.gargoyle.is_active('test'))
 
         # in memory cache shouldnt have expired
-        cache.delete(self.gargoyle.cache_key)
+        cache.delete(self.gargoyle.remote_cache_key)
         self.assertFalse(self.gargoyle.is_active('test'))
         switch.status, switch.value = GLOBAL, {}
         # Ensure post save gets sent
