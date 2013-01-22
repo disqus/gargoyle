@@ -174,10 +174,10 @@ class GargoyleModule(nexus.NexusModule):
         )
 
         changes = {}
-        for key, value in values.iteritems():
-            new_value = getattr(switch, key)
+        for attribute, value in values.iteritems():
+            new_value = getattr(switch, attribute)
             if new_value != value:
-                changes[key] = (value, new_value)
+                changes[attribute] = (value, new_value)
 
         if changes:
             if switch.key != key:
