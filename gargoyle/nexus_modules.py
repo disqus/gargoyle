@@ -79,7 +79,10 @@ class GargoyleModule(nexus.NexusModule):
         return 'Gargoyle'
 
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
+        try:
+            from django.conf.urls import patterns, url
+        except ImportError:  # Django<=1.4
+            from django.conf.urls.defaults import patterns, url
 
         urlpatterns = patterns('',
                                url(r'^add/$', self.as_view(self.add), name='add'),
