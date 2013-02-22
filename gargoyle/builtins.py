@@ -15,6 +15,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.core.validators import validate_ipv4_address
 
 import socket
+import struct
 
 
 class UserConditionSet(ModelConditionSet):
@@ -64,12 +65,22 @@ class IPAddressConditionSet(RequestConditionSet):
         # XXX: can we come up w/ a better API?
         # Ensure we map ``percent`` to the ``id`` column
         if field_name == 'percent':
-            return sum([int(x) for x in instance.META['REMOTE_ADDR'].split('.')])
+            return self._ip_to_int(instance.META['REMOTE_ADDR'])
         elif field_name == 'ip_address':
             return instance.META['REMOTE_ADDR']
         elif field_name == 'internal_ip':
             return instance.META['REMOTE_ADDR'] in settings.INTERNAL_IPS
         return super(IPAddressConditionSet, self).get_field_value(instance, field_name)
+
+    def _ip_to_int(self, ip):
+        if '.' in ip:
+            # IPv4
+            return sum([int(x) for x in ip.split('.')])
+        if ':' in ip:
+            # IPv6
+            hi, lo = struct.unpack('!QQ', socket.inet_pton(socket.AF_INET6, ip))
+            return (hi << 64) | lo
+        raise ValueError('Invalid IP Address %r' % ip)
 
     def get_group_label(self):
         return 'IP Address'

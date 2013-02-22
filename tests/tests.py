@@ -524,6 +524,18 @@ class APITest(TestCase):
         )
         self.assertFalse(self.gargoyle.is_active('test', request))
 
+        self.assertTrue(self.gargoyle.is_active('test', self.gargoyle.as_request(ip_address='::1')))
+
+        switch.clear_conditions(
+            condition_set=condition_set,
+        )
+        switch.add_condition(
+            condition_set=condition_set,
+            field_name='percent',
+            condition='0-50',
+        )
+        self.assertFalse(self.gargoyle.is_active('test', request))
+
     def test_to_dict(self):
         condition_set = 'gargoyle.builtins.IPAddressConditionSet'
 
