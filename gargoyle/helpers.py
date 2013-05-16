@@ -8,10 +8,15 @@ gargoyle.helpers
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpRequest
-from django.utils import simplejson
 
 import datetime
 import uuid
+
+# Django 1.5+ compat
+try:
+    import json
+except ImportError:
+    import django.utils.simplejson as json
 
 
 class MockRequest(HttpRequest):
@@ -43,4 +48,4 @@ class BetterJSONEncoder(DjangoJSONEncoder):
 
 
 def dumps(value, **kwargs):
-    return simplejson.dumps(value, cls=BetterJSONEncoder, **kwargs)
+    return json.dumps(value, cls=BetterJSONEncoder, **kwargs)
