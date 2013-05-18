@@ -389,8 +389,13 @@ class APITest(TestCase):
         # cache shouldn't have expired
         self.assertFalse(self.gargoyle.is_active('test'))
 
+        # lookup cache_key in a modeldict 1.2/1.4 compatible way
+        if hasattr(self.gargoyle, 'remote_cache_key'):
+            cache_key = self.gargoyle.remote_cache_key
+        else:
+            cache_key = self.gargoyle.cache_key
         # in memory cache shouldnt have expired
-        cache.delete(self.gargoyle.remote_cache_key)
+        cache.delete(cache_key)
         self.assertFalse(self.gargoyle.is_active('test'))
         switch.status, switch.value = GLOBAL, {}
         # Ensure post save gets sent
@@ -1112,19 +1117,19 @@ class CommandAddSwitchTestCase(TestCase):
             self.assertRaises(CommandError, command.handle, *args)
 
     def test_add_switch_default_status(self):
-        self.assertNotIn('switch_default', self.gargoyle)
+        self.assertFalse('switch_default' in self.gargoyle)
 
         call_command('add_switch', 'switch_default')
 
-        self.assertIn('switch_default', self.gargoyle)
+        self.assertTrue('switch_default' in self.gargoyle)
         self.assertEqual(GLOBAL, self.gargoyle['switch_default'].status)
 
     def test_add_switch_with_status(self):
-        self.assertNotIn('switch_disabled', self.gargoyle)
+        self.assertFalse('switch_disabled' in self.gargoyle)
 
         call_command('add_switch', 'switch_disabled', status=DISABLED)
 
-        self.assertIn('switch_disabled', self.gargoyle)
+        self.assertTrue('switch_disabled' in self.gargoyle)
         self.assertEqual(DISABLED, self.gargoyle['switch_disabled'].status)
 
     def test_update_switch_status_disabled(self):
@@ -1161,18 +1166,18 @@ class CommandRemoveSwitchTestCase(TestCase):
 
     def test_removes_switch(self):
         Switch.objects.create(key='test')
-        self.assertIn('test', self.gargoyle)
+        self.assertTrue('test' in self.gargoyle)
 
         call_command('remove_switch', 'test')
 
-        self.assertNotIn('test', self.gargoyle)
+        self.assertFalse('test' in self.gargoyle)
 
     def test_remove_non_switch_doesnt_error(self):
-        self.assertNotIn('idontexist', self.gargoyle)
+        self.assertFalse('idontexist' in self.gargoyle)
 
         call_command('remove_switch', 'idontexist')
 
-        self.assertNotIn('idontexist', self.gargoyle)
+        self.assertFalse('idontexist' in self.gargoyle)
 
 
 class HelpersTestCase(TestCase):
