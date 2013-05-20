@@ -2,8 +2,8 @@
 *.egg-info
 *.egg
 .DS_Store
-.arcconfig
 .coverage
 /dist
 /build
 /cover
+*.sublime-workspace
