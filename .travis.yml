@@ -6,9 +6,11 @@ env:
   - DJANGO=1.2.7 MODELDICT=1.2.0
   - DJANGO=1.3.1 MODELDICT=1.2.0
   - DJANGO=1.4 MODELDICT=1.2.0
+  - DJANGO=1.5 MODELDICT=1.2.0
   - DJANGO=1.2.7 MODELDICT=1.4.1
   - DJANGO=1.3.1 MODELDICT=1.4.1
   - DJANGO=1.4 MODELDICT=1.4.1
+  - DJANGO=1.5 MODELDICT=1.4.1
 install:
   - pip install -q Django==$DJANGO --use-mirrors
   - pip install -q django-modeldict==$MODELDICT --use-mirrors
