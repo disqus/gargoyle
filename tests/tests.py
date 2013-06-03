@@ -4,6 +4,7 @@
 """
 
 import datetime
+import sys
 
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
@@ -11,9 +12,11 @@ from django.core.cache import cache
 from django.core.management.base import CommandError
 from django.core.management import call_command
 from django.http import HttpRequest, Http404, HttpResponse
+from django.utils import simplejson
 from django.test import TestCase
 from django.template import Context, Template, TemplateSyntaxError
 
+import gargoyle
 from gargoyle.builtins import IPAddressConditionSet, UserConditionSet, HostConditionSet
 from gargoyle.decorators import switch_is_active
 from gargoyle.helpers import MockRequest
@@ -386,8 +389,13 @@ class APITest(TestCase):
         # cache shouldn't have expired
         self.assertFalse(self.gargoyle.is_active('test'))
 
+        # lookup cache_key in a modeldict 1.2/1.4 compatible way
+        if hasattr(self.gargoyle, 'remote_cache_key'):
+            cache_key = self.gargoyle.remote_cache_key
+        else:
+            cache_key = self.gargoyle.cache_key
         # in memory cache shouldnt have expired
-        cache.delete(self.gargoyle.remote_cache_key)
+        cache.delete(cache_key)
         self.assertFalse(self.gargoyle.is_active('test'))
         switch.status, switch.value = GLOBAL, {}
         # Ensure post save gets sent
@@ -1109,19 +1117,19 @@ class CommandAddSwitchTestCase(TestCase):
             self.assertRaises(CommandError, command.handle, *args)
 
     def test_add_switch_default_status(self):
-        self.assertNotIn('switch_default', self.gargoyle)
+        self.assertFalse('switch_default' in self.gargoyle)
 
         call_command('add_switch', 'switch_default')
 
-        self.assertIn('switch_default', self.gargoyle)
+        self.assertTrue('switch_default' in self.gargoyle)
         self.assertEqual(GLOBAL, self.gargoyle['switch_default'].status)
 
     def test_add_switch_with_status(self):
-        self.assertNotIn('switch_disabled', self.gargoyle)
+        self.assertFalse('switch_disabled' in self.gargoyle)
 
         call_command('add_switch', 'switch_disabled', status=DISABLED)
 
-        self.assertIn('switch_disabled', self.gargoyle)
+        self.assertTrue('switch_disabled' in self.gargoyle)
         self.assertEqual(DISABLED, self.gargoyle['switch_disabled'].status)
 
     def test_update_switch_status_disabled(self):
@@ -1158,15 +1166,47 @@ class CommandRemoveSwitchTestCase(TestCase):
 
     def test_removes_switch(self):
         Switch.objects.create(key='test')
-        self.assertIn('test', self.gargoyle)
+        self.assertTrue('test' in self.gargoyle)
 
         call_command('remove_switch', 'test')
 
-        self.assertNotIn('test', self.gargoyle)
+        self.assertFalse('test' in self.gargoyle)
 
     def test_remove_non_switch_doesnt_error(self):
-        self.assertNotIn('idontexist', self.gargoyle)
+        self.assertFalse('idontexist' in self.gargoyle)
 
         call_command('remove_switch', 'idontexist')
 
-        self.assertNotIn('idontexist', self.gargoyle)
+        self.assertFalse('idontexist' in self.gargoyle)
+
+
+class HelpersTestCase(TestCase):
+
+    def setUp(self):
+        self.old_gargoyle_helpers = sys.modules.pop('gargoyle.helpers')
+        del gargoyle.helpers
+
+        self.old_json = sys.modules.pop('json')
+        sys.modules['json'] = None
+
+    def tearDown(self):
+        if self.old_json is not None:
+            sys.modules['json'] = self.old_json
+        else:
+            del sys.modules['json']
+        sys.modules['gargoyle.helpers'] = self.old_gargoyle_helpers
+        gargoyle.helpers = self.old_gargoyle_helpers
+
+    def test_json_compat(self):
+        # fake json module so test works even in python 2.5
+        mock_json = object()
+        sys.modules['json'] = mock_json
+
+        # reload helpers module to get json reimported
+        from gargoyle.helpers import json
+        self.assertEqual(json, mock_json)
+
+    def test_simplejson_compat(self):
+        # reload helpers module to get json reimported
+        from gargoyle.helpers import json
+        self.assertEqual(json, simplejson)

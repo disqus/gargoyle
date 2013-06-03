@@ -8,7 +8,7 @@ except:
     pass
 
 tests_require = [
-    'Django>=1.2,<1.5',
+    'Django>=1.2,<1.6',
     'django-nose',
     'nose',
     'South',
