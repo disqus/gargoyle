@@ -8,7 +8,7 @@ except:
     pass
 
 tests_require = [
-    'Django>=1.2,<1.5',
+    'Django>=1.2,<1.6',
     'django-nose',
     'nose',
     'South',
@@ -23,7 +23,7 @@ install_requires = [
 
 setup(
     name='gargoyle',
-    version='0.10.7',
+    version='0.10.8',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/gargoyle',
