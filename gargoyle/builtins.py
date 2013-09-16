@@ -11,11 +11,19 @@ from gargoyle.conditions import ModelConditionSet, RequestConditionSet, Percent,
     ConditionSet, OnOrAfterDate
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
 from django.core.validators import validate_ipv4_address
 
 import socket
 import struct
+
+
+try:
+    from django.contrib.auth import get_user_model
+except ImportError: # django < 1.5
+    from django.contrib.auth.models import User
+else:
+    User = get_user_model()
 
 
 class UserConditionSet(ModelConditionSet):
