@@ -67,7 +67,7 @@
                     {% if sorted_by|sort_field == 'date_created' %}
                         Created {{ switch.date_created|timesince }} ago
                     {% else %}
-                        Last modified {{ switch.date_created|timesince }} ago
+                        Last modified {{ switch.date_modified|timesince }} ago
                     {% endif %}
                 </h5>
                 <div class="inner">
