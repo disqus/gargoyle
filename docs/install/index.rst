@@ -35,7 +35,7 @@ If you do use ``gargoyle.py`` files and the autodiscovery code, you'll need to e
 Nexus Frontend
 --------------
 
-While Gargoyle can be used without a frontend, we highly recommend using `Nexus <https://github.com/dcramer/nexus>`_.
+While Gargoyle can be used without a frontend, we highly recommend using `Nexus <https://github.com/disqus/nexus>`_.
 
 Nexus will automatically detect Gargoyle's NexusModule, assuming you're using autodiscovery. If not, you will need to register
 the module by hand:
