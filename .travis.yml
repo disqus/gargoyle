@@ -12,9 +12,9 @@ env:
   - DJANGO=1.4 MODELDICT=1.4.1
   - DJANGO=1.5 MODELDICT=1.4.1
 install:
-  - pip install -q Django==$DJANGO
-  - pip install -q django-modeldict==$MODELDICT
-  - pip install -q flake8
-  - pip install -q -e .
+  - pip install  Django==$DJANGO
+  - pip install  django-modeldict==$MODELDICT
+  - pip install  flake8
+  - pip install  -e .
 script:
   - make test
