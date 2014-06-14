@@ -7,3 +7,5 @@ release:
 	git push origin $(VERSION)
 	git push origin master
 	python setup.py sdist upload
+
+.PHONY: test release
