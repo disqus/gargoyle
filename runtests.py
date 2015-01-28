@@ -30,12 +30,12 @@ if not settings.configured:
             # Included to fix Disqus' test Django which solves IntegrityMessage case
             'django.contrib.contenttypes',
             'gargoyle',
-            'south',
 
             'tests',
         ],
         ROOT_URLCONF='',
         DEBUG=False,
+        MIDDLEWARE_CLASSES=(),
         TEMPLATE_DEBUG=True,
         GARGOYLE_SWITCH_DEFAULTS={
             'active_by_default': {

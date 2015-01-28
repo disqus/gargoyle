@@ -10,13 +10,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpRequest
 
 import datetime
+import json
 import uuid
-
-# Django 1.5+ compat
-try:
-    import json
-except ImportError:
-    import django.utils.simplejson as json
 
 
 class MockRequest(HttpRequest):
