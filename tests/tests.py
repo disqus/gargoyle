@@ -12,7 +12,6 @@ from django.core.cache import cache
 from django.core.management.base import CommandError
 from django.core.management import call_command
 from django.http import HttpRequest, Http404, HttpResponse
-from django.utils import simplejson
 from django.test import TestCase
 from django.template import Context, Template, TemplateSyntaxError
 
@@ -1202,17 +1201,3 @@ class HelpersTestCase(TestCase):
             del sys.modules['json']
         sys.modules['gargoyle.helpers'] = self.old_gargoyle_helpers
         gargoyle.helpers = self.old_gargoyle_helpers
-
-    def test_json_compat(self):
-        # fake json module so test works even in python 2.5
-        mock_json = object()
-        sys.modules['json'] = mock_json
-
-        # reload helpers module to get json reimported
-        from gargoyle.helpers import json
-        self.assertEqual(json, mock_json)
-
-    def test_simplejson_compat(self):
-        # reload helpers module to get json reimported
-        from gargoyle.helpers import json
-        self.assertEqual(json, simplejson)
