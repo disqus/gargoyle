@@ -15,9 +15,9 @@ matrix:
     - python: "2.6"
       env: DJANGO=1.7 MODELDICT=1.4.1
 install:
-  - pip install  Django==$DJANGO
-  - pip install  django-modeldict==$MODELDICT
-  - pip install  flake8
-  - pip install  -e .
+  - pip install Django==$DJANGO
+  - pip install django-modeldict==$MODELDICT
+  - pip install flake8
+  - pip install -e .
 script:
   - make test
