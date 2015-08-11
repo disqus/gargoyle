@@ -20,7 +20,7 @@ In the case of the switch being inactive and you are using the decorator, a 404 
 the user to an absolute URL (relative to domain), or a named URL pattern::
 
 	# if redirect_to starts with a /, we assume it's a url path
-	@switch_is_active('my switch name', redirect_to='/my/url/path)
+	@switch_is_active('my switch name', redirect_to='/my/url/path')
 
 	# alternatively use the url mapper
 	@switch_is_active('my switch name', redirect_to='access_denied')
