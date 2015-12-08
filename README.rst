@@ -1,5 +1,5 @@
-Deprecated
-----------
+NOTICE: Deprecated
+------------------
 This project is deprecated and no longer actively maintained by `Disqus <https://disqus.com/>`_.
 
 Gargoyle
