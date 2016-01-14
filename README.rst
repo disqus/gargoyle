@@ -1,6 +1,6 @@
 NOTICE: Deprecated
 ------------------
-This project is deprecated and no longer actively maintained by `Disqus <https://disqus.com/>`_.
+This project is deprecated and no longer actively maintained by `Disqus <https://disqus.com/>`_. However there is a fork being maintained by YPlan at `github.com/YPlan/gargoyle <https://github.com/YPlan/gargoyle>`_.
 
 Gargoyle
 --------
